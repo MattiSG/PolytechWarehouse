@@ -10,13 +10,21 @@ includeHeader("Deposit Form");
     <legend>Delivery Information</legend>
     <form action="performDeposit.php" method="post"  
           enctype="multipart/form-data">
-      <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo MAX ?>" />
+      <input type="hidden" name="MAX_FILE_SIZE" 
+             value="<?php echo MAX_FILE_SIZE; ?>" />
       <ul>
-        <li>Promotion : <select name="promotion"><?php
-  foreach(getAvailablePromotions() as $promo){
+        <li>Promotion : <select id="promotion" onchange="getCourses()">
+          <option value="">---</option>
+<?php
+foreach(getAvailablePromotions() as $promo){
   echo "          <option value=\"".$promo."\">".$promo."</option>\n";
-  }
-?></li>
+}
+?>
+       </li>
+       <li>Course : <select disabled="true" id="course" onchange="getGroups()">
+                    </select>
+       </li>
+  
       </ul>
     </form>
   </fieldset>
