@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<promotion>
+  <students>
+    <student uid="1" login="student_login">
+      <lastname>...</lastname>
+      <firstname>...</firstname>
+    </student>
+    <!-- ... -->
+  </students>
+  <groups>
+    <group name="group_identifier">
+      <member uid="student_member_uid" />
+      <!-- ... -->
+    </group>
+    <!-- ... -->
+  </groups>
+  <courses>
+    <course label="a_course_name" />
+    <!-- ... -->
+  </courses>
+</promotion>

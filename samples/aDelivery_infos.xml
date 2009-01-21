@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<description>
+  <name>...</name>
+  <deliverable>
+    <file name="field_name" extension="file_extension">
+      <!-- if extension implies an archive file: .zip, .tar.gz ... -->
+      <content name="expected_file_name" />
+      <!-- ...-->
+    </file>
+    <!-- ... -->
+    </deliverable>
+  <delivery_date>
+    <group uid="a_group_uid">a_valid_date</group>
+    <!-- -->
+  </delivery_date>
+</description>

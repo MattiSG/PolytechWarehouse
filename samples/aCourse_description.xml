@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<course label="a_course_label">
+  <longname>...</longname>
+  <academic-year>...</academic-year>
+  <responsible>responsible_teacher_login</responsible>
+  <students promotion="a_promotion_name">
+    <group advisor="a_teacher_login">a_promotion_group</group>
+    <!-- ... -->
+  </students>
+</course>
