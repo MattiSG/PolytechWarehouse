@@ -1,19 +1,26 @@
 <?php
-  /**
+   /** Polytech WareHouse AJAX framework (aka paf) server-side
+   * @author Sebastian mosser <mosser@polytech.unice.fr>
+   * @copyright Polytech'Sophia IaI Team
+   * @licence LGPL
    */
-require "bridge.php";
+require "bootstrap.php";
 
 class Pajax {
 
-  public static function run() {
+  public static function run() 
+  {
 		
-    $request = $_POST["request"];
+    $request = (array_key_exists("request",$_POST) ? $_POST["request"] : null);
     $request = stripslashes(urldecode($request));
     $request = iconv("ISO-8859-1","UTF-8",$request);
     echo self::handle($request);
   }
 
-  private static function handle($request) {
+  private static function handle($request) 
+  {
+    if (null == $request)
+      return;
     $request    = simplexml_load_string($request);
 
     $className  = ((string) $request->className);
@@ -25,25 +32,26 @@ class Pajax {
     $answer     = self::invoke($className,$methodName,$parameters);
 		
     if (is_array($answer))
-      return self::displayArray($answer);
-			
-    return $answer;
+      $answer = self::displayArray($answer);
+    header("Content-Type: text/xml; charset=UTF-8");
+    return "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n".$answer;
   }
 
 
-  private static function displayArray($a) {
-    $title = "<h3> Array2Html Answer Translation </h3>";
-    $tmp = print_r($a,True);
-    $tmp = str_replace(" ","&nbsp;",$tmp);
-    return $title.nl2br($tmp);
+  private static function displayArray($a) 
+  {
+    $result = "<array>";
+    foreach($a as $k => $v)
+      $result .= "<item key=\"$k\">$v</item>";
+    $result .= "</array>";
+    return $result;
   
   }
 
-  private static function invoke($className, $methodName, $parameters) {
+  private static function invoke($className, $methodName, $parameters) 
+  {
     try {
-      // On récupère la méthode statique exposée par introspection
       $method = new ReflectionMethod($className,"pajax_".$methodName);
-      // On l'invoque (static ==> NULL) : 
       $ans = $method->invoke(NULL,$parameters);
       return $ans;
     }
@@ -56,7 +64,5 @@ class Pajax {
     }
   }
 }
-
-// On lance le serveur ^_^
 Pajax::run();
 ?>

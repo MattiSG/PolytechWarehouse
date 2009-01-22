@@ -1,6 +1,6 @@
 /**
   */
-var serverUrl = "pajax_server.php"
+var serverUrl = "paf.php"
 
 var invokers = new Array();
 
