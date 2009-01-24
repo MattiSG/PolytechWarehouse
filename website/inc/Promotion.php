@@ -17,7 +17,8 @@ class Promotion extends XmlData
       $filename = $dir . "/".$f;
       if (is_file($filename) && ereg("[:word:]*\.xml$",$filename)){
 	$tmp = explode(".",$f);
-	$result[] = $tmp[0];
+	$aPromo = new Promotion($tmp[0]);
+	$result[$tmp[0]] = $aPromo->getName();
       }
     }
     return $result; 
@@ -43,6 +44,7 @@ class Promotion extends XmlData
   }
 
   public function getLabel() { return $this->document["label"]; }
+  public function getName() { return $this->document->name; }
 
   public function getAvailableCourses()
   {
@@ -80,11 +82,51 @@ class Promotion extends XmlData
     $promo = new Promotion($promoId[0]);
     $courses = $promo->getAvailableCourses();
     $result = array();
-    foreach($courses as $c)
-      $result[] = $c["descriptor"];
+    foreach($courses as $c) {
+      $cInst = new Course($c["descriptor"]);
+      $result[(string)$c["descriptor"]] = $cInst->getLongName();
+    }
     return $result;
   }
+
+  public static function pajax_getGroups($promoId)
+  {
+    $promo = new Promotion($promoId[0]);
+    return  $promo->getAvailableGroups();
+  }
   
+  public static function pajax_getGroupAsHTML($p)
+  {
+    $promo = new Promotion($p[0]);
+    $members = $promo->getStudentsByGroupName($p[1]);
+    $tmp = array();
+    foreach($members as $s){
+      $row = "<tr><td>".$s["uid"]."</td><td>".$s["login"]."</td>";
+      $row .= "<td>".$s->lastname."</td><td>".$s->firstname."</td>";
+      $row .= "<td><a href=\"mailto:".$s["login"].MAIL_DOMAIN."\">".$s["login"].MAIL_DOMAIN."</a></td>";
+      $row .= "</tr>\n";
+      $key = "".$s->lastname.$s->firstname;
+      $tmp[$key] = $row;
+    }
+    ksort($tmp);
+    $result = "<table>\n";
+    $result .= "<tr><th>UID</th><th>login</th><th>Nom</th><th>Prénom</th><th>email</th></tr>\n";
+    foreach($tmp as $row)
+      $result .= $row;
+    $result .= "</table>";
+    return $result;
+  }
+
+  public static function pajax_getGroupMembersMail($p)
+  {
+    $promo = new Promotion($p[0]);
+    $members = $promo->getStudentsByGroupName($p[1]);
+    $result = array();
+    foreach($members as $m)
+      $result[] = $m["login"].MAIL_DOMAIN;
+    return $result;
+  }
+
 }
 
 ?>

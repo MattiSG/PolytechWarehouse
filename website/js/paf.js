@@ -36,14 +36,19 @@ function createXmlQuery(className, methodName, parameters) {
     return query;
 }
 
-function invoke(id,className, methodName, parameters, callBackFunction) {
+function invoke(id,className, methodName, parameters, callBackFunction,html) {
     invokers[id] = false;
     invokers[id] = httpFactory();
     var xmlQuery = createXmlQuery(className, methodName, parameters);	
     invokers[id].onreadystatechange = function() {
 	if ( 4 == invokers[id].readyState) {
-	    if (invokers[id].status == 200) 
-	      	callBackFunction(invokers[id].responseXML);
+	    if (invokers[id].status == 200) {
+		if (html == true) {
+	      	    callBackFunction(invokers[id].responseText);
+		}
+		else { callBackFunction(invokers[id].responseXML);
+		}
+	    }
 	    else
 		alert("HTTP Error : " + invokers[id].status);	    
 	}

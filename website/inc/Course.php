@@ -15,6 +15,7 @@ class Course extends XmlData
   }
 
   function getLabel() { return $this->document["label"]; }
+  function getLongName() { return (string) $this->document->longname; }
 
   function getGroups()
   {
@@ -31,10 +32,10 @@ class Course extends XmlData
     return $this->document->xpath("deliverable/delivery[@uid='$uid']");
   }
 
-
   function getDeliverableProducts($dUid)
   {
-    return $this->document->xpath("deliverable/delivery[@uid='$dUid']/product/file");
+    $query = "deliverable/delivery[@uid='$dUid']/product/file";
+    return $this->document->xpath($query);
 
   }
 

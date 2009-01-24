@@ -1,0 +1,14 @@
+#menu {
+    float: left;
+    widht: 20%;
+    margin: 10px 10px 10px 10px;
+}
+
+#content {
+    width: 70%;
+    float: left;
+}
+
+#clearer {
+    clear: both;
+}

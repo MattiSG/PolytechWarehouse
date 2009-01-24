@@ -14,6 +14,11 @@ define("TEACHERS_LIST","/config/teachers.xml");
 define("MAIL_DOMAIN","@polytech.unice.fr");
 
 
+// Project status
+define("DELIVERED",0);
+define("TOO_LATE",-1);
+define("STILL_DELIVERABLE",1);
+
 // HTML Page file
 define("HEADER","/html/header.html");
 define("FOOTER","/html/footer.html");

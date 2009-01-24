@@ -1,6 +1,6 @@
 <?php
 
-class Deposit extends XmlData
+class Deposit
 {
   
   private $groupId;
@@ -14,9 +14,9 @@ class Deposit extends XmlData
   {
     $this->course = new Course($courseId);
     $this->promo = new Promotion($promoId);
-    $this->groupId = $groupId;
     $tmp = $this->course->getDeliverable($uid);
-    $this->document = $tmp[0];
+    $this->delivery = new Delivery($tmp[0],$this->promo,$this->course);
+    $this->groupId = $groupId;
     $this->products = $this->fillProducts();
     $this->errors = array();
     $this->warnings = array();
@@ -46,8 +46,8 @@ class Deposit extends XmlData
 
   private function validateDate()
   {
-    $date = $this->document->xpath("due_date/group[@uid='".$this->groupId."']");
-    $due = strtotime((string)$date[0]);
+    $date = $this->delivery->getDueDate($this->groupId);
+    $due = strtotime((string) $date);
     if (($due - time()) > 0)
       return true;
     $e = "Too late !! Your delivery was expected for " . $date[0];
@@ -58,26 +58,18 @@ class Deposit extends XmlData
   private function storeProducts()
   {
     $this->prepareBox();
-    $root = $this->getBoxName();
+    $root = $this->delivery->getBoxName($_SESSION["login"]);
     foreach($this->products as $name => $p){
-      $tmp = $this->document->xpath("product/file[@name='$name']");
-      $ext = $tmp[0]["extension"];
-      move_uploaded_file($p['tmp_name'],$root."/".$name . $ext);
+      $fileName = $this->delivery->getProductFileName($name);
+      move_uploaded_file($p['tmp_name'],$root."/".$fileName);
     }
-
   }
 
-  private function getBoxName()
-  {
-    $root = getcwd() . BOXES . "/" . $this->promo->getLabel() . "/" ;
-    $root .= $this->course->getLabel() ."/" . $this->document["uid"] . "/";
-    $root .= $_SESSION["login"];
-    return $root;
-  }
+
 
   private function prepareBox()
   {
-    $root = $this->getBoxName();
+    $root = $this->delivery->getBoxName($_SESSION["login"]);
     if ( ! is_dir($root))
       mkdir($root,0777,true);
     else {
@@ -93,7 +85,7 @@ class Deposit extends XmlData
   
   private function checkProducts()
   {
-    $root = $this->getBoxName();
+    $root = $this->delivery->getBoxName($_SESSION["login"]);
     foreach($this->products as $name => $real){
       if (! is_array($real)) {
 	$w = "Upload Trouble ! The file <code>$name</code> wasn't ";
@@ -101,7 +93,7 @@ class Deposit extends XmlData
 	$this->errors[] = $w;
 	continue;
       }
-      $tmp = $this->document->xpath("product/file[@name='$name']");
+      $tmp = $this->delivery->getProductFile($name);
       $expected = $tmp[0];
       $ext = str_replace(".","\.",(string) $expected["extension"]);
       if (! ereg("[:word:]*".$ext."$",$real["name"])){

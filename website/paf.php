@@ -5,7 +5,7 @@
    * @licence LGPL
    */
 require "bootstrap.php";
-
+//error_reporting(0);
 class Pajax {
 
   public static function run() 
