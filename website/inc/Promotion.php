@@ -36,7 +36,15 @@ class Promotion extends XmlData
 
   public function getStudentByUid($uid)
   {
-    $result = $this->document->xpath("students/student[@uid='$uid']");
+    $ans = $this->document->xpath("students/student[@uid='$uid']");
+    if (count($ans) != 1)
+      return false;
+    return $ans[0];
+  }
+
+  public function getStudentByLogin($login)
+  {
+    $result = $this->document->xpath("students/student[@login='$login']");
     if (count($result) != 1)
       return false;
     else

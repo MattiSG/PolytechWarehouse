@@ -13,7 +13,6 @@ define("COURSES_ROOT","/config/courses/");
 define("TEACHERS_LIST","/config/teachers.xml");
 define("MAIL_DOMAIN","@polytech.unice.fr");
 
-
 // Project status
 define("DELIVERED",0);
 define("TOO_LATE",-1);
@@ -25,4 +24,16 @@ define("FOOTER","/html/footer.html");
 
 // File size
 define("MAX_FILE_SIZE",15*1024*1024);
+
+// LDAP connector
+define("LDAP_SERVER","ldaps://godot.polytech.unice.fr");
+define("LDAP_ROOT","dc=polytech,dc=unice,dc=fr");
+
+define("BROKEN_GLASS",true);
+
+// Authentication errors
+$SECURITY_ERRORS = array("bad-login" => "Informations incorrectes !",
+                         "unauthorized" => "Accès non authorisé !",
+			 "teacher-only" => "Accès reservé aux enseignants");
+
 ?>

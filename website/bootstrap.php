@@ -6,6 +6,7 @@
    */
 session_start();
 error_reporting(E_ALL | E_STRICT);
+redirectIfUnauthorized();
 
 date_default_timezone_set('Europe/Berlin');
 
@@ -21,14 +22,44 @@ function __autoload($className)
 }
 
 
+function performLogin($login,$password)
+{
+  if (! Ldap::checkPassword($login,$password))
+    return false;
 
+  $_SESSION["connected"] = true;
+  $_SESSION["login"] =  $login;
+  $_SESSION["isTeacher"] = false;
+  $tlist = new TeachersList();
+  if ($tlist->getByLogin($login))
+    $_SESSION["isTeacher"] = true;
+  return true;
+}
 
-// DEBUG PUPROSE
-$_SESSION["login"] = "tafani";
-$_SESSION["teacher"] = false;
-$_SESSION["lastname"] = "TAFANI";
-$_SESSION["firstname"] = "Gaetan";
-$_SESSION["uid"] = "51";
+function isConnected()
+{
+  if(array_key_exists("connected",$_SESSION) && $_SESSION["connected"] === true)
+    return true;
+  else
+    return false;
+}
 
+function performLogout()
+{
+  foreach($_SESSION as $k => $v)
+    unset($_SESSION[$k]);  
+}
+
+function redirectIfUnauthorized()
+{
+  if (! isConnected() && basename($_SERVER["SCRIPT_FILENAME"]) != "login.php")
+    header('Location: login.php?error=unauthorized');
+}
+
+function redirectIfNotTeacher() 
+{
+  if (! $_SESSION["isTeacher"])
+    header('Location: login.php?error=teacher-only');
+}
 
 ?>

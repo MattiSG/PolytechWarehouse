@@ -14,13 +14,13 @@ if (! ($promo && $course && $group && $deliverable))
 $deposit = new Deposit($course,$deliverable,$promo,$group);
 $proof = $deposit->perform();
 
-includeHeader("Deposit Proof");
+includeHeader("Preuve de dépôt");
 ?>
-  <h1> Delivery Proof </h1>
+  <h1> Preuve de dépôt </h1>
 <?php
   if (count($proof["errors"]) != 0) {
-    echo "<h2> Errors !! </h2>\n";
-    echo "<p>The following errors occured: \n";
+    echo "<h2> Erreurs !! </h2>\n";
+    echo "<p>Les erreurs suivantes ont empéchées le dépot de votre livraison: \n";
     echo "  <ul>\n";
     foreach($proof["errors"] as $e)
       echo "    <li>$e</li>\n";
@@ -29,8 +29,8 @@ includeHeader("Deposit Proof");
 ?>
 <?php
   if (count($proof["warnings"]) != 0) {
-    echo "<h2> Warning !! </h2>\n";
-    echo "<p>The following warnings occured: \n";
+    echo "<h2> Attention !! </h2>\n";
+    echo "<p>Le système détecte les incohérences suivantes : \n";
     echo "  <ul>\n";
     foreach($proof["warnings"] as $w)
       echo "    <li>$w</li>\n";
@@ -40,8 +40,8 @@ includeHeader("Deposit Proof");
   <h2>Result</h2>
 <?php
   if (count($proof["errors"]) == 0)
-    echo "<p> Your delivery is stored on the server</p>";
+    echo "<p> Votre dépôt a bien été pris en compte par la plate forme.</p>";
   else
-    echo "<p class=\"error\">Due to errors, your delivery is refused.</p>";
+    echo "<p class=\"error\">En raison des erreurs précédentes, votre dépot est refusé.</p>";
 ?>
 <?php includeFooter(); ?>

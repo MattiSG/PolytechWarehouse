@@ -34,12 +34,13 @@ class Deposit
 
   private function validateUser()
   {
-    $userId = $_SESSION["uid"];
-    if ($this->promo->isMemberOf($userId,$this->groupId))
+    $user = $this->promo->getStudentByLogin($_SESSION["login"]);
+    if ($this->promo->isMemberOf($user["uid"],$this->groupId))
       return true;
-    $e = "Student " . $_SESSION["firstname"] . " " . $_SESSION["lastname"];
-    $e .= "(<code>#$userId / ".$_SESSION["login"]."</code>)";
-    $e .= "is not a member of group <code>".$this->groupId."</code>";
+    $e = "L'utilisateur <em>" . $user->lastname . " " . $user->firstname;
+    $e .= "</em> de login <code>".$_SESSION["login"]."</code>";
+    $e .= " n'appartient pas au groupe <strong>".$this->groupId."</strong>";
+    $e .= " de la promotion <strong>" . $this->promo->getName()."</strong>";
     $this->errors[] = $e;
     return false;
   }
@@ -50,7 +51,7 @@ class Deposit
     $due = strtotime((string) $date);
     if (($due - time()) > 0)
       return true;
-    $e = "Too late !! Your delivery was expected for " . $date[0];
+    $e = "Trop tard ! La date limite de dépôt était fixée au " . $date[0];
     $this->errors[] = $e;
     return  false;
   }
@@ -88,8 +89,8 @@ class Deposit
     $root = $this->delivery->getBoxName($_SESSION["login"]);
     foreach($this->products as $name => $real){
       if (! is_array($real)) {
-	$w = "Upload Trouble ! The file <code>$name</code> wasn't ";
-	$w .= " successfully uploaded. The reason is <code>$real</code>";
+	$w = "Erreur de chargement ! Le fichier <code>$name</code> n'a pas";
+	$w .= " été corresctement chargé. Explications :  <code>$real</code>";
 	$this->errors[] = $w;
 	continue;
       }
@@ -130,21 +131,21 @@ class Deposit
       if (is_uploaded_file($_FILES[$inputName]['tmp_name'])) {
 	return $_FILES[$inputName];
       } else {
-	return "The file doesn't seem to be an uploaded file ... weird ...";
+	return "votre fichier n'est pas un fichier téléchargé ... étrange ...";
       }
     case UPLOAD_ERR_INI_SIZE:  
     case UPLOAD_ERR_FORM_SIZE: 
-      return "File size exceed the maximum allowed by the system !";
+      return "Fichier trop lourd (".(MAX_FILE_SIZE / 1024 / 1024)."Mo max)";
     case UPLOAD_ERR_PARTIAL:
-      return "The file was partially uploaded due to a transport problem";
+      return "Le fichier a été chargé partiellement.";
     case UPLOAD_ERR_NO_FILE:
-      return "No file to upload !";
+      return "Aucun fichier fourni par l'utilisateur";
     case UPLOAD_ERR_NO_TMP_DIR:
     case UPLOAD_ERR_CANT_WRITE:
     case UPLOAD_ERR_EXTENSION:
-      return "Server misconfiguration ... contact the administrator";
+      return "Mauvaise configuration du serveur. Contactez l'administrateur.";
     default:
-      return "Unexpected error case ... really weird, ins't it ?";
+      return "Cas d'erreur non prévu par la plate forme ... vraiment étrange ...";
     }
   }
 

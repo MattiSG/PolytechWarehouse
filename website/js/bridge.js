@@ -222,3 +222,11 @@ function getGroupMail() {
     }
     invoke(1,"Promotion","getGroupMembersMail",params,callback); 
 }
+
+function getSubmitButton() {
+    var deliverable = document.getElementById("deliverable").value;
+    resetForm(4);
+    if ("" == deliverable)
+	return ;
+    document.getElementById("send").disabled = false;
+}
