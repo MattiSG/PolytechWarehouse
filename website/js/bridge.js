@@ -49,13 +49,14 @@ function getCourses(){
 
     function callback(response) {
 	var items = response.getElementsByTagName("item");
+	alert(items.length);
 	var courses = document.getElementById("course");
 	courses.disabled = false;
 	for (i =0; i < items.length; i++){
 	    var opt = document.createElement('option');
 	    opt.text = items[i].textContent;
-	    opt.value = items[i].attributes[0].textContent;
-	    courses.add(opt,null);
+	    opt.value = items[i].attributes[0].textContent; 
+	    courses.add(opt,null);    	    
 	}
     }
     invoke(1,"Promotion","getCourses",params,callback); 

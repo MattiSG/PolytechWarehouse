@@ -29,8 +29,6 @@ define("MAX_FILE_SIZE",15*1024*1024);
 define("LDAP_SERVER","ldaps://godot.polytech.unice.fr");
 define("LDAP_ROOT","dc=polytech,dc=unice,dc=fr");
 
-define("BROKEN_GLASS",true);
-
 // Authentication errors
 $SECURITY_ERRORS = array("bad-login" => "Informations incorrectes !",
                          "unauthorized" => "Accès non authorisé !",
