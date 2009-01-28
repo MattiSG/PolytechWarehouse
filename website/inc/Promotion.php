@@ -113,8 +113,10 @@ class Promotion extends XmlData
     $promo = new Promotion($p[1]);
     $members = $promo->getStudentsByGroupName($p[0]);
     $tmp = array();
+    $i = 0;
     foreach($members as $s){
-      $row = "<tr><td>".$s["uid"]."</td><td>".$s["login"]."</td>";
+      $class = "class=\"".($i++ % 2 == 0 ? "odd": "even") ."\"";
+      $row = "<tr $class><td>".$s["uid"]."</td><td>".$s["login"]."</td>";
       $row .= "<td>".$s->lastname."</td><td>".$s->firstname."</td>";
       $row .= "<td><a href=\"mailto:".$s["login"].MAIL_DOMAIN."\">".$s["login"].MAIL_DOMAIN."</a></td>";
       $row .= "</tr>\n";

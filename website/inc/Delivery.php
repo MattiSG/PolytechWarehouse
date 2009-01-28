@@ -67,8 +67,13 @@ class Delivery extends XmlData
 
   public function getDeliveryStatus($login,$groupId)
   {
-    if ($this->hasDelivered($login))
-      return DELIVERED;
+    if ($this->hasDelivered($login)) {
+      $stamp = filectime($this->getBoxName($login));
+      $day = date("d/m/Y",$stamp);
+      $hour = date("H:i:s",$stamp);
+      $value = "<span class=\"day\">$day</span> <span class=\"hour\">$hour</span>";
+      return $value;
+    }
     else {
       if ($this->isOutOfDate($groupId))
 	return TOO_LATE;
@@ -116,8 +121,10 @@ class Delivery extends XmlData
     $header .= "</tr>\n";
     $content = "";
     $matrix = $result["matrix"];
+    $i = 0;
     foreach($result["students"] as $s){
-      $content .= "<tr><td><a href=\"mailto:".$s["login"].MAIL_DOMAIN."\">";
+      $class = "class=\"".($i++ % 2 == 0 ? "odd" : "even")."\"";
+      $content .= "<tr $class ><td><a href=\"mailto:".$s["login"].MAIL_DOMAIN."\">";
       $content .= $s->lastname."</a></td>";
       $content .= "<td>".$s->firstname."</td>";
       $sUid = (string) $s["uid"];
@@ -125,14 +132,14 @@ class Delivery extends XmlData
 	$dUid =  (string) $d->getUid();
 	$status = $matrix[$sUid][$dUid];
 	switch($status){
-	case DELIVERED:
-	  $content .= "<td kind=\"ok\">X</td>";
-	  break;
 	case TOO_LATE:
-	  $content .= "<td kind=\"ko\">-</td>";
+	  $content .= "<td class=\"ko\">-</td>";
 	  break;
 	case STILL_DELIVERABLE:
-	  $content .= "<td kind=\"empty\">?</td>";
+	  $content .= "<td class=\"empty\">?</td>";
+	  break;
+	default: 
+	  $content .= "<td class=\"ok\">$status</td>";
 	  break;
 	}
       }

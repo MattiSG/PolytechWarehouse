@@ -5,7 +5,6 @@ function resetForm(level) {
 				$(id).disable(); },
 		  function(){ $(id).textContent = ""; }); 	
     }
-
     var upload = $("send");
     if (null != upload)
 	upload.disabled = true;
@@ -71,6 +70,7 @@ function getProducts() {
 	    li.appendChild(input);
 	    $("products").appendChild(li);
 	});
+	$("send").enable();
     }
     var opt = new Array();
     opt.push($F("deliverable"));
@@ -123,4 +123,9 @@ function getSubmitButton() {
     if ("" == deliverable)
 	return ;
     $("send").enable();
+}
+
+function getCourseDescription() {
+    genericUpdate("course",3,"Course","getCourseDescription",new Array(),
+		  function(x) { divCallback(x,"result"); });
 }
