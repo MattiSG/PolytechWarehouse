@@ -110,7 +110,7 @@ class Delivery extends XmlData
   {
     $result = self::getDeliverablesStatus($promoId,$courseId,$gId);
     $header = "<table>";
-    $header .= "<tr><th>Lastname</th><th>Firstname</th>";
+    $header .= "<tr><th>Nom</th><th>Prénom</th>";
     foreach($result["deliverables"] as $d)
       $header .= "<th>".$d->getName()."</th>";
     $header .= "</tr>\n";
@@ -143,7 +143,7 @@ class Delivery extends XmlData
 
   public static function pajax_getDeliverablesStatus($p)
   {
-    return self::getDeliverablesStatusAsHTML($p[0],$p[1],$p[2]);
+    return self::getDeliverablesStatusAsHTML($p[2],$p[1],$p[0]);
   }
 
 

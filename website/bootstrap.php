@@ -10,7 +10,7 @@ redirectIfUnauthorized();
 
 date_default_timezone_set('Europe/Berlin');
 
-define("BROKEN_GLASS",true);
+define("BROKEN_GLASS",file_exists("SPLINTERS"));
 
 // Requiring functions library
 require_once "inc/constants.php";

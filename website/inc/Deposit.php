@@ -51,7 +51,7 @@ class Deposit
     $due = strtotime((string) $date);
     if (($due - time()) > 0)
       return true;
-    $e = "Trop tard ! La date limite de dépôt était fixée au " . $date[0];
+    $e = "Trop tard ! La date limite de dépôt était fixèe au " . $date[0];
     $this->errors[] = $e;
     return  false;
   }
@@ -90,7 +90,7 @@ class Deposit
     foreach($this->products as $name => $real){
       if (! is_array($real)) {
 	$w = "Erreur de chargement ! Le fichier <code>$name</code> n'a pas";
-	$w .= " été corresctement chargé. Explications :  <code>$real</code>";
+	$w .= " été correctement chargé. Explications :  <code>$real</code>";
 	$this->errors[] = $w;
 	continue;
       }

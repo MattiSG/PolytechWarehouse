@@ -100,13 +100,18 @@ class Promotion extends XmlData
   public static function pajax_getGroups($promoId)
   {
     $promo = new Promotion($promoId[0]);
-    return  $promo->getAvailableGroups();
+    $tmp = $promo->getAvailableGroups();
+    $result = array();
+    foreach($tmp as $g) {
+      $result[(string) $g] = $g;
+    }
+    return $result;
   }
   
   public static function pajax_getGroupAsHTML($p)
   {
-    $promo = new Promotion($p[0]);
-    $members = $promo->getStudentsByGroupName($p[1]);
+    $promo = new Promotion($p[1]);
+    $members = $promo->getStudentsByGroupName($p[0]);
     $tmp = array();
     foreach($members as $s){
       $row = "<tr><td>".$s["uid"]."</td><td>".$s["login"]."</td>";
@@ -127,8 +132,8 @@ class Promotion extends XmlData
 
   public static function pajax_getGroupMembersMail($p)
   {
-    $promo = new Promotion($p[0]);
-    $members = $promo->getStudentsByGroupName($p[1]);
+    $promo = new Promotion($p[1]);
+    $members = $promo->getStudentsByGroupName($p[0]);
     $result = array();
     foreach($members as $m)
       $result[] = $m["login"].MAIL_DOMAIN;

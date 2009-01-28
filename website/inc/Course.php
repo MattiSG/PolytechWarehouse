@@ -55,8 +55,8 @@ class Course extends XmlData
 
   public static function pajax_getDeliverables($params)
   {
-    $courseId = $params[0];
-    $groupId = $params[1];
+    $courseId = $params[1];
+    $groupId = $params[0];
     $course = new Course($courseId);
     $result = array();
     foreach($course->getDeliverables() as $d) {
