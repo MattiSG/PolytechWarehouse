@@ -35,6 +35,11 @@ class Deposit
   private function validateUser()
   {
     $user = $this->promo->getStudentByLogin($_SESSION["login"]);
+    if (! $user) {
+		$this->errors[] = "Utilisateur ".$_SESSION["login"]." inconnu !";
+		return false; 
+    }
+      
     if ($this->promo->isMemberOf($user["uid"],$this->groupId))
       return true;
     $e = "L'utilisateur <em>" . $user->lastname . " " . $user->firstname;

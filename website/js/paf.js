@@ -36,14 +36,24 @@ function escapeXMLContent(aString) {
     return tmp;	
 }
 
+
+function getTextContent(elem) {
+	//for(var p in elem)
+	//	alert(p);
+	if (document.getElementsByTagName('body')[0].innerText)
+		return elem.value;
+	else
+		return elem.textContent
+}
 function selectCallback (response,target) {
     var ans = response.responseXML;
     var items = $A(ans.getElementsByTagName("item"));
     $(items).each(function(i) {
-	var opt = document.createElement('option');
-	opt.text = i.textContent;
-	opt.value = i.attributes[0].textContent;
-	$(target).appendChild(opt);
+		var opt = document.createElement('option');
+		//alert(getTextContent(i) + " " + getTextContent(i.attributes[0]));
+		$(opt).update(getTextContent(i.attributes[1]));
+		$(opt).writeAttribute("value",getTextContent(i.attributes[0]));
+		$(target).appendChild(opt);
     });
     $(target).enable();
 }

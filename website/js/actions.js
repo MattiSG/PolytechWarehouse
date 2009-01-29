@@ -1,13 +1,12 @@
 
 function resetForm(level) {
     function resetElem(id) {
-	Try.these(function(){ $(id).length = 1; 
-				$(id).disable(); },
-		  function(){ $(id).textContent = ""; }); 	
+	Try.these(function(){ $(id).length = 1; $(id).disable(); },
+		  function(){ $(id).update(); }); 	
     }
     var upload = $("send");
     if (null != upload)
-	upload.disabled = true;
+	upload.disable();
 
     switch(level) {
     case 0:
@@ -64,9 +63,9 @@ function getProducts() {
 	    var li = document.createElement('li');
 	    var input = document.createElement('input');
 	    input.type = "file";
-	    input.id = i.attributes[0].textContent;
-	    input.name = i.attributes[0].textContent;
-	    li.textContent = i.textContent +  ": ";
+	    input.id = getTextContent(i.attributes[0]);
+	    input.name = getTextContent(i.attributes[0]);
+	    $(li).update(getTextContent(i.attributes[1]) +  ": ");
 	    li.appendChild(input);
 	    $("products").appendChild(li);
 	});
@@ -105,11 +104,11 @@ function getGroupMail() {
 	var items = $A(ans.getElementsByTagName("item"));
 	var str = "";
 	$(items).each(function(i) {
-	    str = str + i.textContent + ",";
+	    str = str + getTextContent(i.attributes[1]) + ",";
 	});
 	var a = document.createElement('a');
 	a.href = "mailto:" + str;
-	a.textContent = "Utilisez ce lien dans votre client mail préféré.";
+	$(a).update("Utilisez ce lien dans votre client mail préféré.");
 	var p = document.createElement('p');
 	$(p).appendChild(a);
 	$("result").appendChild(p);

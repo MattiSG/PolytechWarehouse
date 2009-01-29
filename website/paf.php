@@ -42,7 +42,7 @@ class Pajax {
   {
     $result = "<array>";
     foreach($a as $k => $v)
-      $result .= "<item key=\"$k\">$v</item>";
+      $result .= "<item key=\"$k\" value=\"$v\" />";
     $result .= "</array>";
     return $result;
   
