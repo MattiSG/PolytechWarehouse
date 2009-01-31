@@ -7,6 +7,28 @@ body{
     margin-top:0px;
 }
 
+a, a:link, a:visited{
+	color:#BA3E14;
+}
+
+a:hover{
+	color:#7A5141;
+}
+
+a:active{
+	color:#DBA61F;
+}
+
+h1{
+	font-size:1.1em;
+	text-transform:uppercase;
+}
+
+h2{
+	font-size:1em;
+	color:#1C2834;
+}
+
 /** header **/
 #header{
 	height:10.5em;
@@ -107,6 +129,10 @@ body{
 	border-bottom:1px dotted #000;
 }
 
+.even{
+	background-color:#eee;
+}
+
 .ko{
 	background-color:#Ba3E14;
 	text-align:center;
@@ -121,8 +147,14 @@ body{
 	font-weight:bold;
 }
 
-.even{
-	background-color:#eee;
+.date{
+	display:block;
+	text-align:center;
+}
+
+.hour{
+	display:block;
+	text-align:center;
 }
 
 #clearer {
@@ -141,26 +173,16 @@ body{
 	border:0px;
 }
 
-a, a:link, a:visited{
-	color:#BA3E14;
+#footer p{
+	font-size:0.9em;
 }
 
-a:hover{
-	color:#7A5141;
-}
-
-a:active{
+#footer a, #footer a:link, #footer a:visited, #footer a:active{
 	color:#DBA61F;
 }
 
-h1{
-	font-size:1.1em;
-	text-transform:uppercase;
-}
-
-h2{
-	font-size:1em;
-	color:#1C2834;
+#footer a:hover{
+	color:#fff;
 }
 
 fieldset{
