@@ -121,6 +121,10 @@ body{
 	font-weight:bold;
 }
 
+.even{
+	background-color:#eee;
+}
+
 #clearer {
     clear: both;
 }
