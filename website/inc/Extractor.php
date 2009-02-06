@@ -21,7 +21,7 @@ class Extractor
 
   public function perform()
   {
-    $root = $this->delivery->getBoxName("");
+    $root = $this->delivery->getBoxName($this->groupId,"");
     if (! is_dir($root))
       mkdir($root,0777,true);
     $tmp = $this->makeArchive($root);

@@ -39,17 +39,17 @@ class Delivery extends XmlData
     return $this->document->xpath("product/file[@name='$name']");
   }
 
-  public function getBoxName($login)
+  public function getBoxName($group,$login)
   {
     $root = getcwd() . BOXES . "/" . $this->promo->getLabel() . "/" ;
     $root .= $this->course->getLabel() ."/" . $this->getUid(). "/";
-    $root .= $login;
+    $root .= $group ."/" . $login;
     return $root;
   }
 
-  public function hasDelivered($login)
+  public function hasDelivered($group,$login)
   {
-    $box = $this->getBoxName($login);
+    $box = $this->getBoxName($group,$login);
     if (! is_dir($box)) 
       return false;
     foreach($this->document->product->file as $f) {
@@ -67,8 +67,8 @@ class Delivery extends XmlData
 
   public function getDeliveryStatus($login,$groupId)
   {
-    if ($this->hasDelivered($login)) {
-      $stamp = filectime($this->getBoxName($login));
+    if ($this->hasDelivered($groupId,$login)) {
+      $stamp = filemtime($this->getBoxName($groupId,$login));
       $day = date("d/m/Y",$stamp);
       $hour = date("H:i:s",$stamp);
       $value = "<span class=\"day\">$day</span> <span class=\"hour\">$hour</span>";

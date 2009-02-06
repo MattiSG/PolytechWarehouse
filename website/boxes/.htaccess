@@ -1,5 +1,5 @@
 
 <Limit GET POST>
-  order deny, allow
+  order deny,allow
   deny from all
 </Limit>

@@ -56,7 +56,10 @@ class Deposit
     $due = strtotime((string) $date);
     if (($due - time()) > 0)
       return true;
-    $e = "Trop tard ! La date limite de dépôt était fixèe au " . $date[0];
+    $limit = date("d/m/Y à H:i:s",strtotime($date[0]));
+    
+    $e = "<strong>Trop tard !</strong> La date limite de dépôt était fixée au <strong>" . $limit."</strong>";
+    $e .= " Voyez directement avec votre encadrant les conséquences de votre retard.";
     $this->errors[] = $e;
     return  false;
   }
@@ -64,7 +67,7 @@ class Deposit
   private function storeProducts()
   {
     $this->prepareBox();
-    $root = $this->delivery->getBoxName($_SESSION["login"]);
+    $root = $this->delivery->getBoxName($this->groupId,$_SESSION["login"]);
     foreach($this->products as $name => $p){
       $fileName = $this->delivery->getProductFileName($name);
       move_uploaded_file($p['tmp_name'],$root."/".$fileName);
@@ -75,7 +78,7 @@ class Deposit
 
   private function prepareBox()
   {
-    $root = $this->delivery->getBoxName($_SESSION["login"]);
+    $root = $this->delivery->getBoxName($this->groupId,$_SESSION["login"]);
     if ( ! is_dir($root))
       mkdir($root,0777,true);
     else {
@@ -91,7 +94,7 @@ class Deposit
   
   private function checkProducts()
   {
-    $root = $this->delivery->getBoxName($_SESSION["login"]);
+    $root = $this->delivery->getBoxName($this->groupId,$_SESSION["login"]);
     foreach($this->products as $name => $real){
       if (! is_array($real)) {
 	$w = "Erreur de chargement ! Le fichier <code>$name</code> n'a pas";
