@@ -1,0 +1,238 @@
+body {
+	font-family: Verdana, arial, helvetica, sans-serif;
+	margin: 0 auto 0 auto;
+	padding: 0;
+	width: 754px;
+}
+
+#header {
+	height: 126px;
+	background: url("img/header.png");
+}
+
+#menu {
+	margin: 0;
+	padding: 10px 64px 0 200px;
+	height: 32px;
+	background: url("img/menu.png");
+}
+
+#menu ul {
+	padding: 0;
+	margin: 0;
+}
+
+#menu ul li {
+	display: inline;
+}
+
+#menu ul li a {
+	margin: 0 34px 0 0;
+	font-weight:bold;
+	font-size:14px;
+	text-decoration: none;
+	letter-spacing: 2px;
+	color: #ffcc00;
+}
+
+#menu ul li a:hover {
+	color: #3e7cdb;
+	text-decoration: none;
+}
+
+#content {
+	margin: 0;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	min-height: 300px;
+	background: url("img/bg.png");
+}
+
+#content fieldset {
+	width: 80%;
+	margin: 0 auto 0 auto;
+	background-color: white;
+	border: 1px solid #d1d1d1;/*#beddea;*/
+	font-size: 13px;
+}
+
+#content fieldset legend {
+	color: #3e7cdb;
+	padding: 0 5px 0 5px;
+	font-weight: bold;
+	font-variant: small-caps;
+}
+
+#content fieldset a {
+	padding-left: 5px;
+}
+
+#content a {
+	padding-left: 15px;
+	text-decoration: none;
+	font-size: 12px;
+}
+
+#content a:hover {
+	text-decoration: none;
+}
+
+#login table {
+	width: 100%;
+}
+
+#login p {
+	text-align: center;
+	color: #e72d43;
+	font-weight: bold;
+}
+
+#login table tr td {
+	padding: 15px;
+	text-align: center;
+}
+
+#login .no_align {
+	text-align: left;
+	padding: 3px;
+}
+
+#login label {
+	font-size: 13px;
+	color: #3e7cdb;
+	font-weight: bold;
+}
+
+#login #submit {
+	margin-left: 5px;
+}
+
+#links {
+	width: 70%;
+	margin: 10px auto 0 auto;
+	padding: 0;
+}
+
+#links a {
+	margin: 0 15px 0 0;
+	padding: 0;
+	text-decoration: none;
+	color: #3e7cdb;
+	font-size: 12px;
+}
+
+#links a:hover {
+	text-decoration: none;
+	font-weight: normal;
+	color: #e72d43;
+}
+
+a img {
+	margin-right: 3px;
+	text-decoration: none;
+	border : 0px;
+}
+
+.list ul {
+	padding: 0;
+	list-style-type: none;
+}
+
+.list ul li {
+	width: 70%;
+	margin: 0 auto 10px auto;
+	text-align: left;
+}
+
+.list img {
+	margin: 0 5px 0 0;
+}
+
+.list ul li a {
+	color: #3e7cdb;
+	text-decoration: none;
+	font-size: 16px;
+}
+
+.list ul li a:hover {
+	color: #2d5bca;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+.text h4 {
+    color: #555;
+}
+
+.text p {
+   color: #555;
+}
+
+.manager {
+	color: #3e7cdb;	
+}
+
+.manager table {
+	width: 100%;
+	font-size: 13px;
+	margin-top: 20px;
+	margin-bottom: 10px;
+	border-collapse: collapse;
+	color: #555;
+}
+
+.manager table a {
+    color: #555;
+	text-decoration: none;
+}
+
+.manager table a:hover {
+	color: #e72d43;
+	text-decoration: none;
+}
+
+.manager table th {
+	background-color: #f1f1f1;
+	font-weight: bold;
+}
+
+.manager table tr td {
+	padding: 15px;
+	text-align: center;
+}
+
+.manager label {
+	color: #3e7cdb;	
+	margin-right: 5px;
+}
+
+.manager .no_align {
+	text-align: left;
+	padding: 3px
+}
+
+.manager #submit {
+	margin-left: 5px;
+}
+
+.manager #apply {
+	float: right;
+}
+
+#forbid img {
+	margin: 0 5px 0 0;
+}
+
+#footer {
+	margin: 0;
+	height: 59px;
+	background: url("img/footer.png");
+}
+
+#footer p {
+	line-height: 50px;
+	margin: 0;
+	text-align:center;
+	color:#7ba5d9;    font-weight: bold;
+	font-size:9px;
+}
