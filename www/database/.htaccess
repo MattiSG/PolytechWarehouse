@@ -1,0 +1,7 @@
+<LIMIT GET POST>
+  AuthName "Access Restreint"
+  AuthType Basic
+  AuthUserFile "/data/entrepot/passwd/entrepot.passwd"
+  Require valid-user
+</LIMIT>
+

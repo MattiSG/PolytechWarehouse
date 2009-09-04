@@ -1,5 +1,4 @@
 <?php
-    PWHLog::Write(PWHLog::INFO, $_SESSION['login'], "Acc&egrave;s page create_teacher");
     previousPage("admin_database_management");
       
     

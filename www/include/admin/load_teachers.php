@@ -1,6 +1,4 @@
-<?php
-    PWHLog::Write(PWHLog::INFO, $_SESSION['login'], "Acc&egrave;s page load_teachers");
-      
+<?php     
     previousPage('admin_database_management');
     
     if(isset($_FILES['uploadedFile']) && $_FILES['uploadedFile']['error'] == 0)

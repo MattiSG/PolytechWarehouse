@@ -1,6 +1,3 @@
-<?php
-     PWHLog::Write(PWHLog::INFO, $_SESSION['login'], "Acc&egrave;s page home");
-?>
 <fieldset>
     <legend>espace personnel administrateur</legend>
     <?php

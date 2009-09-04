@@ -1,5 +1,4 @@
 <?php
-    PWHLog::Write(PWHLog::INFO, $_SESSION['login'], "Acc&egrave;s page log_management");
     
     previousPage("admin_home");
     

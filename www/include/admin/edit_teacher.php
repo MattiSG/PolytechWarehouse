@@ -1,5 +1,4 @@
 <?php
-    PWHLog::Write(PWHLog::INFO, $_SESSION['login'], "Acc&egrave;s page edit_teacher");
     
     previousPage("admin_edit_teachers");
     addPreviousPageParameter("index", $_GET['index']);
