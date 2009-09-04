@@ -1,0 +1,78 @@
+/* Content panel */
+#content 
+{
+	margin: 0;
+	min-height: 300px;
+	background: url("../img/bg.png");
+}
+
+#content fieldset 
+{
+	width: 85%;
+	margin: 0 auto 0 auto;
+	background-color: white;
+	border: 1px solid #d1d1d1;
+	font-size: 13px;
+}
+
+
+#content fieldset legend 
+{
+	color: #3e7cdb;
+	margin: 0;
+	padding: 0 5px 0 5px;
+	font-variant: small-caps;
+}
+
+#content fieldset h4
+{
+    width: 98%;
+    text-align:left;
+    margin: auto;
+    padding-left: 10px;
+    border-bottom: 1px solid #999;
+    color: #999;
+}
+/* Section inside the content */
+.section 
+{
+	color: #3e7cdb;
+	width: 90%;
+	padding: 10px;
+	padding-bottom: 20px;
+	margin: auto;
+}
+
+.section p
+{
+    color: #555;
+    padding: 0;
+    margin: 0;
+    text-align: justify;
+}
+
+
+/* Menu with list format */
+.section .list ul 
+{
+	padding: 0;
+	list-style-type: none;
+	margin: auto;
+}
+
+.section .list ul li 
+{
+	margin: 0 auto 10px auto;
+	text-align: justify;
+}
+
+.section .list ul li h5
+{
+    text-align:left;
+    margin: 0;
+    margin-bottom: 5px;
+    padding-left: 10px;
+    border-bottom: 1px solid #999;
+    color: #999;
+}
+

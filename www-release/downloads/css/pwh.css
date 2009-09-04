@@ -1,0 +1,232 @@
+body 
+{
+	font-family: Verdana, arial, helvetica, sans-serif;
+	margin: 0 auto 0 auto;
+	padding: 0;
+	width: 754px;
+}
+
+h4
+{
+    width: 98%;
+    text-align:left;
+    margin: auto;
+    padding-left: 10px;
+    border-bottom: 1px solid #999;
+    color: #999;
+}
+
+.legend ul 
+{
+	padding: 0;
+	margin-bottom: 10px;
+}
+
+.legend ul li 
+{
+	display: inline;
+	margin-left: 10px;
+    color: #3e7cdb;
+}
+
+.legend ul li img 
+{
+	margin-right: 5px;
+	text-decoration: none;
+	border : 1px solid #bbb;
+}
+
+/* Section inside the content */
+.section 
+{
+	color: #3e7cdb;
+	width: 90%;
+	padding: 10px;
+	margin: auto;
+	margin-bottom: 10px;
+}
+
+.section p
+{
+    color: #555;
+    padding: 0;
+    margin: 0;
+    text-align: justify;
+}
+
+.section a 
+{
+    color: #3e7cdb;
+	text-decoration: none;
+}
+
+.section a img 
+{
+    margin: 0 5px 0 0;
+    border: 0;
+}
+
+.section a:hover 
+{
+	color: #e72d43;
+	text-decoration: none;
+}
+
+/* Menu with list format */
+.section .list ul 
+{
+	padding: 0;
+	list-style-type: none;
+	margin: auto;
+}
+
+.section .list ul li 
+{
+	margin: 0 auto 10px auto;
+	text-align: left;
+}
+
+.section .list ul li h5
+{
+    text-align:left;
+    margin-bottom: 5px;
+    padding-left: 10px;
+    border-bottom: 1px solid #999;
+    color: #999;
+}
+
+.section .list ul li a 
+{
+	color: #3e7cdb;
+	text-decoration: none;
+}
+
+.section .list ul li a:hover 
+{
+	color: #e72d43;
+	text-decoration: none;
+}
+
+.section .list ul li img 
+{
+	margin: 0 5px 0 0;
+	border: 0;
+}
+
+
+/* Table */
+.section table 
+{
+	width: 100%;
+	font-size: 11.4px;
+	margin-top: 20px;
+	margin-bottom: 10px;
+	border-collapse: collapse;
+	color: #555;
+}
+
+.section table a 
+{
+    color: #3e7cdb;
+	text-decoration: none;
+}
+
+.section table a img 
+{
+    margin: 0 5px 0 0;
+    border: 0;
+}
+
+.section table a:hover 
+{
+	color: #e72d43;
+	text-decoration: none;
+}
+
+.section table th 
+{
+	background-image: url("../img/header_table.png");
+	font-weight: bold;
+	color: #284650;
+	height: 25px;
+}
+
+.section table tr:hover
+{
+    background-color: #cfe2f4;	
+}
+
+.section table tr td 
+{
+	text-align: center;
+}
+
+.section .colored_table 
+{
+    background-color: #ebf0f4;
+}
+
+.section .uncolored_table 
+{
+    background-color: white;
+}
+
+.section .submit_line 
+{
+    background-color: #dae1e8;
+}
+
+.section .unconfigured_line 
+{
+    background-color: #f3ffb9;
+}
+.section .unpublished_line 
+{
+    background-color: #ffdde1;
+}
+
+.section .active_work
+{
+    background-color: #f3ffb9;
+}
+
+.section .active_delivery
+{
+    background-color: #faffe5;
+}
+
+.section .delivered_line
+{
+    background-color: #caffd6;
+}
+
+.section .undelivered_line
+{
+    background-color: #ffdde1;
+}
+
+.section .extra_time_line
+{
+    background-color: #ffe6c3;
+}
+
+.section .extra_time_delivery_line
+{
+    background-color: #fff1dd;
+}
+
+.section .unactive_work
+{
+    background-color: #efefef;
+}
+
+.section .delivered_locked_line
+{
+    background-color: #f9f9f9;
+}
+
+.section .underlined_table th, .section .underlined_table tr, .section .underlined_table td 
+{
+    border: 1px solid #cbd3d4;
+}
+

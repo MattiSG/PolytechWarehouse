@@ -1,0 +1,9 @@
+Promotion;buchou;merzouga;roger;brigot;ferracin;gerakis;jacquet;lagandre;meyer;raad;zarati;falavel;christma;bouchehb;zhao;rarnaout;colombie;euziere;volpi;kazmierc;pascal;pugnet;lecomman;trichetf;follenfa;marlier;carmouch;batard;leclere;soussi;nerriere;dupin;arnoux;brouard;benabu;gentile;cbondue;choury;joubert;perulliv;kaba;matrah;lapalus;lengelle;gleize;balouet;cboulay;lequeux;ligavant;wenzinge;quincero;boutseri;trepier;bouzdou;thomet;
+Gr1;rarnaout;batard;bouchehb;carmouch;colombie;falavel;gentile;joubert;leclere;lequeux;marlier;nerriere;pugnet;raad;volpi;zhao;
+Gr2;arnoux;benabu;boutseri;buchou;choury;dupin;follenfa;jacquet;lagandre;lecomman;ligavant;merzouga;pascal;quincero;trichetf;zarati;
+Gr3;balouet;cboulay;brigot;christma;euziere;ferracin;gerakis;gleize;kaba;lapalus;lengelle;matrah;meyer;perulliv;soussi;trepier;wenzinge;
+SYLO1;arnoux;benabu;boutseri;bouzdou;carmouch;colombie;falavel;gentile;joubert;lagandre;leclere;lengelle;ligavant;matrah;meyer;pascal;pugnet;raad;trepier;volpi;zarati;thomet;
+SYLO2;rarnaout;batard;bouchehb;buchou;choury;dupin;follenfa;jacquet;kaba;lapalus;lecomman;lequeux;marlier;merzouga;nerriere;perulliv;quincero;soussi;trichetf;wenzinge;zhao;
+AppliRep1;rarnaout;batard;bouchehb;bouzdou;carmouch;colombie;falavel;gentile;joubert;leclere;lequeux;marlier;nerriere;pugnet;raad;thomet;volpi;zhao;thomet;
+AppliRep2;arnoux;benabu;boutseri;buchou;choury;dupin;follenfa;jacquet;lagandre;lecomman;ligavant;merzouga;pascal;quincero;trichetf;zarati;
+AppliRep3;balouet;christma;ferracin;gerakis;kaba;lapalus;lengelle;matrah;meyer;perulliv;soussi;trepier;wenzinge;

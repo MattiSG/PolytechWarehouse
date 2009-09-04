@@ -1,0 +1,111 @@
+.failed {
+    width: 90%;
+    margin: auto;
+    margin-bottom: 10px;
+	text-align: center;
+	color: #e72d43;
+	font-weight: bold;
+	background-color: #eabdc2;
+}
+
+.failed .up {
+    width: 100%;
+    height: 15px;
+    background: url("../img/box_up_right_2") no-repeat top right;
+}
+
+.failed .up div {
+    width: 15px;
+    height: 15px;
+    background: url("../img/box_up_left_2") no-repeat top left;
+}
+
+.failed .down {
+    width: 100%;
+    height: 15px;
+    background: url("../img/box_down_right_2") no-repeat bottom right;
+}
+
+.failed .down div {
+    width: 15px;
+    height: 15px;
+    background: url("../img/box_down_left_2") no-repeat bottom left;
+}
+
+.success {
+    width: 90%;
+    margin: auto;
+    margin-bottom: 10px;
+	text-align: center;
+	color: #58c467;
+	font-weight: bold;
+	background-color: #c3f3cb;
+}
+
+.success .up {
+    width: 100%;
+    height: 15px;
+    background: url("../img/box_up_right") no-repeat top right;
+}
+
+.success .up div {
+    width: 15px;
+    height: 15px;
+    background: url("../img/box_up_left") no-repeat top left;
+}
+
+.success .down {
+    width: 100%;
+    height: 15px;
+    background: url("../img/box_down_right") no-repeat bottom right;
+}
+
+.success .down div {
+    width: 15px;
+    height: 15px;
+    background: url("../img/box_down_left") no-repeat bottom left;
+}
+
+.memo {
+    width: 90%;
+    margin: auto;
+    margin-bottom: 20px;
+	text-align: center;
+	color: #3e7cdb;
+	font-weight: bold;
+	background-color: #c3dcf3;
+}
+
+.memo .up {
+    width: 100%;
+    height: 15px;
+    background: url("../img/box_up_right_3") no-repeat top right;
+}
+
+.memo .up div {
+    width: 15px;
+    height: 15px;
+    background: url("../img/box_up_left_3") no-repeat top left;
+}
+
+.memo .down {
+    width: 100%;
+    height: 15px;
+    background: url("../img/box_down_right_3") no-repeat bottom right;
+}
+
+.memo .down div {
+    width: 15px;
+    height: 15px;
+    background: url("../img/box_down_left_3") no-repeat bottom left;
+}
+
+.failed img, .success img, .memo img {
+    margin: 0 4px 0 0;
+    padding: 0;
+}
+
+.failed p, .success p, .memo p{
+    margin: 0;
+    padding: 0;
+}

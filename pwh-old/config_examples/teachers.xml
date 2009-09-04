@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<teachers>
-  <teacher login="teacher_login">
-    <lastname>...</lastname>
-    <firstname>...</firstname>
-    <role>...</role>
-  </teacher>
-  <!-- ... -->
-</teachers>

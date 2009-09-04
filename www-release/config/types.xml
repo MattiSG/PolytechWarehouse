@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- metatypes used in work constraints --><metatypes>
+	    <metatype id="1" name="libre">
+	      <pattern id="1-1" name="libre">.*</pattern>
+	    </metatype>
+	    <metatype id="2" name="archive">
+	        <pattern id="2-1" name="zip">.*\.zip</pattern>
+	        <pattern id="2-2" name="tar">.*\.tar</pattern>
+	        <pattern id="2-3" name="gz">.*\.gz</pattern>
+	        <pattern id="2-4" name="tar.gz">.*\.tar.gz</pattern>
+	        <pattern id="2-5" name="tgz">.*\.tgz</pattern>
+	        <pattern id="2-6" name="bz2">.*\.bz2</pattern>
+	        <pattern id="2-7" name="rar">.*\.rar</pattern>
+	        <pattern id="2-8" name="7z">.*\.7z</pattern>
+	        <pattern id="2-9" name="ace">.*\.ace</pattern>
+	        <pattern id="2-10" name="jar">.*\.jar</pattern>
+	    </metatype>
+	    <metatype id="3" name="code source">
+	        <pattern id="3-1" name="c source">.*\.c</pattern>
+	        <pattern id="3-2" name="c header">.*\.h</pattern>
+	        <pattern id="3-3" name="c++ source">.*\.cpp</pattern>
+	        <pattern id="3-4" name="c++ header">.*\.hpp</pattern>
+	        <pattern id="3-5" name="java">.*\.java</pattern>
+	        <pattern id="3-6" name="c# source">.*\.cs</pattern>
+	        <pattern id="3-7" name="matlab">.*\.ml</pattern>
+	        <pattern id="3-8" name="scheme">.*\.stk</pattern>
+	        <pattern id="3-9" name="prolog">.*\.pl</pattern>
+	        <pattern id="3-10" name="bash">.*\.sh</pattern>
+	        <pattern id="3-11" name="python">.*\.py</pattern>
+	        <pattern id="3-12" name="ruby">.*\.ry</pattern>
+	        <pattern id="3-13" name="php">.*\.php</pattern>
+	        <pattern id="3-14" name="javascript">.*\.js</pattern>
+	        <pattern id="3-15" name="webpage">.*\.html</pattern>
+	        <pattern id="3-16" name=".net webservice">.*\.asmx</pattern>
+	        <pattern id="3-17" name=".net webpage">.*\.aspx</pattern>
+	        <pattern id="3-18" name="java webpage">.*\.jsp</pattern>
+	    </metatype>    
+	    <metatype id="4" name="document">
+	        <pattern id="4-1" name="text">.*\.txt</pattern>
+	        <pattern id="4-2" name="microsoft doc">.*\.doc</pattern>
+	        <pattern id="4-3" name="microsoft docx">.*\.docx</pattern>
+	        <pattern id="4-4" name="microsoft ppt">.*\.ppt</pattern>
+	        <pattern id="4-5" name="microsoft pptx">.*\.pptx</pattern>
+	        <pattern id="4-6" name="pdf">.*\.pdf</pattern>
+	        <pattern id="4-7" name="xls">.*\.xls</pattern>
+	    </metatype>
+	    <metatype id="5" name="image">
+	        <pattern id="5-1" name="bitmap">.*\.bmp</pattern>
+	        <pattern id="5-2" name="jpeg">.*\.(jpg|jpeg)</pattern>
+	        <pattern id="5-3" name="png">.*\.png</pattern>
+	        <pattern id="5-4" name="tiff">.*\.tiff</pattern>
+	        <pattern id="5-5" name="gif">.*\.gif</pattern>
+	        <pattern id="5-6" name="psd">.*\.psd</pattern>
+	        <pattern id="5-7" name="xcf">.*\.xcf</pattern>
+	    </metatype>
+</metatypes>
+

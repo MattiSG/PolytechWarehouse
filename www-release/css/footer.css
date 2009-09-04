@@ -1,0 +1,25 @@
+#footer {
+    clear: both;
+	margin: 0;
+	height: 59px;
+	background: url("../img/footer.png");
+}
+
+#footer p {
+	line-height: 50px;
+	margin: 0;
+	text-align:center;
+	color:#7ba5d9;    font-weight: bold;
+	font-size:9px;
+}
+
+#footer p a
+{
+    padding-top: 5px;
+}
+
+#footer p img
+{
+    border: 0;
+    margin-right: 5px;
+}
