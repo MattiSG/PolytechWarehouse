@@ -1,4 +1,5 @@
 <?php
+  //@seb: moved config definition into config/local.conf
 	
 	// Global variables
 	$GLOBALS['PWH_LIB_DIRNAME'] = 'libpwh/';
@@ -71,9 +72,5 @@
 	define('STUDENT_TYPE', 0);
 	define('TEACHER_TYPE', 1);
 	define('ADMIN_TYPE', 2);
-	define('BROKEN_GLASS', true);
 	define('NO_ID', -1);
-	define ('LDAP_SERVER', "ldaps://godot.polytech.unice.fr");
-	define("LDAP_ROOT","dc=polytech,dc=unice,dc=fr");
-
 ?>

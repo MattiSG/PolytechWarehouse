@@ -10,6 +10,8 @@
 	$GLOBALS['PWH_PATH'] = "./";
 	require_once($GLOBALS['PWH_PATH'] . 'libpwh/PWHHeader.php');
 	require_once('include/util.php');
+// To extract the config from hard--coded to local file
+        require_once('config/local.conf.php');
 	
 	// If he is not logged, the user is redirected to the login page
 	if(!isset($_SESSION['id']))
@@ -64,7 +66,7 @@
 				            ?> <p id="links"> <?php 
 						    // Back to home link
 						    if($file != 'teacher_home' && $file != 'student_home' && $file != 'admin_home' && $file != 'login') 
-						    { ?>					    
+						    { ?>					    
 						    <a href="index.php"><img src="<?php echo IMG_PATH(); ?>home.png"/>Retour &agrave l'espace personnel</a>
 						    <a href="index.php?page=<?php echo $_SESSION['previousPage'] . $_SESSION['previousParams']; ?>">
 					            <img src="<?php echo IMG_PATH(); ?>arrow_left.png"/>Retour &agrave la page pr&eacute;c&eacute;dente</a>					
