@@ -7,13 +7,17 @@
     addPreviousPageParameter('delivery_id', $_GET['delivery_id']);
     addPreviousPageParameter('previous', $_GET['previous']);
     addPreviousPageParameter('index', 'A');
+    $failed = false;
+    
     if(isset($_GET['group_id']))
     {
         addPreviousPageParameter('group_id', $_GET['group_id']);
     }
     
     
-    if(isset($_GET['delivery_id']) && isset($_GET['work_id']))
+    if(isset($_GET['subject_id']) && isset($_GET['work_id'])
+        && PWHEntity::Valid("PWHSubject", $_GET['subject_id'])
+        && PWHEntity::Valid("PWHWork", $_GET['work_id']))
     {
         try
         {
@@ -31,149 +35,110 @@
         }
         catch(Exception $ex)
         {
+            $failed = true;
             errorReport($ex->getMessage());
         }
     }
-    
-    if(isset($_SESSION['students']))
+    else
     {
-        $table = new PWHPersonTable();
-        $students = $table->FilterPersons($students, $_SESSION['students']);
+        $failed = true;
     }
     
-    // [FORM] Save the teachers who have been added to the subject
-    if(isset($_GET['action']) && $_GET['action'] == 'add_students')
+    if(!$failed)
     {
-        if(!isset($_SESSION['students']))
+        if(isset($_SESSION['students']))
         {
-            $_SESSION['students'] = array();
+            $table = new PWHPersonTable();
+            $students = $table->FilterPersons($students, $_SESSION['students']);
         }
-
-        $insert = array();
-        foreach($students as $student)
+        
+        // [FORM] Save the teachers who have been added to the subject
+        if(isset($_GET['action']) && $_GET['action'] == 'add_students')
         {
-            if(isset($_POST[$student->GetID()]))
+            if(!isset($_SESSION['students']))
             {
-                array_push($insert, (int)$student->GetID());
+                $_SESSION['students'] = array();
             }
-        }
-        $_SESSION['students'] = array_merge($_SESSION['students'], $insert);
-        $table = new PWHPersonTable();
-        $students = $table->FilterPersons($students, $_SESSION['students']);
-        $allStudents = $table->FilterPersons($allStudents, $_SESSION['students']);
-     }
-    
-    if(isset($_GET['action']) && $_GET['action'] == 'create')
-    {
-        try
-        {    
-            $deliverygroup = new PWHDeliverygroup();
-            $deliverygroup->SetDeliveryID($delivery->GetID());
-            $deliverygroup->SetSuper(true);
-            $deliverygroup->SetCreation(date("Y-m-d H:i:s"));
-            $deliverygroup->AddStudents($_SESSION['students']);
-            $deliverygroup->Create(true);
-            $deliverygroup->CreateDirectory();    
-            
+
+            $insert = array();
+            foreach($students as $student)
+            {
+                if(isset($_POST[$student->GetID()]))
+                {
+                    array_push($insert, (int)$student->GetID());
+                }
+            }
+            $_SESSION['students'] = array_merge($_SESSION['students'], $insert);
             $table = new PWHPersonTable();
             $students = $table->FilterPersons($students, $_SESSION['students']);
             $allStudents = $table->FilterPersons($allStudents, $_SESSION['students']);
-            
-            $targets = $deliverygroup->GetStudents();
-            $strbuf = "";
-            foreach($targets as $target)
-            {
-                $strbuf .= $target->GetLastName() . " " . $target->GetFirstName() . ", ";
-            }
-            $strbuf = substr($strbuf, 0, strlen($strbuf) - 2);
-            
-            if(count($targets) == 1)
-            {
-                PWHEvent::Notify($targets, STUDENT_TYPE, $strbuf . " a &eacute;t&eacute; assign&eacute; &agrave; un groupe de rendu dans le travail " . $subject->GetName() . "-" . $work->GetName());
-            }
-            else
-            {
-                PWHEvent::Notify($targets, STUDENT_TYPE, $strbuf . " ont &eacute;t&eacute; assign&eacute;s &agrave; un groupe de rendu dans le travail " . $subject->GetName() . "-" . $work->GetName());
-            }
-            
-            PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Cr&eacute;ation groupe de rendu " . $deliverygroup->GetName() . " dans le travail " . $subject->GetName() . "-" . $work->GetName());
-            successReport("Le groupe de rendu a &eacute;t&eacute; cr&eacute;&eacute;.");
-            
-            unset($_SESSION['students']);
-        }
-        catch(Exception $ex)
+         }
+        
+        if(isset($_GET['action']) && $_GET['action'] == 'create')
         {
-            PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec cr&eacute;ation groupe de rendu dans le travail " . $subject->GetName() . "-" . $work->GetName());
-            errorReport($ex->getMessage());
+            try
+            {    
+                $deliverygroup = new PWHDeliverygroup();
+                $deliverygroup->SetDeliveryID($delivery->GetID());
+                $deliverygroup->SetSuper(true);
+                $deliverygroup->SetCreation(date("Y-m-d H:i:s"));
+                $deliverygroup->AddStudents($_SESSION['students']);
+                $deliverygroup->Create(true);
+                $deliverygroup->CreateDirectory();    
+                
+                $table = new PWHPersonTable();
+                $students = $table->FilterPersons($students, $_SESSION['students']);
+                $allStudents = $table->FilterPersons($allStudents, $_SESSION['students']);
+                
+                $targets = $deliverygroup->GetStudents();
+                $strbuf = "";
+                foreach($targets as $target)
+                {
+                    $strbuf .= $target->GetLastName() . " " . $target->GetFirstName() . ", ";
+                }
+                $strbuf = substr($strbuf, 0, strlen($strbuf) - 2);
+                
+                if(count($targets) == 1)
+                {
+                    PWHEvent::Notify($targets, STUDENT_TYPE, $strbuf . " a &eacute;t&eacute; assign&eacute; &agrave; un groupe de rendu dans le travail " . $subject->GetName() . "-" . $work->GetName());
+                }
+                else
+                {
+                    PWHEvent::Notify($targets, STUDENT_TYPE, $strbuf . " ont &eacute;t&eacute; assign&eacute;s &agrave; un groupe de rendu dans le travail " . $subject->GetName() . "-" . $work->GetName());
+                }
+                
+                PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Cr&eacute;ation groupe de rendu " . $deliverygroup->GetName() . " dans le travail " . $subject->GetName() . "-" . $work->GetName());
+                successReport("Le groupe de rendu a &eacute;t&eacute; cr&eacute;&eacute;.");
+                
+                unset($_SESSION['students']);
+            }
+            catch(Exception $ex)
+            {
+                PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec cr&eacute;ation groupe de rendu dans le travail " . $subject->GetName() . "-" . $work->GetName());
+                errorReport($ex->getMessage());
+            }
+        }
+        
+        // Creates a new memo for the user     
+        $memo = new PWHDeliverygroupCreationMemo();
+        if(isset($_SESSION['students']))
+        {
+            $memo->SetStudents($_SESSION['students']);
+        }
+        
+        // Permit the creation of the group
+        $disabled = "";
+        if(!isset($_SESSION['students']))
+        {
+            $disabled = 'disabled="disabled"';
         }
     }
     
-    // Creates a new memo for the user     
-    $memo = new PWHDeliverygroupCreationMemo();
-    if(isset($_SESSION['students']))
+    if($failed)
     {
-        $memo->SetStudents($_SESSION['students']);
-    }
-    
-    // Permit the creation of the group
-    $disabled = "";
-    if(!isset($_SESSION['students']))
-    {
-        $disabled = 'disabled="disabled"';
+        errorReport("Impossible d'afficher la page demand&eacute;e.");
     }
 ?>
-
-<script type="text/javascript" charset="iso-8859-1">
-<!--
-    function MakeIndex(link, letter)
-    {
-        var form = document.getElementById("person_index");
-        var boxs = form.elements;
-        var quit = true;
-        for(var i=0; i<boxs.length; i++)
-        {
-            if(boxs[i].checked)
-            {
-                if(confirm("Vous n'avez pas valid\351 le formulaire en cliquant sur le bouton \"Ajouter +\" ? Voulez-vous le valider avant de quitter cette page ?"))
-                {
-                    form.submit();
-                    window.location = link + "&index=" + letter;
-                    break;
-                }
-                else
-                {
-                    window.location = link + "&index=" + letter;
-                    break;
-                }
-           }
-        }
-
-        window.location = link + "&index=" + letter;
-    }
-    
-    function UserConfirmSubmit()
-    {
-        var form = document.getElementById("person_index");
-        var boxs = form.elements;
-        for(var i=0; i<boxs.length; i++)
-        {
-            if(boxs[i].checked)
-            {
-                if(confirm("Vous n'avez pas valid\351 le formulaire en cliquant sur le bouton \"Ajouter +\" ? Voulez-vous le valider avant de cr\351er le groupe de rendu ?"))
-                {
-                    form.submit();
-                    break;
-                }
-                else
-                {
-                    break;
-                }
-           }
-        }
-    }
-//-->
-</script>
-
 <fieldset>
 	<legend>&eacute;tudiants disponibles</legend>
 	<?php
@@ -182,7 +147,10 @@
         
 	    displayErrorReport();
 	    displaySuccessReport();
-	    echo $memo->Html();
+	    
+	    if(!$failed)
+	    {
+	        echo $memo->Html();
 	?>
 	<h4>Liste des &eacute;tudiants disponibles</h4>
 	<div class="section">
@@ -207,6 +175,7 @@
 	        </div>
 	    </form>
 	</div>
+	<?php } ?>
 </fieldset>
 
 <script type="text/javascript" charset="iso-8859-1">
@@ -278,5 +247,55 @@
          }
     }
     input.disabled = disabled; 
+//-->
+</script>
+<script type="text/javascript" charset="iso-8859-1">
+<!--
+    function MakeIndex(link, letter)
+    {
+        var form = document.getElementById("person_index");
+        var boxs = form.elements;
+        var quit = true;
+        for(var i=0; i<boxs.length; i++)
+        {
+            if(boxs[i].checked)
+            {
+                if(confirm("Vous n'avez pas valid\351 le formulaire en cliquant sur le bouton \"Ajouter +\" ? Voulez-vous le valider avant de quitter cette page ?"))
+                {
+                    form.submit();
+                    window.location = link + "&index=" + letter;
+                    break;
+                }
+                else
+                {
+                    window.location = link + "&index=" + letter;
+                    break;
+                }
+           }
+        }
+
+        window.location = link + "&index=" + letter;
+    }
+    
+    function UserConfirmSubmit()
+    {
+        var form = document.getElementById("person_index");
+        var boxs = form.elements;
+        for(var i=0; i<boxs.length; i++)
+        {
+            if(boxs[i].checked)
+            {
+                if(confirm("Vous n'avez pas valid\351 le formulaire en cliquant sur le bouton \"Ajouter +\" ? Voulez-vous le valider avant de cr\351er le groupe de rendu ?"))
+                {
+                    form.submit();
+                    break;
+                }
+                else
+                {
+                    break;
+                }
+           }
+        }
+    }
 //-->
 </script>

@@ -3,6 +3,7 @@
     
     previousPage('teacher_create_subject_teachers');
     addPreviousPageParameter('index', 'A');
+    $failed = false;
     
     try
     {
@@ -11,74 +12,82 @@
     catch(Exception $ex)
     {
         errorReport($ex->getMessage());
-        $groups = array();
+        $failed = false;
     }
     
-    // [FORM] Creates a new subject with the specified name, teachers and groups
-    if(isset($_GET['action']) && $_GET['action'] == 'add_groups')
-    {        
-        $insert = array();
-        $check = array();
-        foreach($groups as $group)
-        {
-            if(isset($_POST[$group->GetID()]))
+    if(!$failed)
+    {
+        // [FORM] Creates a new subject with the specified name, teachers and groups
+        if(isset($_GET['action']) && $_GET['action'] == 'add_groups')
+        {        
+            $insert = array();
+            $check = array();
+            foreach($groups as $group)
             {
-                array_push($insert, $group->GetID());
-                array_push($check, $group);
-            }
-        }
-        
-        $failed = false;
-        foreach($check as $group)
-        {
-            $parents = $group->GetParents();
-            foreach($parents as $parent)
-            {
-                if(in_array($parent->GetID(), $insert))
+                if(isset($_POST[$group->GetID()]))
                 {
-                    $failed = true;
+                    array_push($insert, $group->GetID());
+                    array_push($check, $group);
                 }
             }
+            
+            $wrong = false;
+            foreach($check as $group)
+            {
+                $parents = $group->GetParents();
+                foreach($parents as $parent)
+                {
+                    if(in_array($parent->GetID(), $insert))
+                    {
+                        $wrong = true;
+                    }
+                }
+            }
+            
+            if(!$wrong)
+            {
+                try
+                {
+                    $subject = new PWHSubject();
+                    $subject->SetName($_SESSION['subject_name']);
+                    $subject->AddTeachers($_SESSION['teachers']);
+                    $subject->AddGroups($insert);
+                    $subject->Create(true);
+                    $subject->CreateDirectory();
+                    
+                    $teachers = $subject->GetTeachers();
+                    PWHEvent::Notify($teachers, TEACHER_TYPE, "La mati&egrave;re " . $subject->GetName() . " a &eacute;t&eacute; cr&eacute;&eacute;e");
+                    PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Cr&eacute;ation mati&egrave;re " . $subject->GetName());
+                    
+                    // Destroys session variables
+                    unset($_SESSION['subject_name']);
+                    unset($_SESSION['promo']);
+                    unset($_SESSION['teachers']);
+                    
+                    redirect("index.php?page=teacher_list_subjects&amp;see=less");
+                }
+                catch(Exception $ex)
+                {
+                    errorReport($ex->getMessage());
+                    PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec cr&eacute;ation mati&egrave;");
+                }   
+            }
+            else
+            {
+                errorReport("Vous ne pouvez pas choisir en m&ecirc;me temps un groupe et un de ses groupes parents.");
+            }
         }
         
-        if(!$failed)
-        {
-            try
-            {
-                $subject = new PWHSubject();
-                $subject->SetName($_SESSION['subject_name']);
-                $subject->AddTeachers($_SESSION['teachers']);
-                $subject->AddGroups($insert);
-                $subject->Create(true);
-                $subject->CreateDirectory();
-                
-                $teachers = $subject->GetTeachers();
-                PWHEvent::Notify($teachers, TEACHER_TYPE, "La mati&egrave;re " . $subject->GetName() . " a &eacute;t&eacute; cr&eacute;&eacute;e");
-                PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Cr&eacute;ation mati&egrave;re " . $subject->GetName());
-                
-                // Destroys session variables
-                unset($_SESSION['subject_name']);
-                unset($_SESSION['promo']);
-                unset($_SESSION['teachers']);
-                
-                redirect("index.php?page=teacher_list_subjects&amp;see=less");
-            }
-            catch(Exception $ex)
-            {
-                errorReport($ex->getMessage());
-                PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec cr&eacute;ation mati&egrave;");
-            }   
-        }
-        else
-        {
-            errorReport("Vous ne pouvez pas choisir en m&ecirc;me temps un groupe et un de ses groupes parents.");
-        }
+        // Creates a new memo for the user     
+        $memo = new PWHSubjectCreationMemo();
+        $memo->SetName($_SESSION['subject_name']);
+        $memo->SetTeachers($_SESSION['teachers']);
     }
     
-    // Creates a new memo for the user     
-    $memo = new PWHSubjectCreationMemo();
-    $memo->SetName($_SESSION['subject_name']);
-    $memo->SetTeachers($_SESSION['teachers']);
+    if($failed)
+    {
+        errorReport("Impossible d'afficher la page demand&eacute;e.");
+    }
 ?>
 
 <fieldset>
@@ -90,6 +99,9 @@
 	    displayErrorReport();
 	    displaySuccessReport();
 	    echo $memo->Html();
+	    
+	    if(!$failed)
+	    {
 	?>
 	<h4>Affectation de groupes &agrave la mati&egrave;re</h4>
 	<div class="section">
@@ -103,8 +115,8 @@
             </table>
 	    </form>	 
 	</div>
+	<?php } ?>
 </fieldset>
-
 <script type="text/javascript" charset="iso-8859-1">
 <!--
     function MakeIndex(link, letter)
@@ -133,7 +145,6 @@
     }
 //-->
 </script>
-
 <script type="text/javascript">
 <!--
     function CheckForm()

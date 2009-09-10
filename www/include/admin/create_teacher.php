@@ -5,19 +5,38 @@
     // [FORM] Adds a teacher to the group
     if(isset($_POST['teacherLogin']) && isset($_POST['teacherFirstName']) && isset($_POST['teacherLastName']) && isset($_POST['teacherEmail']))
     {
-        try
+        if(!preg_match("#^[a-zA-Z0-9]+$#", $_POST['teacherLogin']))
         {
-            $teacher = new PWHTeacher();
-            $teacher->SetLogin(stripslashes($_POST['teacherLogin']));
-            $teacher->SetFirstName(stripslashes($_POST['teacherFirstName']));
-            $teacher->SetLastName(stripslashes($_POST['teacherLastName']));
-            $teacher->SetEmail(stripslashes($_POST['teacherEmail']));
-            $teacher->Create(true);        
-            successReport("L'enseignant " . $teacher->GetLogin() . " a &eacute;t&eacute; cr&eacute;e.");
+            errorReport("Echec cr&eacute;ation de l'enseigant: le login ne doit comporter que des chiffres et des lettres");  
         }
-        catch(Exception $ex)
+        else if(!preg_match("#^[-éèêëàâäïîûùüöôç'a-zA-Z0-9 ]+$#", $_POST['teacherFirstName']))
         {
-            errorReport("L'enseignant existe d&eacute;j&agrave;.");
+            errorReport("Echec cr&eacute;ation de l'enseigant: le pr&eacute;nom ne doit comporter des lettres, espaces, apostrophes ou tir&eacute;s");  
+        }
+        else if(!preg_match("#^[-éèêëàâäïîûùüöôç'a-zA-Z0-9 ]+$#", $_POST['teacherLastName']))
+        {
+            errorReport("Echec cr&eacute;ation de l'enseigant: le nom ne doit comporter des lettres, espaces, apostrophes ou tir&eacute;s");  
+        }
+        else if(!preg_match("#^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$#", $_POST['teacherEmail']))
+        {
+            errorReport("Echec cr&eacute;ation de l'enseigant: l'email est invalide");  
+        }
+        else
+        {
+            try
+            {
+                $teacher = new PWHTeacher();
+                $teacher->SetLogin(stripslashes($_POST['teacherLogin']));
+                $teacher->SetFirstName(stripslashes($_POST['teacherFirstName']));
+                $teacher->SetLastName(stripslashes($_POST['teacherLastName']));
+                $teacher->SetEmail(stripslashes($_POST['teacherEmail']));
+                $teacher->Create(true);        
+                successReport("L'enseignant " . $teacher->GetLogin() . " a &eacute;t&eacute; cr&eacute;e.");
+            }
+            catch(Exception $ex)
+            {
+                errorReport("L'enseignant existe d&eacute;j&agrave;.");
+            }
         }
     }
 ?>

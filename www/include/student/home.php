@@ -30,7 +30,7 @@
 	<div class="section">    
 	    <div class="list">
             <ul>
-                <li><a href="index.php?page=student_list_deliveries"><img src="img/package_go.png"/>Gestion des rendus</a></li>
+                <li><a href="index.php?page=student_list_deliveries"><img src="img/package_go.png"/>Gestion des travaux</a></li>
                 <li><a href="export/index.php?type=student&amp;student_id=<?php echo $_SESSION['id']; ?>&amp;action=show_cal"><img src="img/calendar.png"/>Export du planning des rendus au format agenda iCalendar</a></li>
                 <li><a href="index.php?page=student_email_groups"><img src="img/email.png"/>Mailing List</a></li>
             </ul>

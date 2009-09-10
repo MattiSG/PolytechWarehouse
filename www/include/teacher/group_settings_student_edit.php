@@ -4,6 +4,9 @@
     previousPage("teacher_group_settings_students_edit");
     addPreviousPageParameter("group_id", $_GET['group_id']);
     addPreviousPageParameter("index", $_GET['index']);
+    
+    $failed = false;
+    $studentName = "???";
       
     // Retrieves the concerned student
     if(isset($_GET['student_id']))
@@ -15,39 +18,76 @@
         }
         catch(Exception $ex)
         {
+            $failed = true;
             errorReport($ex->getMessage);
         }
     }
-    
-    // [FORM] Update a student
-    if(isset($_POST['studentLogin']) && isset($_POST['studentFirstName']) && isset($_POST['studentLastName']) && isset($_POST['studentEmail']))
+    else
     {
-        try
+        $failed = true;
+    }
+    
+    if(!$failed)
+    {
+        // [FORM] Update a student
+        if(isset($_POST['studentLogin']) && isset($_POST['studentFirstName']) && isset($_POST['studentLastName']) && isset($_POST['studentEmail']))
         {
-            $student->SetLogin(stripslashes($_POST['studentLogin']));
-            $student->SetFirstName(stripslashes($_POST['studentFirstName']));
-            $student->SetLastName(stripslashes($_POST['studentLastName']));
-            $student->SetEmail(stripslashes($_POST['studentEmail']));
-            $student->Update();
-            PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Mise &agrave; jour profil &eacute;tudiant " . $student->GetLogin());
-            successReport("Le profil de l'&eacute;tudiant a &eacute;t&eacute; mis &agrave; jour."); 
+            if(!preg_match("#^[a-zA-Z0-9]+$#", $_POST['studentLogin']))
+            {
+                errorReport("Echec de la mise &agrave; jour du profil: le login ne doit comporter que des chiffres et des lettres");  
+            }
+            else if(!preg_match("#^[-éèêëàâäïîûùüöôç'a-zA-Z0-9 ]+$#", $_POST['studentFirstName']))
+            {
+                errorReport("Echec de la mise &agrave; jour du profil: le pr&eacute;nom ne doit comporter des lettres, espaces, apostrophes ou tir&eacute;s");  
+            }
+            else if(!preg_match("#^[-éèêëàâäïîûùüöôç'a-zA-Z0-9 ]+$#", $_POST['studentLastName']))
+            {
+                errorReport("Echec de la mise &agrave; jour du profil: le nom ne doit comporter des lettres, espaces, apostrophes ou tir&eacute;s");  
+            }
+            else if(!preg_match("#^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$#", $_POST['studentEmail']))
+            {
+                errorReport("Echec de la mise &agrave; jour du profil: l'email est invalide");  
+            }
+            else
+            {
+                try
+                {
+                    $student->SetLogin(stripslashes($_POST['studentLogin']));
+                    $student->SetFirstName(stripslashes($_POST['studentFirstName']));
+                    $student->SetLastName(stripslashes($_POST['studentLastName']));
+                    $student->SetEmail(stripslashes($_POST['studentEmail']));
+                    $student->Update();
+                    PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Mise &agrave; jour profil &eacute;tudiant " . $student->GetLogin());
+                    successReport("Le profil de l'&eacute;tudiant a &eacute;t&eacute; mis &agrave; jour."); 
+                }
+                catch(Exception $ex)
+                {
+                    PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec mise &agrave; jour profil &eacute;tudiant");
+                    errorReport($ex->getMessage());
+                }
+            }
         }
-        catch(Exception $ex)
-        {
-            PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec mise &agrave; jour profil &eacute;tudiant");
-            errorReport($ex->getMessage());
-        }
+        
+        $studentName = mb_strtolower($student->GetLastname() . " " . $student->GetFirstName());
+    }
+    
+    if($failed)
+    {
+        errorReport("Impossible d'afficher la page demand&eacute;e.");
     }
 ?>
 
 <fieldset>
-	<legend>Profil de <?php echo $student->GetLastname() . " " . $student->GetFirstName(); ?></legend>
+	<legend>Profil de <?php echo $studentName; ?></legend>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/group_settings_student_edit.html', 800, 600);");
         
 	    displayErrorReport();
 	    displaySuccessReport();
+	    
+	    if(!$failed)
+	    {
 	?>
 	<h4>Informations sur l'&eacute;tudiant</h4>
 	<div class="section">
@@ -66,6 +106,7 @@
 		    </div>
 	    </form>
     </div>
+    <?php } ?>
 </fieldset>
 
 <script type="text/javascript">

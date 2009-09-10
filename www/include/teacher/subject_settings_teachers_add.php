@@ -3,6 +3,8 @@
     
     previousPage('teacher_list_subjects');
     addPreviousPageParameter('see', 'less');
+    $failed = false;
+    $subjectName = "???";
     
     // Retrieves the list of all teachers
     try
@@ -16,11 +18,11 @@
     catch(Exception $ex)
     {
         errorReport($ex->getMessage());
-        $teachers = array();
+        $failed = true;
     }
     
     // Retrieves the concerned subject
-    if(isset($_GET['subject_id']))
+    if(isset($_GET['subject_id']) && PWHEntity::Valid("PWHGroup", $_GET['subject_id']))
     {
         try
         {
@@ -36,94 +38,77 @@
         }
         catch(Exception $ex)
         {
+            $failed = true;
             errorReport($ex->getMessage());
         }
     }
-    
-    // [LINK ACTION] Adds teachers responsible of the subject
-    if(isset($_GET['action']))
-    {              
-        try
-        {
-            if($_GET['action'] == 'add')
-            {
-                $insert = array();
-                foreach($teachers as $teacher)
-                {
-                    if(isset($_POST[$teacher->GetID()]))
-                    {
-                        array_push($insert, (int)$teacher->GetID());
-                    }
-                }
-                $persons = array();
-                foreach($insert as $id)
-                {
-                    $person = new PWHTeacher();
-                    $person->Read($id);
-                    array_push($persons, $person);
-                }
-                
-                $targets = $subject->GetTeachers();
-                $subject->AddTeachers($insert);
-                $subject->Update();
-                PWHEvent::Notify($targets, TEACHER_TYPE, "L'ensemble des enseignants responsables de la mati&egrave;re " . $subject->GetName() . " a &eacute;t&eacute; modifi&eacute;");
-                PWHEvent::Notify($persons, TEACHER_TYPE, "Vous avez &eacute;t&eacute; ajout&eacute; &agrave; la mati&egrave;re " . $subject->GetName());
-            
-                if(count($insert) > 1)
-                {
-                    successReport("Les enseignants ont &eacute;t&eacute; ajout&eacute;s &agrave; la mati&egrave;re " . $subject->GetName() . ".");
-                }
-                else
-                {
-                    successReport("L'enseignant a &eacute;t&eacute; ajout&eacute; &agrave; la mati&egrave;re " . $subject->GetName() . ".");
-                }
-                PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Mise &agrave; jour ajout [enseignants] mati&egrave;re " . $subject->GetName());
-            }
-        }
-        catch(Exception $ex)
-        {
-            PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec mise &agrave; jour ajout [enseignants] mati&egrave;re");
-            errorReport($ex->getMessage());
-        }     
-    }
-    
-    $existingTeachers = $subject->GetTeachers();
-    usort($existingTeachers, "person_comparator");
-    $link = '<a class="next_form" id="toggle" href="javascript:toggle();"><img src="img/zoom_in.png"/>Voir les enseignants d&eacute;j&agrave; responsables</a>';
-?>
-
-<script type="text/javascript" charset="iso-8859-1">
-<!--
-    function MakeIndex(link, letter)
+    else
     {
-        var form = document.getElementById("person_index");
-        var boxs = form.elements;
-        var quit = true;
-        for(var i=0; i<boxs.length; i++)
-        {
-            if(boxs[i].checked)
-            {
-                if(confirm("Vous n'avez pas valid\351 le formulaire en cliquant sur le bouton \"Ajouter +\" ? Voulez-vous le valider avant de quitter cette page ?"))
-                {
-                    form.submit();
-                    window.location = link + "&index=" + letter;
-                    break;
-                }
-                else
-                {
-                    window.location = link + "&index=" + letter;
-                    break;
-                }
-           }
-        }
-
-        window.location = link + "&index=" + letter;
+        $failed = true;
     }
-//-->
-</script>
-
+    
+    if(!$failed)
+    {
+        // [FORM] Adds teachers responsible of the subject
+        if(isset($_GET['action']))
+        {              
+            try
+            {
+                if($_GET['action'] == 'add')
+                {
+                    $insert = array();
+                    foreach($teachers as $teacher)
+                    {
+                        if(isset($_POST[$teacher->GetID()]))
+                        {
+                            array_push($insert, (int)$teacher->GetID());
+                        }
+                    }
+                    $persons = array();
+                    foreach($insert as $id)
+                    {
+                        $person = new PWHTeacher();
+                        $person->Read($id);
+                        array_push($persons, $person);
+                    }
+                    
+                    $targets = $subject->GetTeachers();
+                    $subject->AddTeachers($insert);
+                    $subject->Update();
+                    PWHEvent::Notify($targets, TEACHER_TYPE, "L'ensemble des enseignants responsables de la mati&egrave;re " . $subject->GetName() . " a &eacute;t&eacute; modifi&eacute;");
+                    PWHEvent::Notify($persons, TEACHER_TYPE, "Vous avez &eacute;t&eacute; ajout&eacute; &agrave; la mati&egrave;re " . $subject->GetName());
+                
+                    if(count($insert) > 1)
+                    {
+                        successReport("Les enseignants ont &eacute;t&eacute; ajout&eacute;s &agrave; la mati&egrave;re " . $subject->GetName() . ".");
+                    }
+                    else
+                    {
+                        successReport("L'enseignant a &eacute;t&eacute; ajout&eacute; &agrave; la mati&egrave;re " . $subject->GetName() . ".");
+                    }
+                    PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Mise &agrave; jour ajout [enseignants] mati&egrave;re " . $subject->GetName());
+                }
+            }
+            catch(Exception $ex)
+            {
+                PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec mise &agrave; jour ajout [enseignants] mati&egrave;re");
+                errorReport($ex->getMessage());
+            }     
+        }
+        
+        $existingTeachers = $subject->GetTeachers();
+        usort($existingTeachers, "person_comparator");
+        $link = '<a class="next_form" id="toggle" href="javascript:toggle();"><img src="img/zoom_in.png"/>Voir les enseignants d&eacute;j&agrave; responsables</a>';
+        $subjectName = mb_strtolower($subject->GetName());
+    }
+    
+    if($failed)
+    {
+        errorReport("Impossible d'afficher la page demand&eacute;e.");
+    }  
+?>
 <fieldset>
-	<legend>configuration de <?php echo mb_strtolower($subject->GetName()); ?></legend>
+	<legend>configuration de <?php echo $subjectName; ?></legend>
 	
 	<?php
 	    $help = new PWHHelp();
@@ -131,6 +116,9 @@
         
 	   displayErrorReport();
 	   displaySuccessReport();
+	   
+	   if(!$failed)
+	   {
 	?>
 	<div class="tab">
       <ul>
@@ -234,8 +222,37 @@
             </table>
         </div>
     </div>
+    <?php } ?>
 </fieldset>
+<script type="text/javascript" charset="iso-8859-1">
+<!--
+    function MakeIndex(link, letter)
+    {
+        var form = document.getElementById("person_index");
+        var boxs = form.elements;
+        var quit = true;
+        for(var i=0; i<boxs.length; i++)
+        {
+            if(boxs[i].checked)
+            {
+                if(confirm("Vous n'avez pas valid\351 le formulaire en cliquant sur le bouton \"Ajouter +\" ? Voulez-vous le valider avant de quitter cette page ?"))
+                {
+                    form.submit();
+                    window.location = link + "&index=" + letter;
+                    break;
+                }
+                else
+                {
+                    window.location = link + "&index=" + letter;
+                    break;
+                }
+           }
+        }
 
+        window.location = link + "&index=" + letter;
+    }
+//-->
+</script>
 <script type="text/javascript" charset="iso-8859-1">
 <!--
     function CheckForm(index)

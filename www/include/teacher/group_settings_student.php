@@ -2,9 +2,11 @@
     PWHLog::Write(PWHLog::INFO, $_SESSION['login'], "Acc&egrave;s page group_settings_student");
     
     previousPage("teacher_list_groups");
+    $failed = false;
+    $groupName = "???";
       
     // Retrieves the concerned group
-    if(isset($_GET['group_id']))
+    if(isset($_GET['group_id']) && PWHEntity::Valid("PWHGroup", $_GET['group_id']))
     {
         try
         {
@@ -13,42 +15,79 @@
         }
         catch(Exception $ex)
         {
+            $failed = true;
             errorReport($ex->getMessage);
         }
     }
-    
-    // [FORM] Adds a student to the group
-    if(isset($_POST['studentLogin']) && isset($_POST['studentFirstName']) && isset($_POST['studentLastName']) && isset($_POST['studentEmail']))
+    else
     {
-        try
+        $failed = true;
+    }
+    
+    if(!$failed)
+    {
+        // [FORM] Adds a student to the group
+        if(isset($_POST['studentLogin']) && isset($_POST['studentFirstName']) && isset($_POST['studentLastName']) && isset($_POST['studentEmail']))
         {
-            $student = new PWHStudent();
-            $student->SetLogin(stripslashes($_POST['studentLogin']));
-            $student->SetFirstName(stripslashes($_POST['studentFirstName']));
-            $student->SetLastName(stripslashes($_POST['studentLastName']));
-            $student->SetEmail(stripslashes($_POST['studentEmail']));
-            $student->Create(true);        
-            $group->AddStudents(array($student->GetID()));
-            $group->Update();
-            PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Cr&eacute;ation &eacute;tudiants promo " . $group->GetName());
-            successReport("L'&eacute;tudiant " . $student->GetLogin() . " a &eacute;t&eacute; cr&eacute;e et ajout&eacute; au groupe " . $group->GetName() . ".");
+            if(!preg_match("#^[a-zA-Z0-9]+$#", $_POST['studentLogin']))
+            {
+                errorReport("Echec cr&eacute;ation &eacute;tudiant promo " . $group->GetName() . ": le login ne doit comporter que des chiffres et des lettres");  
+            }
+            else if(!preg_match("#^[-éèêëàâäïîûùüöôç'a-zA-Z0-9 ]+$#", $_POST['studentFirstName']))
+            {
+                errorReport("Echec cr&eacute;ation &eacute;tudiant promo " . $group->GetName() . ": le pr&eacute;nom ne doit comporter des lettres, espaces, apostrophes ou tir&eacute;s");  
+            }
+            else if(!preg_match("#^[-éèêëàâäïîûùüöôç'a-zA-Z0-9 ]+$#", $_POST['studentLastName']))
+            {
+                errorReport("Echec cr&eacute;ation &eacute;tudiant promo " . $group->GetName() . ": le nom ne doit comporter des lettres, espaces, apostrophes ou tir&eacute;s");  
+            }
+            else if(!preg_match("#^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$#", $_POST['studentEmail']))
+            {
+                errorReport("Echec cr&eacute;ation &eacute;tudiant promo " . $group->GetName() . ": l'email est invalide");  
+            }
+            else
+            {
+                try
+                {
+                    $student = new PWHStudent();
+                    $student->SetLogin(stripslashes($_POST['studentLogin']));
+                    $student->SetFirstName(stripslashes($_POST['studentFirstName']));
+                    $student->SetLastName(stripslashes($_POST['studentLastName']));
+                    $student->SetEmail(stripslashes($_POST['studentEmail']));
+                    $student->Create(true);        
+                    $group->AddStudents(array($student->GetID()));
+                    $group->Update();
+                    PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Cr&eacute;ation &eacute;tudiants promo " . $group->GetName());
+                    successReport("L'&eacute;tudiant " . $student->GetLogin() . " a &eacute;t&eacute; cr&eacute;e et ajout&eacute; au groupe " . $group->GetName() . ".");
+                }
+                catch(Exception $ex)
+                {
+                    PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Echec cr&eacute;ation &eacute;tudiant promo " . $group->GetName() . ": &eacute;tudiant d&eacute;j&agrave; existant");
+                    errorReport("L'&eacute;tudiant existe d&eacute;j&agrave;.");
+                }
+            }
         }
-        catch(Exception $ex)
-        {
-            PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Echec cr&eacute;ation &eacute;tudiant promo " . $group->GetName() . ": &eacute;tudiant d&eacute;j&agrave; existant");
-            errorReport("L'&eacute;tudiant existe d&eacute;j&agrave;.");
-        }
+        
+        $groupName = mb_strtolower($group->GetName());
+    }
+    
+    if($failed)
+    {
+        errorReport("Impossible d'afficher la page demand&eacute;e.");
     }
 ?>
 
 <fieldset>
-	<legend>configuration de <?php echo mb_strtolower($group->GetName()); ?></legend>
+	<legend>configuration de <?php echo $groupName; ?></legend>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/group_settings_student.html', 800, 550);");
         
 	    displayErrorReport();
 	    displaySuccessReport();
+	    
+	    if(!$failed)
+	    {
 	?>
     <div class="tab">
       <ul>
@@ -78,6 +117,7 @@
 		    </div>
 	    </form>
     </div>
+    <?php } ?>
 </fieldset>
 
 <script type="text/javascript">

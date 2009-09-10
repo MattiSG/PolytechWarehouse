@@ -1,8 +1,10 @@
 <?php
     PWHLog::Write(PWHLog::INFO, $_SESSION['login'], "Acc&egrave;s page list_group_deliveries");
     previousPage('teacher_list_groups_deliveries');
+    $failed = false;
+    $groupName = "???";
     
-    if(isset($_GET['group_id']))
+    if(isset($_GET['group_id']) && PWHEntity::Valid("PWHGroup", $_GET['group_id']))
     {     
         try
         {
@@ -12,10 +14,17 @@
         }
         catch(Exception $ex)
         {
+            $failed = true;
             errorReport($ex->getMessage());
         }
-        
-        
+    }
+    else
+    {
+        $failed = true;
+    }   
+    
+    if(!$failed)
+    {
         $active = array();
         $unactive = array();
         
@@ -76,20 +85,29 @@
                 array_push($unactiveSorted, $workDeliveries);
             }
         }
+    
+        $id=1;
+        $link = '<a class="next_form" id="toggle" href="javascript:toggle();"><img src="img/zoom_in.png"/>Voir les rendus inactifs</a>';
+        $JSID = 1;
+        $groupName = mb_strtolower($group->GetName());
     }
     
-    $id=1;
-    $link = '<a class="next_form" id="toggle" href="javascript:toggle();"><img src="img/zoom_in.png"/>Voir les rendus inactifs</a>';
-    $JSID = 1;
+    if($failed)
+    {
+        errorReport("Impossible d'afficher la page demand&eacute;e.");
+    }
 ?>
 <fieldset>
-	<legend>Rendus du groupe <?php echo $group->GetName(); ?></legend>
+	<legend>Travaux du groupe <?php echo $groupName; ?></legend>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/list_group_deliveries.html', 800, 550);");
         
 	    displayErrorReport();
 	    displaySuccessReport();
+	    
+	    if(!$failed)
+	    {
 	?>
 	<h4>Statistiques</h4>
 	<div class="section">
@@ -279,6 +297,7 @@
             </table>
         </div>
     </div>
+    <?php } ?>
 </fieldset>
 <script type="text/javascript">
 <!--

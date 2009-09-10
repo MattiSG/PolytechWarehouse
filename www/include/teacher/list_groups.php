@@ -1,39 +1,7 @@
 <?php 
     PWHLog::Write(PWHLog::INFO, $_SESSION['login'], "Acc&egrave;s page list_groups");
     previousPage("teacher_home");
-    
-    // [LINK ACTION] Delete the specified group
-    if(isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['group_id']))
-    {
-        try 
-        {
-            $group = new PWHGroup();
-            $group->Read($_GET['group_id']);   
-            if(!$group->HasSubjects(true))
-            {   
-                $group->Delete();
-                PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Suppression groupe " . $group->GetName());
-                successReport("Le groupe " . $group->GetName() . " et ses sous-groupes ont &eacute;t&eacute; supprim&eacute;.");
-            }
-            else
-            {
-                $subjects = $group->GetSubjects(true);
-                $strbuf = "";
-                foreach($subjects as $subject)
-                {
-                    $strbuf .= $subject->GetName() . ", ";
-                }
-                $strbuf = substr($strbuf, 0, strlen($strbuf) - 2);
-                PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Echec suppression groupe " . $group->GetName() . ": mati&egrave;res existantes");
-                errorReport("Le groupe " . $group->GetName() . " ne peut pas &ecirc;tre supprim&eacute; car il est utilis&eacute; dans les mati&egrave;res suivantes : " . $strbuf . ".");
-            }
-        }
-        catch(Exception $ex)
-        {
-            PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec suppression groupe");
-            errorReport($ex->getMessage());
-        }      
-    }
+    $failed = false;
     
     try 
     {
@@ -41,23 +9,51 @@
     }
     catch(Exception $ex)
     {
+        $failed = true;
         errorReport($ex->getMessage());
-        $groups = array();
     }
-?>
-
-<script type="text/javascript">
-<!--
-    function UserConfirmation(group_id)
+    
+    if(!$failed)
     {
-        if(confirm('Voulez-vous vraiment continuer ?'))
+        // [FORM] Delete the specified group
+        if(isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['group_id']))
         {
-            window.location = "index.php?page=teacher_list_groups&action=delete&group_id=" + group_id;
+            try 
+            {
+                $group = new PWHGroup();
+                $group->Read($_GET['group_id']);   
+                if(!$group->HasSubjects(true))
+                {   
+                    $group->Delete();
+                    PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Suppression groupe " . $group->GetName());
+                    successReport("Le groupe " . $group->GetName() . " et ses sous-groupes ont &eacute;t&eacute; supprim&eacute;.");
+                }
+                else
+                {
+                    $subjects = $group->GetSubjects(true);
+                    $strbuf = "";
+                    foreach($subjects as $subject)
+                    {
+                        $strbuf .= $subject->GetName() . ", ";
+                    }
+                    $strbuf = substr($strbuf, 0, strlen($strbuf) - 2);
+                    PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Echec suppression groupe " . $group->GetName() . ": mati&egrave;res existantes");
+                    errorReport("Le groupe " . $group->GetName() . " ne peut pas &ecirc;tre supprim&eacute; car il est utilis&eacute; dans les mati&egrave;res suivantes : " . $strbuf . ".");
+                }
+            }
+            catch(Exception $ex)
+            {
+                PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec suppression groupe");
+                errorReport($ex->getMessage());
+            }      
         }
     }
-//-->
-</script>
-
+    
+    if($failed)
+    {
+        errorReport("Impossible d'afficher la page demand&eacute;e.");
+    }
+?>
 <fieldset>
     <legend>gestion des groupes</legend>
     <?php
@@ -66,6 +62,9 @@
         
         displaySuccessReport();
         displayErrorReport();
+        
+        if(!$failed)
+        {
     ?>
     <h4>Cr&eacute;ation de groupes</h4>
     <div class="section">
@@ -92,5 +91,16 @@
             echo $groupTree->Html(PWHGroupTree::CONFIG_TREE, PWHGroupTree::TEACHER); 
         ?>
     </div>
+    <?php } ?>
 </fieldset>
-
+<script type="text/javascript">
+<!--
+    function UserConfirmation(group_id)
+    {
+        if(confirm('Voulez-vous vraiment continuer ?'))
+        {
+            window.location = "index.php?page=teacher_list_groups&action=delete&group_id=" + group_id;
+        }
+    }
+//-->
+</script>

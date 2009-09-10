@@ -1,5 +1,7 @@
 <?php
     PWHLog::Write(PWHLog::INFO, $_SESSION['login'], "Acc&egrave;s page display_board");
+    $failed = false;
+    $deliveryName = "???";
     
     if(isset($_GET['previous']))
     {
@@ -17,78 +19,17 @@
     {
         unset($_SESSION['students']);
     }
-    
-    if(isset($_GET['work_id']) && isset($_GET['subject_id']))
-    {
-        try
-        {
-            $work = new PWHWork();
-            $work->Read($_GET['work_id']);
-        }
-        catch(Exception $ex)
-        {
-            errorReport($ex->getMessage());
-        }
-        
-        try
-        {
-            $subject = new PWHSubject();
-            $subject->Read($_GET['subject_id']);
-        }
-        catch(Exception $ex)
-        {
-            errorReport($ex->getMessage());
-        }
-    }
-    
-    if(isset($_GET['action']) && isset($_GET['deliverygroup_id']))
-    {
-        if($_GET['action'] == 'delete')
-        {
-            try
-            {
-                $deliverygroup = new PWHDeliverygroup();
-                $deliverygroup->Read($_GET['deliverygroup_id']);
-                $deliverygroup->Delete();
-                
-                $targets = $deliverygroup->GetStudents();
-                PWHEvent::Notify($targets, STUDENT_TYPE, "Votre groupe de rendu dans le travail " . $subject->GetName() . "-" . $work->GetName() . " a &eacute;t&eacute; supprim&eacute;");
-                
-                PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Suppression groupe de rendu " . $deliverygroup->GetName() . " dans le travail " . $subject->GetName() . "-" . $work->GetName());
-                successReport("Le groupe de rendu " . $deliverygroup->GetName() . " a &eacute;t&eacute; supprim&eacute;.");
-            }
-            catch(Exception $ex)
-            {
-                PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec suppression groupe de rendu dans le travail " . $subject->GetName() . "-" . $work->GetName());
-                errorReport($ex->getMessage());
-            }
-        }
-    }
-    
-    if(isset($_GET['subject_id']) && isset($_GET['work_id']) && isset($_GET['delivery_id']))
+    if(isset($_GET['subject_id']) && isset($_GET['work_id']) && isset($_GET['delivery_id'])
+        && PWHEntity::Valid("PWHSubject", $_GET['subject_id'])
+        && PWHEntity::Valid("PWHWork", $_GET['work_id'])
+        && PWHEntity::Valid("PWHDelivery", $_GET['delivery_id']))
     {
         try
         {
             $subject = new PWHSubject();
             $subject->Read($_GET['subject_id']);
-        }
-        catch(Exception $ex)
-        {
-            errorReport($ex->getMessage());
-        }
-        
-        try
-        {
             $work = new PWHWork();
             $work->Read($_GET['work_id']);
-        }
-        catch(Exception $ex)
-        {
-            errorReport($ex->getMessage());
-        }
-        
-        try
-        {
             $delivery = new PWHDelivery();
             $delivery->Read($_GET['delivery_id']);
             $deliverygroups = $delivery->GetDeliverygroups();
@@ -97,44 +38,82 @@
         }
         catch(Exception $ex)
         {
+            $failed = true;
             errorReport($ex->getMessage());
         }
     }
+    else
+    {
+        $failed = true;
+    }
     
-    $dateTranslator = new PWHDateTranslator();
+    if(!$failed)
+    {
+        if(isset($_GET['action']) && isset($_GET['deliverygroup_id']))
+        {
+            if($_GET['action'] == 'delete')
+            {
+                try
+                {
+                    $deliverygroup = new PWHDeliverygroup();
+                    $deliverygroup->Read($_GET['deliverygroup_id']);
+                    $deliverygroup->Delete();
+                    
+                    $targets = $deliverygroup->GetStudents();
+                    PWHEvent::Notify($targets, STUDENT_TYPE, "Votre groupe de rendu dans le travail " . $subject->GetName() . "-" . $work->GetName() . " a &eacute;t&eacute; supprim&eacute;");
+                    
+                    PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Suppression groupe de rendu " . $deliverygroup->GetName() . " dans le travail " . $subject->GetName() . "-" . $work->GetName());
+                    successReport("Le groupe de rendu " . $deliverygroup->GetName() . " a &eacute;t&eacute; supprim&eacute;.");
+                }
+                catch(Exception $ex)
+                {
+                    PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec suppression groupe de rendu dans le travail " . $subject->GetName() . "-" . $work->GetName());
+                    errorReport($ex->getMessage());
+                }
+            }
+        }
+        
+        $dateTranslator = new PWHDateTranslator();
+        $deliveryName = mb_strtolower($delivery->GetName());
+    }
+    
+    if($failed)
+    {
+        errorReport("Impossible d'afficher la page demand&eacute;e.");
+    }
 ?>
 
 
 <fieldset>
-	<legend>etat des rendus de <?php echo $delivery->GetName(); ?></legend>
+	<legend>etat des rendus de <?php echo $deliveryName; ?></legend>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/display_board.html', 800, 600);");
         
 	    displayErrorReport();
 	    displaySuccessReport();
-    ?>
-    <?php
-        $totalStudents = count($freeStudents);
-        $totalDelivered = 0;
-        $totalLate = 0;
-        $totalUndelivered = $totalStudents;
-        foreach($deliverygroups as $deliverygroup)
-        {
-            $totalStudents += $deliverygroup->CountStudents();
-            if($deliverygroup->GetLastDelivery() == "")
+	    if(!$failed)
+	    {
+            $totalStudents = count($freeStudents);
+            $totalDelivered = 0;
+            $totalLate = 0;
+            $totalUndelivered = $totalStudents;
+            foreach($deliverygroups as $deliverygroup)
             {
-                $totalUndelivered++;
+                $totalStudents += $deliverygroup->CountStudents();
+                if($deliverygroup->GetLastDelivery() == "")
+                {
+                    $totalUndelivered++;
+                }
+                else if($deliverygroup->IsExtraTimeUsed())
+                {
+                    $totalLate++;
+                }
+                else
+                {
+                    $totalDelivered++;
+                }
             }
-            else if($deliverygroup->IsExtraTimeUsed())
-            {
-                $totalLate++;
-            }
-            else
-            {
-                $totalDelivered++;
-            }
-        }
     ?>
     <h4>Statistiques</h4>
     <div class="section">
@@ -298,4 +277,5 @@
             <?php } ?>
         </table>
    </div>
+   <?php } ?>
 </fieldset>

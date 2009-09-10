@@ -2,108 +2,115 @@
     PWHLog::Write(PWHLog::INFO, $_SESSION['login'], "Acc&egrave;s page student_list_deliveries");
     
     previousPage('student_home');
+    $failed = false;
+    $studentName = "???";
     
-    $student = new PWHStudent();
-    $student->Read($_SESSION['id']);
-    $groups = $student->GetGroups();
-    
-    $deliveries = array();
-    foreach($groups as $group)
+    try
     {
-        $deliveries = array_merge($deliveries, $group->GetDeliveries(false));
-    }
-    
-    $level;
-    $i = 0;
-    while($i < count($deliveries))
-    {
-        $work = new PWHWork();
-        $work->Read($deliveries[$i]->GetWorkID());
-        if(!$work->IsPublished())
+        $student = new PWHStudent();
+        $student->Read($_SESSION['id']);
+        $groups = $student->GetGroups();
+        
+        $deliveries = array();
+        foreach($groups as $group)
         {
-            array_splice($deliveries, $i, 1);
+            $deliveries = array_merge($deliveries, $group->GetDeliveries(false));
         }
-        else
+        
+        $level;
+        $i = 0;
+        while($i < count($deliveries))
         {
-            $level += $work->GetLevel();
-            $i++;
-        }
-    }
-    
-    $activeDelivered = array();
-    $activeUndelivered = array();
-    $unactiveDelivered = array();
-    $unactiveUndelivered = array();
-    
-    foreach($deliveries as $delivery)
-    {
-        if($delivery->IsStillTimeForDelivery(date("Y-m-d H:i:s")))
-        {
-            if($student->HasDeliverygroup($delivery->GetID()) && $student->GetDeliverygroup($delivery->GetID())->GetLastDelivery() != "")
+            $work = new PWHWork();
+            $work->Read($deliveries[$i]->GetWorkID());
+            if(!$work->IsPublished())
             {
-               array_push($activeDelivered, $delivery);
+                array_splice($deliveries, $i, 1);
             }
             else
             {
-                array_push($activeUndelivered, $delivery);
+                $level += $work->GetLevel();
+                $i++;
             }
         }
-        else
+        
+        $activeDelivered = array();
+        $activeUndelivered = array();
+        $unactiveDelivered = array();
+        $unactiveUndelivered = array();
+        
+        foreach($deliveries as $delivery)
         {
-            if($student->HasDeliverygroup($delivery->GetID()) && $student->GetDeliverygroup($delivery->GetID())->GetLastDelivery() != "")
+            if($delivery->IsStillTimeForDelivery(date("Y-m-d H:i:s")))
             {
-               array_push($unactiveDelivered, $delivery);
+                if($student->HasDeliverygroup($delivery->GetID()) && $student->GetDeliverygroup($delivery->GetID())->GetLastDelivery() != "")
+                {
+                   array_push($activeDelivered, $delivery);
+                }
+                else
+                {
+                    array_push($activeUndelivered, $delivery);
+                }
             }
             else
             {
-                array_push($unactiveUndelivered, $delivery);
+                if($student->HasDeliverygroup($delivery->GetID()) && $student->GetDeliverygroup($delivery->GetID())->GetLastDelivery() != "")
+                {
+                   array_push($unactiveDelivered, $delivery);
+                }
+                else
+                {
+                    array_push($unactiveUndelivered, $delivery);
+                }
             }
         }
+        
+        $id=1;
+        $link = '<a class="next_form" id="toggle" href="javascript:toggle();"><img src="img/zoom_in.png"/>Voir les rendus inactifs</a>';
+        $studentName = mb_strtolower($student->GetFirstName() . " " . $student->GetLastName());
+    }
+    catch(Exception $ex)
+    {
+        $failed = true;
     }
     
-    $id=1;
-    $link = '<a class="next_form" id="toggle" href="javascript:toggle();"><img src="img/zoom_in.png"/>Voir les rendus inactifs</a>';
+    if($failed)
+    {
+        errorReport("Impossible d'afficher la page demand&eacute;e.");
+    }
 ?>
 
 <fieldset>
-	<legend>rendus de <?php echo mb_strtolower($student->GetFirstName() . " " . $student->GetLastName()); ?></legend>
+	<legend>Travaux de <?php echo $studentName; ?></legend>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/student/help/list_deliveries.html', 800, 550);");
         
 	    displayErrorReport();
 	    displaySuccessReport();
+	    
+	    if(!$failed)
+	    {
 	?>
 	<h4>Statistiques</h4>
 	<div class="section">
 	    <table class="summary">
-            <tr>
-                <td>Nombre de travaux actifs</td>
-                <td><?php echo count($activeDelivered) + count($activeUndelivered); ?></td>
-            </tr>
-            <tr>
-                <td>Nombre de travaux inactifs</td>
-                <td><?php echo count($unactiveDelivered) + count($unactiveUndelivered); ?></td>
-            </tr>
-            <tr>
-                <td>Charge de travail approximative</td>
-                <td><?php 
-                        if($level == 0)
-                        {
-                            echo "-";
-                        }
-                        else if($level == 1)
-                        {
-                            echo $level . " heure"; 
-                        }
-                        else if($level > 1)
-                        {
-                            echo $level . " heures";
-                        }
-                     ?>
-                </td>
-            </tr>
-        </table>
+	    <?php
+	        $workLevel = '-';
+            if($level == 1)
+            {
+                $workLevel = $level . " heure"; 
+            }
+            else if($level > 1)
+            {
+                $workLevel = $level . " heures";
+            }
+            $summary = new PWHSummary();
+            $summary->SetInfo('Nombre de travaux actifs', count($activeDelivered) + count($activeUndelivered));
+            $summary->SetInfo('Nombre de travaux inactifs', count($unactiveDelivered) + count($unactiveUndelivered));
+            $summary->SetInfo('Charge de travail approximative', $workLevel);
+            echo $summary->HTML();
+        ?>
 	</div>
 	<?php
 	    	    
@@ -111,185 +118,30 @@
 	    $legend->SetType($_SESSION['type']);
 	    echo $legend->Html();
 	?>
-	<h4>Listes des rendus actifs</h4>
+	<h4>Listes des travaux actifs</h4>
     <div class="section">
-        <table class="colored_table underlined_table">
-	        <tr>
-		        <th>Nom</th>
-		        <th>Groupe</th> 
-		        <th>Rendu</th>
-		        <th>Extra</th>
-	        </tr>
-	        <?php
-	            if(count($activeDelivered) + count($activeUndelivered) == 0)
-	            { ?>
-	                <tr><td colspan="4">Il n'y a aucun rendu actif</td></tr>
-	            <?php
-	            }
-	            else 
-	            {   
-	                foreach($activeUndelivered as $delivery)
-	                { 
-                        $work = new PWHWork();
-                        $work->Read($delivery->GetWorkID());
-                        $subject = new PWHSubject();
-                        $subject->Read($work->GetSubjectID());
-                        
-                        $currentDate = date('Y-m-d H:i:s');
-                        
-                        $deliveryDaysLeft = dateDiff($currentDate, $delivery->GetDeadline());
-                        if($work->IsSimple() || $work->GetGroupMax() == 1)
-                        {
-                            $groupDaysLeft = 0;
-                        }
-                        else
-                        {
-                            $groupDaysLeft = dateDiff($currentDate, $delivery->GetGroupCompositionDeadline());
-                        }
-                        
-                        $extraTimeLeft = 0;
-                        if($work->GetExtraTime() > 0)
-                        {
-                            if($delivery->IsExtraTimeUsed($currentDate))
-                            {
-                                $extraTimeLeft = $deliveryDaysLeft + $work->GetExtraTime() * 86400;
-                            }
-                            else
-                            {
-                                $extraTimeLeft = $work->GetExtraTime() * 86400;
-                            }
-                        }
-                        
-                        $class = ' class="active_work"';
-                        if($delivery->IsExtraTimeUsed(date("Y-m-d H:i:s")))
-                        {
-                            $class = ' class="extra_time_line"';
-                        } 
-                    ?>
-	                <tr<?php echo $class; ?>>
-		                <td>
-		                    <a href="index.php?page=student_display_delivery&amp;subject_id=<?php echo $subject->GetID(); ?>&amp;work_id=<?php echo $work->GetID(); ?>&amp;delivery_id=<?php echo $delivery->GetID(); ?>">
-		                        <img src="img/bullet_go.png"/><?php echo $subject->GetName().' / '.$work->GetName(); ?>
-		                    </a>
-		                </td>
-		                <td id="group_days_left<?php echo $id; ?>"><?php if($groupDaysLeft < 0) { echo 0; } else { echo $groupDaysLeft; } ?></td>
-		                <td id="delivery_days_left<?php echo $id; ?>"><?php if($deliveryDaysLeft < 0) { echo 0; } else { echo $deliveryDaysLeft; } ?></td>
-	                    <td id="extra_time_left<?php echo $id; ?>"><?php echo $extraTimeLeft; ?></td>
-	                </tr>           
-               <?php 
-                        $id++;
-                    }
-                    
-                    foreach($activeDelivered as $delivery)
-	                { 
-                        $work = new PWHWork();
-                        $work->Read($delivery->GetWorkID());
-                        $subject = new PWHSubject();
-                        $subject->Read($work->GetSubjectID());
-                        
-                        $currentDate = date('Y-m-d H:i:s');
-                        
-                        $deliveryDaysLeft = dateDiff($currentDate, $delivery->GetDeadline());
-                        if($work->IsSimple() || $work->GetGroupMax() == 1)
-                        {
-                            $groupDaysLeft = 0;
-                        }
-                        else
-                        {
-                            $groupDaysLeft = dateDiff($currentDate, $delivery->GetGroupCompositionDeadline());
-                        }
-                        
-                        $extraTimeLeft = 0;
-                        if($work->GetExtraTime() > 0)
-                        {
-                            if($delivery->IsExtraTimeUsed($currentDate))
-                            {
-                                $extraTimeLeft = $deliveryDaysLeft + $work->GetExtraTime() * 86400;
-                            }
-                            else
-                            {
-                                $extraTimeLeft = $work->GetExtraTime() * 86400;
-                            }
-                        }
-                    ?>
-	                <tr class="delivered_line">
-		                <td>
-		                    <a href="index.php?page=student_display_delivery&amp;subject_id=<?php echo $subject->GetID(); ?>&amp;work_id=<?php echo $work->GetID(); ?>&amp;delivery_id=<?php echo $delivery->GetID(); ?>">
-		                        <img src="img/bullet_go.png"/><?php echo $subject->GetName().' / '.$work->GetName(); ?>
-		                    </a>
-		                </td>
-		                <td id="group_days_left<?php echo $id; ?>"><?php if($groupDaysLeft < 0) { echo 0; } else { echo $groupDaysLeft; } ?></td>
-		                <td id="delivery_days_left<?php echo $id; ?>"><?php if($deliveryDaysLeft < 0) { echo 0; } else { echo $deliveryDaysLeft; } ?></td>
-	                    <td id="extra_time_left<?php echo $id; ?>"><?php echo $extraTimeLeft; ?></td>
-	                </tr>           
-               <?php 
-                        $id++;
-                    }
-	           } ?>
-        </table>
+        <?php
+            $activeTable = new PWHActiveDeliveriesTable();
+            $activeTable->SetUndelivered($activeUndelivered);
+            $activeTable->SetDelivered($activeDelivered);
+            echo $activeTable->HTML();
+        ?>
     </div>
     <div class="section">
 	    <?php echo $link; ?>
 	</div>
 	<div id="inactive">
-        <h4>Listes des rendus inactif</h4>
+        <h4>Listes des travaux inactifs</h4>
         <div class="section">
-            <table class="colored_table underlined_table">
-	            <tr>
-		            <th>Nom</th>
-		            <th>Date de fin</th>
-	            </tr>
-	            <?php
-	                if(count($unactiveDelivered) + count($unactiveUndelivered) == 0)
-	                { ?>
-	                    <tr><td colspan="4">Il n'y a aucun rendu inactif</td></tr>
-	                <?php
-	                }
-	                else 
-	                {   
-	                    $dateTranslator = new PWHDateTranslator();
-	                    
-	                    foreach($unactiveUndelivered as $delivery)
-	                    { 
-                            $work = new PWHWork();
-                            $work->Read($delivery->GetWorkID());
-                            $subject = new PWHSubject();
-                            $subject->Read($work->GetSubjectID());
-                        ?>
-	                    <tr class="undelivered_line">
-		                    <td>
-		                        <a href="index.php?page=student_display_delivery&amp;subject_id=<?php echo $subject->GetID(); ?>&amp;work_id=<?php echo $work->GetID(); ?>&amp;delivery_id=<?php echo $delivery->GetID(); ?>">
-		                            <img src="img/bullet_go.png"/><?php echo $subject->GetName().' / '.$work->GetName(); ?>
-		                        </a>
-		                    </td>
-		                    <td><?php echo $dateTranslator->Html($delivery->GetDeadline(), PWHDateTranslator::DATE_AND_TIME); ?></td>
-	                    </tr>           
-                   <?php 
-                            $id++;
-                        }
-                        
-                        foreach($unactiveDelivered as $delivery)
-	                    { 
-                            $work = new PWHWork();
-                            $work->Read($delivery->GetWorkID());
-                            $subject = new PWHSubject();
-                            $subject->Read($work->GetSubjectID());
-                        ?>
-	                    <tr class="unactive_work">
-		                    <td>
-		                        <a href="index.php?page=student_display_delivery&amp;subject_id=<?php echo $subject->GetID(); ?>&amp;work_id=<?php echo $work->GetID(); ?>&amp;delivery_id=<?php echo $delivery->GetID(); ?>">
-		                            <img src="img/bullet_go.png"/><?php echo $subject->GetName().' / '.$work->GetName(); ?>
-		                        </a>
-		                    </td>
-		                    <td><?php echo $dateTranslator->Html($delivery->GetDeadline(), PWHDateTranslator::DATE_AND_TIME); ?></td>
-	                    </tr>           
-                   <?php 
-                            $id++;
-                        }
-	               } ?>
-            </table>
+            <?php
+                $inactiveTable = new PWHInactiveDeliveriesTable();
+                $inactiveTable->SetUndelivered($inactiveUndelivered);
+                $inactiveTable->SetDelivered($inactiveDelivered);
+                echo $inactiveTable->HTML();
+            ?>
         </div>
     </div>
+    <?php } ?>
 </fieldset>
 <script type="text/javascript">
 <!--

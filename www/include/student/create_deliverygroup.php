@@ -18,7 +18,7 @@
         $failed = true;
     }
     
-    if(isset($_GET['subject_id']) && isset($_GET['delivery_id']) && isset($_GET['work_id'])
+    if(isset($_GET['subject_id']) && isset($_GET['delivery_id']) && isset($_GET['work_id']) && isset($_GET['index']) && preg_match("#^[A-Z]$#", $_GET['index'])
         && PWHEntity::Valid("PWHSubject", $_GET['subject_id']) 
         && PWHEntity::Valid("PWHWork", $_GET['work_id']) 
         && PWHEntity::Valid("PWHDelivery", $_GET['delivery_id']))
@@ -77,173 +77,146 @@
         PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Acc&egrave;s page student_create_deliverygroup avec param&egrave;tres URL absents ou corrompus");
     }
     
-    if(isset($_GET['action']) && $_GET['action'] == 'create')
+    if(!$failed)
     {
-        if($work->IsSimple() || $work->GetGroupMax() == 1 || $delivery->IsStillTimeForGroupComposition(date("Y-m-d H:i:s")))
+        if(isset($_GET['action']) && $_GET['action'] == 'create')
         {
-            try
+            if($work->IsSimple() || $work->GetGroupMax() == 1 || $delivery->IsStillTimeForGroupComposition(date("Y-m-d H:i:s")))
             {
-                $update = false;
-                if(!$student->HasDeliverygroup($delivery->GetID()))
+                try
                 {
-                    $deliverygroup = new PWHDeliverygroup();
-                    $deliverygroup->SetDeliveryID($delivery->GetID());
-                    $deliverygroup->AddStudents(array($_SESSION['id']));
-                }
-                else
-                { 
-                    $deliverygroup = $student->GetDeliverygroup($delivery->GetID());
-                    $update = true;
-                }
-                
-                $insert = array();
-                foreach($students as $s)
-                {
-                    if(isset($_POST[$s->GetID()]))
+                    $update = false;
+                    if(!$student->HasDeliverygroup($delivery->GetID()))
                     {
-                        array_push($insert, (int)$s->GetID());
-                    }
-                }
-                
-                
-                if(count($insert) + count($deliverygroup->GetStudents()) <= $work->GetGroupMax())
-                {       
-                    $deliverygroup->AddStudents($insert);    
-                    if($update)
-                    {
-                        successReport("Le groupe de rendu a &eacute;t&eacute; mis &agrave jour.");
-                        $deliverygroup->Update();
+                        $deliverygroup = new PWHDeliverygroup();
+                        $deliverygroup->SetDeliveryID($delivery->GetID());
+                        $deliverygroup->AddStudents(array($_SESSION['id']));
                     }
                     else
-                    {
-                        $deliverygroup->SetCreation(date("Y-m-d H:i:s"));
-                        $deliverygroup->Create(true);
-                        $deliverygroup->CreateDirectory();
-                        successReport("Le groupe de rendu a &eacute;t&eacute; cr&eacute;&eacute;.");
+                    { 
+                        $deliverygroup = $student->GetDeliverygroup($delivery->GetID());
+                        $update = true;
                     }
                     
-                    $persons = array();
-                    foreach($insert as $id)
+                    $insert = array();
+                    foreach($students as $s)
                     {
-                        $person = new PWHStudent();
-                        $person->Read($id);
-                        array_push($persons, $person);
+                        if(isset($_POST[$s->GetID()]))
+                        {
+                            array_push($insert, (int)$s->GetID());
+                        }
                     }
+                    
+                    
+                    if(count($insert) + count($deliverygroup->GetStudents()) <= $work->GetGroupMax())
+                    {       
+                        $deliverygroup->AddStudents($insert);    
+                        if($update)
+                        {
+                            successReport("Le groupe de rendu a &eacute;t&eacute; mis &agrave jour.");
+                            $deliverygroup->Update();
+                        }
+                        else
+                        {
+                            $deliverygroup->SetCreation(date("Y-m-d H:i:s"));
+                            $deliverygroup->Create(true);
+                            $deliverygroup->CreateDirectory();
+                            successReport("Le groupe de rendu a &eacute;t&eacute; cr&eacute;&eacute;.");
+                        }
+                        
+                        $persons = array();
+                        foreach($insert as $id)
+                        {
+                            $person = new PWHStudent();
+                            $person->Read($id);
+                            array_push($persons, $person);
+                        }
 
-                    foreach($persons as $person)
-                    {
-                        $strbuf .= $person->GetLastName() . " " . $person->GetFirstName() . ", ";
-                    }
-                    $strbuf = substr($strbuf, 0, strlen($strbuf) - 2);
-                    
-                    $targets = $deliverygroup->GetStudents();
-                    $table = new PWHPersonTable();
-                    $targets = $table->FilterPersons($targets, array($_SESSION['id']));
-                    
-                    if(count($persons) == 1)
-                    {
-                        PWHEvent::Notify($targets, STUDENT_TYPE, $strbuf . " a rejoint un groupe de rendu dans le travail " . $subject->GetName() . "-" . $work->GetName());
-                        PWHEvent::Notify(array($student), STUDENT_TYPE, $strbuf . " a rejoint votre groupe de rendu dans le travail " . $subject->GetName() . "-" . $work->GetName());
+                        foreach($persons as $person)
+                        {
+                            $strbuf .= $person->GetLastName() . " " . $person->GetFirstName() . ", ";
+                        }
+                        $strbuf = substr($strbuf, 0, strlen($strbuf) - 2);
+                        
+                        $targets = $deliverygroup->GetStudents();
+                        $table = new PWHPersonTable();
+                        $targets = $table->FilterPersons($targets, array($_SESSION['id']));
+                        
+                        if(count($persons) == 1)
+                        {
+                            PWHEvent::Notify($targets, STUDENT_TYPE, $strbuf . " a rejoint un groupe de rendu dans le travail " . $subject->GetName() . "-" . $work->GetName());
+                            PWHEvent::Notify(array($student), STUDENT_TYPE, $strbuf . " a rejoint votre groupe de rendu dans le travail " . $subject->GetName() . "-" . $work->GetName());
+                        }
+                        else
+                        {
+                            PWHEvent::Notify($targets, STUDENT_TYPE, $strbuf . " ont rejoint un groupe de rendu dans le travail " . $subject->GetName() . "-" . $work->GetName());
+                            PWHEvent::Notify(array($student), STUDENT_TYPE, $strbuf . " ont rejoint votre groupe de rendu dans le travail " . $subject->GetName() . "-" . $work->GetName());
+                        }
+                        
+                        PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Cr&eacute;ation groupe de rendu");
+                        
+                        $table = new PWHPersonTable();
+	                    $students = $table->FilterPersons($students, $insert);
+	                    $allStudents = $table->FilterPersons($allStudents, $insert);
                     }
                     else
                     {
-                        PWHEvent::Notify($targets, STUDENT_TYPE, $strbuf . " ont rejoint un groupe de rendu dans le travail " . $subject->GetName() . "-" . $work->GetName());
-                        PWHEvent::Notify(array($student), STUDENT_TYPE, $strbuf . " ont rejoint votre groupe de rendu dans le travail " . $subject->GetName() . "-" . $work->GetName());
+                        $left = $work->GetGroupMax() - count($deliverygroup->GetStudents());
+                        if($left == 1)
+                        {
+                            errorReport("Vous ne pouvez choisir que 1 membre.");
+                        }
+                        else
+                        {
+                            errorReport("Vous ne pouvez choisir que " . $left . " membres.");
+                        }
+                        PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Echec cr&eacute;ation groupe de rendu: trop de membres");
                     }
-                    
-                    PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Cr&eacute;ation groupe de rendu");
-                    
-                    $table = new PWHPersonTable();
-	                $students = $table->FilterPersons($students, $insert);
-	                $allStudents = $table->FilterPersons($allStudents, $insert);
                 }
-                else
+                catch(Exception $ex)
                 {
-                    $left = $work->GetGroupMax() - count($deliverygroup->GetStudents());
-                    if($left == 1)
-                    {
-                        errorReport("Vous ne pouvez choisir que 1 membre.");
-                    }
-                    else
-                    {
-                        errorReport("Vous ne pouvez choisir que " . $left . " membres.");
-                    }
-                    PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Echec cr&eacute;ation groupe de rendu: trop de membres");
+                    errorReport($ex->getMessage());
                 }
             }
-            catch(Exception $ex)
+            else
             {
-                errorReport($ex->getMessage());
+                errorReport("La date de composition des groupes est d&eacute;pass&eacute;e.");
+                PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Echec cr&eacute;ation groupe de rendu: date de composition d&eacute;pass&eacute;e");
             }
         }
-        else
+    
+        if($student->HasDeliverygroup($delivery->GetID()))
         {
-            errorReport("La date de composition des groupes est d&eacute;pass&eacute;e.");
-            PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Echec cr&eacute;ation groupe de rendu: date de composition d&eacute;pass&eacute;e");
+            $deliverygroup = $student->GetDeliverygroup($delivery->GetID());
+            $left = $work->GetGroupMax() - count($deliverygroup->GetStudents());
+        }
+        else
+        {  
+            $left = $work->GetGroupMax() - 1;
         }
     }
     
-    if($student->HasDeliverygroup($delivery->GetID()))
+    if($failed)
     {
-        $deliverygroup = $student->GetDeliverygroup($delivery->GetID());
-        $left = $work->GetGroupMax() - count($deliverygroup->GetStudents());
+        errorReport("Impossible d'afficher la page demand&eacute;e.");
     }
-    else
-    {  
-        $left = $work->GetGroupMax() - 1;
+    else if(!$failed && !$exist)
+    {      
+        errorReport("Vous n'&ecirc;tes pas concern&eacute; par ce rendu.");
     }
 ?>
-
-<script type="text/javascript" charset="iso-8859-1">
-<!--
-    function MakeIndex(link, letter)
-    {
-        var form = document.getElementById("person_index");
-        var boxs = form.elements;
-        var quit = true;
-        for(var i=0; i<boxs.length; i++)
-        {
-            if(boxs[i].checked)
-            {
-                if(confirm("Vous n'avez pas valid\351 le formulaire en cliquant sur le bouton \"Ajouter +\" ? Voulez-vous le valider avant de quitter cette page ?"))
-                {
-                    form.submit();
-                    window.location = link + "&index=" + letter;
-                    break;
-                }
-                else
-                {
-                    window.location = link + "&index=" + letter;
-                    break;
-                }
-           }
-        }
-        window.location = link + "&index=" + letter;
-    }
-//-->
-</script>
-
 <fieldset>
 	<legend>&eacute;tudiants disponibles</legend>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/student/help/create_deliverygroup.html', 800, 550);");
         
-        if($failed)
-        {
-            errorReport("Impossible d'afficher la page.");
-            displayErrorReport();
-        }
-        else if(!$failed && !$exist)
-        {      
-            errorReport("Vous n'&ecirc;tes pas concern&eacute; par ce rendu.");
-            displayErrorReport();
-        }
-        else if(!$failed)
-        { 
-            displayErrorReport();
-	        displaySuccessReport();
-	    ?>
+        displayErrorReport();
+	    displaySuccessReport();
+	        
+        if(!$failed)
+        {     
+    ?>
 	<h4 id="counter">Liste des &eacute;tudiants disponibles - encore <?php echo $left; ?> <?php if($left > 1) { echo "membres"; } else { echo "membre"; } ?> pour compl&eacute;ter le groupe</h4>
 	<div class="section">
 	    <?php
@@ -381,5 +354,33 @@
         }
     }
     input.disabled = save;
+//-->
+</script>
+<script type="text/javascript" charset="iso-8859-1">
+<!--
+    function MakeIndex(link, letter)
+    {
+        var form = document.getElementById("person_index");
+        var boxs = form.elements;
+        var quit = true;
+        for(var i=0; i<boxs.length; i++)
+        {
+            if(boxs[i].checked)
+            {
+                if(confirm("Vous n'avez pas valid\351 le formulaire en cliquant sur le bouton \"Ajouter +\" ? Voulez-vous le valider avant de quitter cette page ?"))
+                {
+                    form.submit();
+                    window.location = link + "&index=" + letter;
+                    break;
+                }
+                else
+                {
+                    window.location = link + "&index=" + letter;
+                    break;
+                }
+           }
+        }
+        window.location = link + "&index=" + letter;
+    }
 //-->
 </script>

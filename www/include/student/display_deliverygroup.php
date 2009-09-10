@@ -7,6 +7,8 @@
     addPreviousPageParameter('delivery_id', $_GET['delivery_id']);   
 
     $failed = false;
+    $studentName = "???";
+    
     try
     {
         $student = new PWHStudent();
@@ -119,33 +121,35 @@
             $memo->SetText("Ce groupe de rendu a &eacute;t&eacute; cr&eacute;e par un enseignant. Vous ne pouvez pas quitter ce groupe sans l'intervention d'un responsable.");
             array_push($memos, $memo);
         }
+        $studentName = mb_strtolower($student->GetFirstName() . " " . $student->GetLastName());
+    }
+    
+    if($failed)
+    {
+        errorReport("Impossible d'afficher la page demand&eacute;e.");
+    }
+    else if(!$failed && !$exist)
+    {      
+        errorReport("Vous n'&ecirc;tes pas concern&eacute; par ce rendu.");
     }
 ?>
 
 
 <fieldset>
-	<legend>groupe de rendu de <?php echo mb_strtolower($student->GetFirstName() . " " . $student->GetLastName()); ?></legend>
+	<legend>groupe de rendu de <?php echo $studentName; ?></legend>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/student/help/display_deliverygroup.html', 800, 550);");
-    if($failed)
-    {
-        errorReport("Impossible d'afficher la page.");
+    
         displayErrorReport();
-    }
-    else if(!$failed && !$exist)
-    {      
-        errorReport("Vous n'&ecirc;tes pas concern&eacute; par ce rendu.");
-        displayErrorReport();
-    }
-    else if(!$failed && $deliverygroup != null)
-    {   
-	    displayErrorReport();
 	    displaySuccessReport();
-	    foreach($memos as $memo)
-	    {
-	        echo $memo->Html();
-	    }
+	        
+        if(!$failed && $deliverygroup != null)
+        {
+	        foreach($memos as $memo)
+	        {
+	            echo $memo->Html();
+	        }
     ?>
     <div class="section">
         <div class="list">

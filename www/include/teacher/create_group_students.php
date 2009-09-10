@@ -2,18 +2,13 @@
     PWHLog::Write(PWHLog::INFO, $_SESSION['login'], "Acc&egrave;s page create_group_students");
     
     previousPage('teacher_create_group_name');
+    $failed = false;
     
     // Definition of the parent group
-    if(isset($_POST['parentGroup']))
+    if(isset($_POST['parentGroup']) && PWHEntity::Valid("PWHGroup", $_POST['parent_group']) && isset($_POST['groupName']))
     {
-        $_SESSION['parent_group'] = (int)$_POST['parentGroup'];  
-    }
-    // Saves the specified name when go back to the previous page
-    addPreviousPageParameter('parent_group', $_SESSION['parent_group']);
-    
-        // [FORM] Save the name of the groups into the session
-    if(isset($_POST['groupName']))
-    { 
+        $_SESSION['parent_group'] = (int)$_POST['parentGroup'];
+        
         $parent = new PWHGroup();
         $parent->Read($_SESSION['parent_group']);
         if($parent->IsChildUniqueName(stripslashes($_POST['groupName'])))
@@ -24,12 +19,19 @@
         {
             redirect("index.php?page=teacher_create_group_name&amp;action=alert_name_used");
         }
+        // Saves the specified name when go back to the previous page
+        addPreviousPageParameter('parent_group', $_SESSION['parent_group']);
+        // Saves the specified name when go back to the previous page
+        addPreviousPageParameter('group_name', $_SESSION['group_name']);
     }
-    // Saves the specified name when go back to the previous page
-    addPreviousPageParameter('group_name', $_SESSION['group_name']);
+    else
+    {
+        $failed = true;
+    }
+    
        
     // Retrieves the list of students sorted, corresponding to the value of the index
-    if(isset($_GET['index']))
+    if(isset($_GET['index']) && preg_match("#^[A-Z]$#", $_GET['index']))
     {        
         try
         {
@@ -43,91 +45,134 @@
         catch(Exception $ex)
         {
             errorReport($ex->getMessage());
-            $students = array();
+            $failed = true;
         }
     }
-    
-    if(isset($_SESSION['students']))
+    else
     {
-        $table = new PWHPersonTable();
-        $students = $table->FilterPersons($students, $_SESSION['students']);
+        $failed = true;
     }
     
-    // [FORM] Save the teachers who have been added to the subject
-    if(isset($_GET['action']))
-    {    
-        if($_GET['action'] == 'add_students')
+    if(!$failed)
+    {
+        if(isset($_SESSION['students']))
         {
-            if(!isset($_SESSION['students']))
-            {
-                $_SESSION['students'] = array();
-            }
-
-            $insert = array();
-            foreach($students as $student)
-            {
-                if(isset($_POST[$student->GetID()]))
-                {
-                    array_push($insert, (int)$student->GetID());
-                }
-            }
-            $_SESSION['students'] = array_merge($_SESSION['students'], $insert);
             $table = new PWHPersonTable();
             $students = $table->FilterPersons($students, $_SESSION['students']);
         }
-        else if($_GET['action'] == 'create')
-        {
-            try
+        
+        // [FORM] Save the teachers who have been added to the subject
+        if(isset($_GET['action']))
+        {    
+            if($_GET['action'] == 'add_students')
             {
-                $group = new PWHGroup();
-                $group->SetName($_SESSION['group_name']);
-                $group->SetParentID($_SESSION['parent_group']);
-                $group->AddStudents($_SESSION['students']);
-                $group->Create(true);
-                
-                // Destroys session variables
-                unset($_SESSION['group_name']);
-                unset($_SESSION['parent_group']);
-                unset($_SESSION['students']);
-                
-                PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Cr&eacute;ation groupe " . $group->GetName());
-                redirect("index.php?page=teacher_list_groups");
-            }
-            catch(Exception $ex)
-            {
-                errorReport($ex->getMessage());
-                PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec cr&eacute;ation groupe");
-            }
-        }
-     }
-     
-    // Creates a new memo for the user     
-    $memo = new PWHGroupCreationMemo();
-    $memo->SetName($_SESSION['group_name']);
-    if(isset($_SESSION['parent_group']))
-    {
-        $memo->SetParent($_SESSION['parent_group']);
-    }
-    if(isset($_SESSION['students']))
-    {
-        $memo->SetStudents($_SESSION['students']);
-    }
-    
-    // Permit the creation of the group
-    $disabled = "";
-    if(!isset($_SESSION['students']))
-    {
-        $disabled = 'disabled="disabled"';
-    }
-    
-    $allStudents = $parentGroup->GetStudents();
-    if(isset($_SESSION['students']))
-    {
-        $table = new PWHPersonTable();
-        $allStudents = $table->FilterPersons($allStudents, $_SESSION['students']);
-    }
-?>
+                if(!isset($_SESSION['students']))
+                {
+                    $_SESSION['students'] = array();
+                }
 
+                $insert = array();
+                foreach($students as $student)
+                {
+                    if(isset($_POST[$student->GetID()]))
+                    {
+                        array_push($insert, (int)$student->GetID());
+                    }
+                }
+                $_SESSION['students'] = array_merge($_SESSION['students'], $insert);
+                $table = new PWHPersonTable();
+                $students = $table->FilterPersons($students, $_SESSION['students']);
+            }
+            else if($_GET['action'] == 'create')
+            {
+                try
+                {
+                    $group = new PWHGroup();
+                    $group->SetName($_SESSION['group_name']);
+                    $group->SetParentID($_SESSION['parent_group']);
+                    $group->AddStudents($_SESSION['students']);
+                    $group->Create(true);
+                    
+                    // Destroys session variables
+                    unset($_SESSION['group_name']);
+                    unset($_SESSION['parent_group']);
+                    unset($_SESSION['students']);
+                    
+                    PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Cr&eacute;ation groupe " . $group->GetName());
+                    redirect("index.php?page=teacher_list_groups");
+                }
+                catch(Exception $ex)
+                {
+                    errorReport($ex->getMessage());
+                    PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec cr&eacute;ation groupe");
+                }
+            }
+         }
+         
+        // Creates a new memo for the user     
+        $memo = new PWHGroupCreationMemo();
+        $memo->SetName($_SESSION['group_name']);
+        if(isset($_SESSION['parent_group']))
+        {
+            $memo->SetParent($_SESSION['parent_group']);
+        }
+        if(isset($_SESSION['students']))
+        {
+            $memo->SetStudents($_SESSION['students']);
+        }
+        
+        // Permit the creation of the group
+        $disabled = "";
+        if(!isset($_SESSION['students']))
+        {
+            $disabled = 'disabled="disabled"';
+        }
+        
+        $allStudents = $parentGroup->GetStudents();
+        if(isset($_SESSION['students']))
+        {
+            $table = new PWHPersonTable();
+            $allStudents = $table->FilterPersons($allStudents, $_SESSION['students']);
+        }
+    }
+    
+    if($failed)
+    {
+        errorReport("Impossible d'afficher la page demand&eacute;e.");
+    }
+
+?>
+<fieldset>
+	<legend>&eacute;tudiants - etape 2/2</legend>
+	<?php
+	    $help = new PWHHelp();
+        echo $help->Html("javascript:popup('include/teacher/help/create_group_students.html', 800, 550);");
+        
+	    displayErrorReport();
+	    displaySuccessReport();
+	    
+	    if(!$failed)
+	    {
+	        echo $memo->Html();
+	?>
+	<h4>Liste des &eacute;tudiants disponibles</h4>
+	<div class="section">
+	    <?php 
+	        $index = new PWHIndex();
+	        echo $index->Html("index.php?page=teacher_create_group_students", $_GET['index'], true, $allStudents);
+	    ?>
+		<form id="person_index" method="post" action="index.php?page=teacher_create_group_students&amp;index=<?php echo $_GET['index']; ?>&amp;action=add_students">
+	        <?php
+	            $table = new PWHPersonTable();
+	            echo $table->Html($students, "Ajouter +");
+	        ?>
+	   </form>
+	   <form id="submit_group" method="post" action="index.php?page=teacher_create_group_students&amp;action=create">
+            <input onclick="javascript:UserConfirmSubmit();" class="next_form" <?php echo $disabled; ?> type="submit" value="Cr&eacute;er !"/>
+        </form>
+	</div>
+	<?php } ?>
+</fieldset>
 <script type="text/javascript" charset="iso-8859-1">
 <!--
     function MakeIndex(link, letter)
@@ -177,35 +222,6 @@
     }
 //-->
 </script>
-
-<fieldset>
-	<legend>&eacute;tudiants - etape 2/2</legend>
-	<?php
-	    $help = new PWHHelp();
-        echo $help->Html("javascript:popup('include/teacher/help/create_group_students.html', 800, 550);");
-        
-	    displayErrorReport();
-	    displaySuccessReport();
-	    echo $memo->Html();
-	?>
-	<h4>Liste des &eacute;tudiants disponibles</h4>
-	<div class="section">
-	    <?php 
-	        $index = new PWHIndex();
-	        echo $index->Html("index.php?page=teacher_create_group_students", $_GET['index'], true, $allStudents);
-	    ?>
-		<form id="person_index" method="post" action="index.php?page=teacher_create_group_students&amp;index=<?php echo $_GET['index']; ?>&amp;action=add_students">
-	        <?php
-	            $table = new PWHPersonTable();
-	            echo $table->Html($students, "Ajouter +");
-	        ?>
-	   </form>
-	   <form id="submit_group" method="post" action="index.php?page=teacher_create_group_students&amp;action=create">
-            <input onclick="javascript:UserConfirmSubmit();" class="next_form" <?php echo $disabled; ?> type="submit" value="Cr&eacute;er !"/>
-        </form>
-	</div>
-</fieldset>
-
 <script type="text/javascript" charset="iso-8859-1">
 <!--
     function CheckForm(index)

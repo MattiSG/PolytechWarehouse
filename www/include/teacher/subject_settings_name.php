@@ -3,9 +3,11 @@
     
     previousPage('teacher_list_subjects');
     addPreviousPageParameter('see', 'less');
+    $failed = false;
+    $subjectName = "???";
     
     // Retrieves the concerned subject
-    if(isset($_GET['subject_id']))
+    if(isset($_GET['subject_id']) && PWHEntity::Valid("PWHSubject", $_GET['subject_id']))
     {
         try
         {
@@ -15,42 +17,59 @@
         }
         catch(Exception $ex)
         {
+            $failed = true;
             errorReport($ex->getMessage());
         }
     }
-    
-    // [FORM] Changes the name of the subject
-    if(isset($_POST['subjectName']))
+    else
     {
-        try
-        {
-            $oldName = $subject->GetName();
-            $subject->SetName(stripslashes($_POST['subjectName']));
-            $subject->Update();
-            $teachers = $subject->GetTeachers();
-            PWHEvent::Notify($teachers, TEACHER_TYPE, "La mati&egrave;re " . $oldName . " a &eacute;t&eacute; renomm&eacute;e en " . $subject->GetName()); 
-            PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Mise &agrave; jour [nom] mati&egrave;re " . $subject->GetName());
-            successReport("La mati&egrave;re " . $oldName . " a &eacute;t&eacute; renomm&eacute;e en " . $subject->GetName() . "."); 
-        }
-        catch(Exception $ex)
-        {
-            PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec mise &agrave; jour [nom] mati&egrave;re");
-            errorReport($ex->getMessage());
-        }
+        $failed = true;
     }
     
-    $existingTeachers = $subject->GetTeachers();
-    usort($existingTeachers, "person_comparator");
-    $link = '<a class="next_form" id="toggle" href="javascript:toggle();"><img src="img/zoom_in.png"/>Voir les enseignants d&eacute;j&agrave; responsables</a>';
+    if(!$failed)
+    {
+        // [FORM] Changes the name of the subject
+        if(isset($_POST['subjectName']))
+        {
+            try
+            {
+                $oldName = $subject->GetName();
+                $subject->SetName(stripslashes($_POST['subjectName']));
+                $subject->Update();
+                $teachers = $subject->GetTeachers();
+                PWHEvent::Notify($teachers, TEACHER_TYPE, "La mati&egrave;re " . $oldName . " a &eacute;t&eacute; renomm&eacute;e en " . $subject->GetName()); 
+                PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Mise &agrave; jour [nom] mati&egrave;re " . $subject->GetName());
+                successReport("La mati&egrave;re " . $oldName . " a &eacute;t&eacute; renomm&eacute;e en " . $subject->GetName() . "."); 
+            }
+            catch(Exception $ex)
+            {
+                PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec mise &agrave; jour [nom] mati&egrave;re");
+                errorReport($ex->getMessage());
+            }
+        }
+        
+        $existingTeachers = $subject->GetTeachers();
+        usort($existingTeachers, "person_comparator");
+        $link = '<a class="next_form" id="toggle" href="javascript:toggle();"><img src="img/zoom_in.png"/>Voir les enseignants d&eacute;j&agrave; responsables</a>';
+        $subjectName = mb_strtolower($subject->GetName());
+    }
+    
+    if($failed)
+    {
+        errorReport("Impossible d'afficher la page demand&eacute;e.");
+    }
 ?>
 <fieldset>
-	<legend>configuration de <?php echo mb_strtolower($subject->GetName()); ?></legend>
+	<legend>configuration de <?php echo $subjectName; ?></legend>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/subject_settings_name.html', 800, 600);");
         
 	    displayErrorReport();
 	    displaySuccessReport();
+	    
+	    if(!$failed)
+	    {
 	?>
 	<div class="tab">
       <ul>
@@ -105,9 +124,8 @@
             </table>
         </div>
     </div>
+    <?php } ?>
 </fieldset>
-</fieldset>
-
 <script type="text/javascript">
 <!--
     function CheckForm()

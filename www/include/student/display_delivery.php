@@ -3,6 +3,8 @@
      
     previousPage('student_list_deliveries');   
     $failed = false;
+    $workName = "???";
+    
     try
     {
         $student = new PWHStudent();
@@ -209,30 +211,28 @@
         
         $teacher = new PWHTeacher();
         $teacher->Read($delivery->GetOwnerID());
+        $workName = mb_strtolower($subject->GetName() . " / " . $work->GetName());
     }
-?>
-
-
-
-<fieldset>
-	<legend><?php if(!$failed) { ?> rendu <?php echo $subject->GetName() . " / " . $work->GetName(); }?></legend>
-	<?php
-	    $help = new PWHHelp();
-        echo $help->Html("javascript:popup('include/student/help/display_delivery.html', 800, 550);");
+    
     if($failed)
     {
-        errorReport("Impossible d'afficher la page.");
-        displayErrorReport();
+        errorReport("Impossible d'afficher la page demand&eacute;e.");
     }
     else if(!$failed && !$exist)
     {      
         errorReport("Vous n'&ecirc;tes pas concern&eacute; par ce rendu.");
-        displayErrorReport();
     }
-    else if(!$failed)
-    {   
-	    displayErrorReport();
-	    displaySuccessReport();
+?>
+<fieldset>
+	<legend><?php echo 'travail ' . $workName; ?></legend>
+	<?php
+	    $help = new PWHHelp();
+        echo $help->Html("javascript:popup('include/student/help/display_delivery.html', 800, 550);");
+        
+        displayErrorReport();
+	    displaySuccessReport();   
+    if(!$failed)
+    {     
 	    foreach($memos as $memo)
 	    {
 	        echo $memo->Html();

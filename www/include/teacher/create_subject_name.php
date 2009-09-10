@@ -3,6 +3,7 @@
     
     previousPage('teacher_list_subjects');
     addPreviousPageParameter('see', 'less');
+    $failed = true;
     
     // Clean session variables that will be used during the creation of the subject
     if(isset($_SESSION['subject_name']))
@@ -44,12 +45,21 @@
     }
     catch(Exception $ex)
     {
+        $failed = true;
         errorReport($ex->getMessage());
     }
     
-    if(count($promos) == 0)
+    if(!$failed)
     {
-        errorReport("Aucune promotion n'est disponible. Vous ne pouvez pas cr&eacute;er de mati&egrave;re.");
+        if(count($promos) == 0)
+        {
+            errorReport("Aucune promotion n'est disponible. Vous ne pouvez pas cr&eacute;er de mati&egrave;re.");
+        }
+    }
+    
+    if($failed)
+    {
+        errorReport("Impossible d'afficher la page demand&eacute;e.");
     }
 ?>
 
@@ -60,9 +70,8 @@
         echo $help->Html("javascript:popup('include/teacher/help/create_subject_name.html', 800, 550);");
         
         displayErrorReport();
-    ?>
-    <?php
-        if(count($promos) > 0)
+
+        if(!$failed && count($promos) > 0)
         { ?>
 	<div class="section">
 		<form method="post" action="index.php?page=teacher_create_subject_teachers&amp;index=A">

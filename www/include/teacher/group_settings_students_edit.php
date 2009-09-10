@@ -2,32 +2,35 @@
     PWHLog::Write(PWHLog::INFO, $_SESSION['login'], "Acc&egrave;s page group_settings_students_edit");    
      
     previousPage('teacher_list_groups');
+    $failed = false;
  
     // Retrieves the list of students sorted, corresponding to the value of the index
-    if(isset($_GET['index']))
+    if(isset($_GET['group_id']) && PWHEntity::Valid("PWHGroup", $_GET['group_id']) && isset($_GET['index']) && preg_match("#^[A-Z]$#", $_GET['index']))
     {        
         try
         {
-            if(isset($_GET['group_id']))
-            {
-                $group = new PWHGroup();
-                $group->Read($_GET['group_id']);
-                $students = $group->GetStudents();
-                $allStudents = $students;
-                usort($students, "person_comparator");
-                $index = new PWHIndex();
-                $students = $index->FilterPersons($students, $_GET['index']);
-            }
-            else
-            {
-                $students = array();
-            }
+            $group = new PWHGroup();
+            $group->Read($_GET['group_id']);
+            $students = $group->GetStudents();
+            $allStudents = $students;
+            usort($students, "person_comparator");
+            $index = new PWHIndex();
+            $students = $index->FilterPersons($students, $_GET['index']);
         }
         catch(Exception $ex)
-        {
+        {   
+            $failed = true;
             errorReport($ex->getMessage());
-            $students = array();
         }
+    }
+    else
+    {
+        $failed = true;
+    }
+    
+    if($failed)
+    {
+        errorReport("Impossible d'afficher la page demand&eacute;e.");
     }
 ?>
 
@@ -39,6 +42,9 @@
         
 	    displayErrorReport();
 	    displaySuccessReport();
+	    
+	    if(!$failed)
+	    {
 	?>
 	<div class="tab">
       <ul>
@@ -90,6 +96,7 @@
                   } ?>
         </table>
 	</div>
+	<?php } ?>
 </fieldset>
 			
 

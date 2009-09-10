@@ -2,6 +2,8 @@
     PWHLog::Write(PWHLog::INFO, $_SESSION['login'], "Acc&egrave;s page group_settings_students_add");
     
     previousPage("teacher_list_groups");
+    $failed = false;
+    $groupName = "???";
         
     // Retrieves the concerned group
     if(isset($_GET['group_id']))
@@ -15,8 +17,13 @@
         }
         catch(Exception $ex)
         {
+            $failed = true;
             errorReport($ex->getMessage);
         }
+    }
+    else
+    {
+        $failed = true;
     }
     
     // Definition of the parent group
@@ -35,7 +42,7 @@
     }
     
     // Retrieves the list of students of the concerned group and the list of all students
-    if(isset($_GET['index']))
+    if(isset($_GET['index']) && preg_match("#^[A-Z]$#", $_GET['index']))
     {
         try
         {
@@ -64,88 +71,74 @@
         }
         catch(Exception $ex)
         {
+            $failed = true;
             errorReport($ex->getMessage());
         }
     }
-    
-    // [LINK ACTION] Add or remove a student from the group
-    if(isset($_GET['action']) && $_GET['action'] == 'add')
-    {          
-        try
-        {
-            $insert = array();
-            foreach($students as $student)
-            {
-                if(isset($_POST[$student->GetID()]))
-                {
-                    array_push($insert, (int)$student->GetID());
-                }
-            }
-            $group->AddStudents($insert);
-            $group->Update();
-            $table = new PWHPersonTable();
-            $students = $table->FilterPersons($students, $insert);
-            $allStudents = $table->FilterPersons($allStudents, $insert);
-            if(count($insert) > 1)
-            {
-                successReport("Les &eacute;tudiants ont &eacute;t&eacute;s ajout&eacute; au groupe " . $group->GetName() . ".");
-            }
-            else
-            {
-                successReport("L'&eacute;tudiant a &eacute;t&eacute; ajout&eacute; au groupe " . $group->GetName() . ".");
-            }
-            PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Mise &agrave; jour ajout [&eacute;tudiants] groupe " . $group->GetName());
-        }
-        catch(Exception $ex)
-        {
-            PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec mise &agrave; jour ajout [&eacute;tudiants] groupe");
-            errorReport($ex->getMessage());
-        }            
-    }
-    
-    $existingStudents = $group->GetStudents();
-    usort($existingStudents, "person_comparator");
-    $link = '<a class="next_form" id="toggle" href="javascript:toggle();"><img src="img/zoom_in.png"/>Voir les &eacute;tudiants d&eacute;j&agrave; pr&eacute;sents</a>';
-?>
-
-<script type="text/javascript" charset="iso-8859-1">
-<!--
-    function MakeIndex(link, letter)
+    else
     {
-        var form = document.getElementById("person_index");
-        var boxs = form.elements;
-        var quit = true;
-        for(var i=0; i<boxs.length; i++)
-        {
-            if(boxs[i].checked)
+        $failed = true;
+    }
+    
+    if(!$failed)
+    {
+        // [FORM] Add students to the group
+        if(isset($_GET['action']) && $_GET['action'] == 'add')
+        {          
+            try
             {
-                if(confirm("Vous n'avez pas valid\351 le formulaire en cliquant sur le bouton \"Ajouter +\" ? Voulez-vous le valider avant de quitter cette page ?"))
+                $insert = array();
+                foreach($students as $student)
                 {
-                    form.submit();
-                    window.location = link + "&index=" + letter;
-                    break;
+                    if(isset($_POST[$student->GetID()]))
+                    {
+                        array_push($insert, (int)$student->GetID());
+                    }
+                }
+                $group->AddStudents($insert);
+                $group->Update();
+                $table = new PWHPersonTable();
+                $students = $table->FilterPersons($students, $insert);
+                $allStudents = $table->FilterPersons($allStudents, $insert);
+                if(count($insert) > 1)
+                {
+                    successReport("Les &eacute;tudiants ont &eacute;t&eacute;s ajout&eacute; au groupe " . $group->GetName() . ".");
                 }
                 else
                 {
-                    window.location = link + "&index=" + letter;
-                    break;
+                    successReport("L'&eacute;tudiant a &eacute;t&eacute; ajout&eacute; au groupe " . $group->GetName() . ".");
                 }
-           }
+                PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Mise &agrave; jour ajout [&eacute;tudiants] groupe " . $group->GetName());
+            }
+            catch(Exception $ex)
+            {
+                PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec mise &agrave; jour ajout [&eacute;tudiants] groupe");
+                errorReport($ex->getMessage());
+            }            
         }
-
-        window.location = link + "&index=" + letter;
+        
+        $existingStudents = $group->GetStudents();
+        usort($existingStudents, "person_comparator");
+        $link = '<a class="next_form" id="toggle" href="javascript:toggle();"><img src="img/zoom_in.png"/>Voir les &eacute;tudiants d&eacute;j&agrave; pr&eacute;sents</a>';
+        $groupName = mb_strtolower($group->GetName());
     }
-//-->
-</script>
-
+    
+    if($failed)
+    {
+        errorReport("Impossible d'afficher la page demand&eacute;e.");
+    }
+?>
 <fieldset>
-	<legend>configuration de <?php echo mb_strtolower($group->GetName()); ?></legend>
+	<legend>configuration de <?php echo $groupName; ?></legend>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/group_settings_students_add.html', 800, 550);");
         
 	    displayErrorReport();
 	    displaySuccessReport();
+	    
+	    if(!$failed)
+	    {
 	?>
     <div class="tab">
       <ul>
@@ -268,6 +261,7 @@
             </table>
         </div>
     </div>
+    <?php } ?>
 </fieldset>
 
 <script type="text/javascript" charset="iso-8859-1">
@@ -362,4 +356,33 @@
     }
     
     document.getElementById("present").style.display = "none";
+</script>
+<script type="text/javascript" charset="iso-8859-1">
+<!--
+    function MakeIndex(link, letter)
+    {
+        var form = document.getElementById("person_index");
+        var boxs = form.elements;
+        var quit = true;
+        for(var i=0; i<boxs.length; i++)
+        {
+            if(boxs[i].checked)
+            {
+                if(confirm("Vous n'avez pas valid\351 le formulaire en cliquant sur le bouton \"Ajouter +\" ? Voulez-vous le valider avant de quitter cette page ?"))
+                {
+                    form.submit();
+                    window.location = link + "&index=" + letter;
+                    break;
+                }
+                else
+                {
+                    window.location = link + "&index=" + letter;
+                    break;
+                }
+           }
+        }
+
+        window.location = link + "&index=" + letter;
+    }
+//-->
 </script>

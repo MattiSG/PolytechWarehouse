@@ -1,7 +1,8 @@
 <?php
     PWHLog::Write(PWHLog::INFO, $_SESSION['login'], "Acc&egrave;s page create_group_name");
     
-    previousPage('teacher_list_groups');;
+    previousPage('teacher_list_groups');
+    $failed = false;
     
     // Clean session variables that will be used during the creation of the subject
     if(isset($_SESSION['group_name']))
@@ -43,22 +44,30 @@
     }
     catch(Exception $ex)
     {
+        $failed = true;
         errorReport($ex->getMessage());
-        $promos = array();
     }
     
-    if(count($promos) == 0)
+    if(!$failed)
     {
-        errorReport("Il n'y aucun groupe disponible. Vous ne pouvez pas cr&eacute;er de sous groupes.");
-    }
-    
-    if(isset($_GET['action']))
-    {
-        if($_GET['action'] == 'alert_name_used')
+        if(count($promos) == 0)
         {
-            errorReport("Un groupe portant ce nom a d&eacute;j&agrave; &eacute;t&eacute; cr&eacute;&eacute; dans ce groupe parent");
+            errorReport("Il n'y aucun groupe disponible. Vous ne pouvez pas cr&eacute;er de sous groupes.");
         }
-   }
+        
+        if(isset($_GET['action']))
+        {
+            if($_GET['action'] == 'alert_name_used')
+            {
+                errorReport("Un groupe portant ce nom a d&eacute;j&agrave; &eacute;t&eacute; cr&eacute;&eacute; dans ce groupe parent");
+            }
+       }
+    }
+    
+    if($failed)
+    {
+        errorReport("Impossible d'afficher la page demand&eacute;e.");
+    }
 ?>
 
 <fieldset>
@@ -68,8 +77,8 @@
         echo $help->Html("javascript:popup('include/teacher/help/create_group_name.html', 800, 550);");
         
         displayErrorReport();
-    
-        if(count($promos) > 0)
+        
+        if(!$failed && count($promos) > 0)
         {
     ?>
 	<div class="section">

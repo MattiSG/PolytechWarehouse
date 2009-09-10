@@ -4,8 +4,12 @@
     previousPage('teacher_list_works');
     addPreviousPageParameter('subject_id', $_GET['subject_id']);
     addPreviousPageParameter('work_id', $_GET['work_id']);
+    $failed = false;
+    $workName = "???";
     
-    if(isset($_GET['work_id']) && isset($_GET['subject_id']))
+    if(isset($_GET['subject_id']) && isset($_GET['work_id'])
+        && PWHEntity::Valid("PWHSubject", $_GET['subject_id'])
+        && PWHEntity::Valid("PWHWork", $_GET['work_id']))
     {
         try
         {
@@ -16,74 +20,78 @@
         }
         catch(Exception $ex)
         {
+            $failed = true;
             errorReport($ex->getMessage());
         }
     }
-    
-    if(isset($_GET['action']) && isset($_GET['delivery_id']))
+    else
     {
-        $delivery = new PWHDelivery();
-        $delivery->Read($_GET['delivery_id']);
-                
-        if($_GET['action'] == 'delete')
+        $failed = true;
+    }
+    
+    if(!$failed)
+    {
+        if(isset($_GET['action']) && isset($_GET['delivery_id']))
         {
-            if($_SESSION['id'] == $work->GetOwnerID() || $_SESSION['id'] == $delivery->GetOwnerID())
+            $delivery = new PWHDelivery();
+            $delivery->Read($_GET['delivery_id']);
+                    
+            if($_GET['action'] == 'delete')
             {
-                try
+                if($_SESSION['id'] == $work->GetOwnerID() || $_SESSION['id'] == $delivery->GetOwnerID())
                 {
-                    $delivery->Delete();
-                    $work->RemoveDeliveries(array($_GET['delivery_id']));
-                    $work->Update();
-                    $groups = $delivery->GetGroups();
-                    foreach($groups as $group)
+                    try
                     {
-                        $students = $group->GetStudents();
-                        PWHEvent::Notify($students, STUDENT_TYPE, "Le travail " . $subject->GetName() . "-" . $work->GetName() . " a &eacute;t&eacute; supprim&eacute;");
+                        $delivery->Delete();
+                        $work->RemoveDeliveries(array($_GET['delivery_id']));
+                        $work->Update();
+                        $groups = $delivery->GetGroups();
+                        foreach($groups as $group)
+                        {
+                            $students = $group->GetStudents();
+                            PWHEvent::Notify($students, STUDENT_TYPE, "Le travail " . $subject->GetName() . "-" . $work->GetName() . " a &eacute;t&eacute; supprim&eacute;");
+                        }
+                        $teachers = $subject->GetTeachers();
+                        PWHEvent::Notify($teachers, TEACHER_TYPE, "Le rendu " . $subject->GetName() . "-" . $work->GetName() . "-" . $delivery->GetName() . " a &eacute;t&eacute; supprim&eacute;");
+                        PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Suppression rendu " . $subject->GetName() . "-" . $work->GetName());
+                        successReport("Le rendu " . $delivery->GetName() . " a &eacute;t&eacute; supprim&eacute; du travail " . $work->GetName() . ".");
                     }
-                    $teachers = $subject->GetTeachers();
-                    PWHEvent::Notify($teachers, TEACHER_TYPE, "Le rendu " . $subject->GetName() . "-" . $work->GetName() . "-" . $delivery->GetName() . " a &eacute;t&eacute; supprim&eacute;");
-                    PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Suppression rendu " . $subject->GetName() . "-" . $work->GetName());
-                    successReport("Le rendu " . $delivery->GetName() . " a &eacute;t&eacute; supprim&eacute; du travail " . $work->GetName() . ".");
+                    catch(Exception $ex)
+                    {
+                        PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec suppression rendu");
+                        errorReport($ex->getMessage());
+                    }
                 }
-                catch(Exception $ex)
+                else
                 {
-                    PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec suppression rendu");
-                    errorReport($ex->getMessage());
+                    PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Echec suppression rendu " . $subject->GetName() . "-" . $work->GetName() . ": non propri&eacute;taire rendu ni travail");
+                    errorReport("Echec de suppression du rendu " . $delivery->GetName() . " : vous n'&ecirc;tes pas le propri&eacute;taire de ce rendu ni propri&eacute;taire du travail.");
                 }
-            }
-            else
-            {
-                PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Echec suppression rendu " . $subject->GetName() . "-" . $work->GetName() . ": non propri&eacute;taire rendu ni travail");
-                errorReport("Echec de suppression du rendu " . $delivery->GetName() . " : vous n'&ecirc;tes pas le propri&eacute;taire de ce rendu ni propri&eacute;taire du travail.");
             }
         }
+        
+        $deliveries = $work->GetDeliveries();
+        $files = $work->GetFiles();
+        $dateTranslator = new PWHDateTranslator();
+        $workName = mb_strtolower($work->GetName());
     }
     
-    $deliveries = $work->GetDeliveries();
-    $files = $work->GetFiles();
-    $dateTranslator = new PWHDateTranslator();
-?>
-
-<script type="text/javascript">
-<!--
-    function UserConfirmation(subject_id, work_id, delivery_id)
+    if($failed)
     {
-        if(confirm('Voulez-vous vraiment continuer ?'))
-        {
-            window.location = "index.php?page=teacher_list_deliveries&action=delete&subject_id=" + subject_id + "&work_id=" + work_id + "&delivery_id=" + delivery_id;
-        }
+        errorReport("Impossible d'afficher la page demand&eacute;e.");
     }
-//-->
-</script>
-
+?>
 <fieldset>
-	<legend>rendus de <?php echo mb_strtolower($work->GetName()); ?></legend>
+	<legend>rendus de <?php echo $workName; ?></legend>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/list_deliveries.html', 800, 600);");
         
 	    displayErrorReport();
 	    displaySuccessReport();
+	    
+	    if(!$failed)
+	    {
     ?>
     <h4>R&eacute;capitulatif</h4>
 	<div class="section">
@@ -276,5 +284,16 @@
             } ?>
         </table>
     </div>
+    <?php } ?>
 </fieldset>
-
+<script type="text/javascript">
+<!--
+    function UserConfirmation(subject_id, work_id, delivery_id)
+    {
+        if(confirm('Voulez-vous vraiment continuer ?'))
+        {
+            window.location = "index.php?page=teacher_list_deliveries&action=delete&subject_id=" + subject_id + "&work_id=" + work_id + "&delivery_id=" + delivery_id;
+        }
+    }
+//-->
+</script>

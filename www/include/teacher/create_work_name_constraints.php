@@ -3,20 +3,7 @@
     
     previousPage('teacher_list_works');
     addPreviousPageParameter('subject_id', $_GET['subject_id']);
-    
-    
-    if(isset($_GET['subject_id']))
-    {
-        try
-        {
-            $subject = new PWHSubject();
-            $subject->Read($_GET['subject_id']);
-        }
-        catch(Exception $ex)
-        {
-            errorReport($ex->getMessage());
-        }
-    }
+    $failed = false;
     
     // Clean session variables that will be used during the creation of the subject
     if(isset($_SESSION['work_name']))
@@ -55,63 +42,88 @@
     {
         unset($_SESSION['level']);
     }
-    
-    
-    if(isset($_GET['work_name']) && isset($_GET['extra_time']) && isset($_GET['size'])
-         && isset($_GET['group_min']) && isset($_GET['group_max']) && isset($_GET['link']) && isset($_GET['level']))
+        
+    if(isset($_GET['subject_id']) && PWHEntity::Valid("PWHSubject", $_GET['subject_id']))
     {
-        $workName = stripslashes($_GET['work_name']);
-        $extraTime = $_GET['extra_time'];
-        $size = $_GET['size'];
-        $format = $_GET['format'];
-        $groupMin = $_GET['group_min'];
-        $groupMax = $_GET['group_max'];
-        $link = $_GET['link'];
-        $level = $_GET['level'];
+        try
+        {
+            $subject = new PWHSubject();
+            $subject->Read($_GET['subject_id']);
+        }
+        catch(Exception $ex)
+        {
+            $failed = true;
+            errorReport($ex->getMessage());
+        }
     }
     else
     {
-        $workName = "";
-        $extraTime = "";
-        $size = "";
-        $format = "";
-        $groupMin = "";
-        $groupMax = "";
-        $link = "";
-        $level = "";
+        $failed = true;
     }
     
-    if(isset($_GET['action']))
+    if(!$failed)
     {
-        if($_GET['action'] == 'alert_empty')
+        if(isset($_GET['work_name']) && isset($_GET['extra_time']) && isset($_GET['size'])
+             && isset($_GET['group_min']) && isset($_GET['group_max']) && isset($_GET['link']) && isset($_GET['level']))
         {
-            errorReport("Vous devez remplir tous les champs obligatoires.");
+            $workName = stripslashes($_GET['work_name']);
+            $extraTime = $_GET['extra_time'];
+            $size = $_GET['size'];
+            $format = $_GET['format'];
+            $groupMin = $_GET['group_min'];
+            $groupMax = $_GET['group_max'];
+            $link = $_GET['link'];
+            $level = $_GET['level'];
         }
-        else if($_GET['action'] == 'alert_type_req')
+        else
         {
-            errorReport("Vous devez sp&eacute;cifier des nombres entiers pour le nombre minimum et maximum de membres dans un groupe de rendu.");
+            $workName = "";
+            $extraTime = "";
+            $size = "";
+            $format = "";
+            $groupMin = "";
+            $groupMax = "";
+            $link = "";
+            $level = "";
         }
-        else if($_GET['action'] == 'alert_type_nreq')
+        
+        if(isset($_GET['action']))
         {
-            errorReport("Vous devez sp&eacute;cifier des nombres entiers pour la periode de tol&eacute;rance et la taille du rendu.");
-        }
-        else if($_GET['action'] == 'alert_err')
+            if($_GET['action'] == 'alert_empty')
+            {
+                errorReport("Vous devez remplir tous les champs obligatoires.");
+            }
+            else if($_GET['action'] == 'alert_type_req')
+            {
+                errorReport("Vous devez sp&eacute;cifier des nombres entiers pour le nombre minimum et maximum de membres dans un groupe de rendu.");
+            }
+            else if($_GET['action'] == 'alert_type_nreq')
+            {
+                errorReport("Vous devez sp&eacute;cifier des nombres entiers pour la periode de tol&eacute;rance et la taille du rendu.");
+            }
+            else if($_GET['action'] == 'alert_err')
+            {
+                errorReport("Vous devez sp&eacute;cifier un nombre de membres minimum inf&eacute;rieur au nombre de membres maximum.");
+            }
+       }
+       
+        $memos = array();
+        if(!$subject->TeacherExists($_SESSION['id']))
         {
-            errorReport("Vous devez sp&eacute;cifier un nombre de membres minimum inf&eacute;rieur au nombre de membres maximum.");
+            $memo = new PWHMemo();
+            $memo->SetText("Vous &ecirc;tes sur le point de cr&eacute;er un travail dans une mati&egrave;re dont vous n'&ecirc;tes pas responsable. Vous ne pourez pas &ecirc;tre responsable des rendus qui seront cr&eacute;&eacute;s.");
+            array_push($memos, $memo);
         }
-   }
-   
-    $memos = array();
-    if(!$subject->TeacherExists($_SESSION['id']))
-    {
-        $memo = new PWHMemo();
-        $memo->SetText("Vous &ecirc;tes sur le point de cr&eacute;er un travail dans une mati&egrave;re dont vous n'&ecirc;tes pas responsable. Vous ne pourez pas &ecirc;tre responsable des rendus qui seront cr&eacute;&eacute;s.");
-        array_push($memos, $memo);
+        
+        if($subject->CountTeachers() == 0)
+        {
+            errorReport("Aucun enseignant n'a &eacute;t&eacute; design&eacute; responsable de cette mati&egrave;re. Vous ne pouvez pas cr&eacute;er de travaux.");
+        }
     }
     
-    if($subject->CountTeachers() == 0)
+    if($failed)
     {
-        errorReport("Aucun enseignant n'a &eacute;t&eacute; design&eacute; responsable de cette mati&egrave;re. Vous ne pouvez pas cr&eacute;er de travaux.");
+        errorReport("Impossible d'afficher la page demand&eacute;e.");
     }
 ?>
 
@@ -123,9 +135,8 @@
         
         displayErrorReport();
         
-        if($subject->CountTeachers() > 0)
+        if(!$failed && $subject->CountTeachers() > 0)
         {
-        
             foreach($memos as $memo)
             {
                 echo $memo->Html();

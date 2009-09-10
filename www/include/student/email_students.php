@@ -2,9 +2,10 @@
     PWHLog::Write(PWHLog::INFO, $_SESSION['login'], "Acc&egrave;s page student_email_students");
     
     previousPage('student_email_groups');
-         
+    $failed = false;
+    
     // Retrieves the list of students sorted, corresponding to the value of the index
-    if(isset($_GET['index']))
+    if(isset($_GET['index']) && preg_match("#^[A-Z]$#", $_GET['index']))
     {        
         try
         {
@@ -20,14 +21,23 @@
             }
             else
             {
-                $students = array();
+                $failed = true;
             }
         }
         catch(Exception $ex)
         {
+            $failed = true;
             errorReport($ex->getMessage());
-            $students = array();
         }
+    }
+    else
+    {
+        $failed = true;
+    }
+    
+    if($failed)
+    {
+        errorReport("Impossible d'afficher la page demand&eacute;e.");
     }
 ?>
 
@@ -39,6 +49,8 @@
         
 	    displayErrorReport();
 	    displaySuccessReport();
+	    if(!$failed)
+	    {
 	?>
 	<h4>Liste des &eacute;tudiants du groupe <?php echo $group->GetName(); ?></h4>
 	<div class="section">
@@ -51,6 +63,7 @@
             echo $table->Html($students);
         ?>
 	</div>
+	<?php } ?>
 </fieldset>
 			
 

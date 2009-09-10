@@ -118,8 +118,9 @@
 		</div>
 		<div id="footer">
 		    <p>
-		        <a href="http://www.polytechnice.fr"><img src="img/polytech.png" alt=""/></a>
-		        Polytech'WareHouse par Karim Matrah | Optimis&eacute; par Silk Icons &copy; |  Polytech'Nice-Sophia &copy; 2009
+		        <a href="index.php?page=credits">Cr&eacute;dits</a> | 
+		        Polytech'WareHouse &copy; | 
+		        Polytech'Nice-Sophia &copy; 2009
 		    </p>
 	    </div>
 	</body>

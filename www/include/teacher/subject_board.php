@@ -3,8 +3,11 @@
 	require_once($GLOBALS['PWH_PATH'] . 'libpwh/PWHHeader.php');
 	require_once($GLOBALS['PWH_PATH'] . 'include/util.php');
 	
+	$failed = false;
+	$subjectName = "???";
+	
     // Retrieves the concerned subject and its works
-    if(isset($_GET['subject_id']))
+    if(isset($_GET['subject_id']) && PWHEntity::Valid("PWHSubject", $_GET['subject_id']))
     {
         try
         {
@@ -15,8 +18,22 @@
         }
         catch(Exception $ex)
         {
+            $failed = true;
             errorReport($ex->getMessage());
         }
+    }
+    else
+    {
+        $failed = true;
+    }
+    if(!$failed)
+    {
+        $subjectName = mb_strtolower($subjects->GetName());
+    }
+
+    if($failed)
+    {
+        errorReport("Impossible d'afficher la page demand&eacute;e.");
     }
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -29,7 +46,13 @@
 	<body>
         <div id="content_alt">
             <fieldset>
-                <legend><?php echo $subject->GetName(); ?></legend>
+                <legend>&eacute;tats des travaux dans la mati&egrave;re <?php echo $subjectName; ?></legend>
+                <?php
+                    displayErrorReport();
+                    
+                    if(!$failed)
+                    { 
+                ?>
                 <h4>Tableau de bord</h4>
                 <div class="section">
                     <table class="colored_table underlined_table">
@@ -80,6 +103,7 @@
                             } ?>
                     </table>
                 </div>
+                <?php } ?>
             </fieldset>
         </div>
     </body>

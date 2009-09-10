@@ -4,9 +4,12 @@
     previousPage('teacher_list_deliveries');
     addPreviousPageParameter('subject_id', $_GET['subject_id']);
     addPreviousPageParameter('work_id', $_GET['work_id']);
-
-    if(isset($_GET['subject_id']) && isset($_GET['work_id']))
-    {   
+    $failed = false;
+    
+    if(isset($_GET['subject_id']) && isset($_GET['work_id'])
+        && PWHEntity::Valid("PWHSubject", $_GET['subject_id'])
+        && PWHEntity::Valid("PWHWork", $_GET['work_id']))
+    { 
         try
         {
             $subject = new PWHSubject();
@@ -17,227 +20,240 @@
         }
         catch(Exception $ex)
         {
+            $failed = false;
             errorReport($ex->getMessage());
         }
     }
-    
-    if(isset($_GET['action']))
+    else
     {
-        if($_GET['action'] == 'set_all_date')
+        $failed = false;
+    }
+    
+    if(!$failed)
+    {
+        if(isset($_GET['action']))
         {
-            $failed = false;
-            foreach($deliveries as $delivery)
+            if($_GET['action'] == 'set_all_date')
             {
-                if(!$work->IsSimple() && $work->GetGroupMax() > 1)
+                $dateFailed = false;
+                foreach($deliveries as $delivery)
                 {
-                    if(checkdate($_POST['groupCompositionDeadline_month'], $_POST['groupCompositionDeadline_day'], $_POST['groupCompositionDeadline_year'])
-                        && preg_match("#^[0-9]{2}$#", $_POST['groupCompositionDeadline_hour']) && preg_match("#^[0-9]{2}$#", $_POST['groupCompositionDeadline_minute']))
+                    if(!$work->IsSimple() && $work->GetGroupMax() > 1)
+                    {
+                        if(checkdate($_POST['groupCompositionDeadline_month'], $_POST['groupCompositionDeadline_day'], $_POST['groupCompositionDeadline_year'])
+                            && preg_match("#^[0-9]{2}$#", $_POST['groupCompositionDeadline_hour']) && preg_match("#^[0-9]{2}$#", $_POST['groupCompositionDeadline_minute']))
+                        {
+                            try
+                            {
+                                $delivery->SetGroupCompositionDeadline($_POST['groupCompositionDeadline_year'] . "-" . $_POST['groupCompositionDeadline_month'] . "-" . $_POST['groupCompositionDeadline_day'] . " " . $_POST['groupCompositionDeadline_hour'] . ":" . $_POST['groupCompositionDeadline_minute'] . ":00");   
+                                $delivery->Update();
+                            }
+                            catch(Exception $ex)
+                            {
+                                errorReport($ex->getMessage());
+                                PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec mise &agrave; jour [date groupe] rendu");
+                                $dateFailed = true;
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            errorReport("Tentative d'utilisation d'une date de composition des groupes non valide. Format valide: JJ/MM/AAAA HH:MM.");
+                            PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Echec mise &agrave; jour [date groupe] rendu " . $subject->GetName() . "-" . $work->GetName() . "-" . $delivery->GetName() . ": format date invalide");
+                            $dateFailed = true;
+                            break;
+                        }
+                    }
+                    
+                    if(checkdate($_POST['deadline_month'], $_POST['deadline_day'], $_POST['deadline_year'])
+                        && preg_match("#^[0-9]{2}$#", $_POST['deadline_hour']) && preg_match("#^[0-9]{2}$#", $_POST['deadline_minute']))
                     {
                         try
                         {
-                            $delivery->SetGroupCompositionDeadline($_POST['groupCompositionDeadline_year'] . "-" . $_POST['groupCompositionDeadline_month'] . "-" . $_POST['groupCompositionDeadline_day'] . " " . $_POST['groupCompositionDeadline_hour'] . ":" . $_POST['groupCompositionDeadline_minute'] . ":00");   
+                            $delivery->SetDeadline($_POST['deadline_year'] . "-" . $_POST['deadline_month'] . "-" . $_POST['deadline_day'] . " " . $_POST['deadline_hour'] . ":" . $_POST['deadline_minute'] . ":00");   
                             $delivery->Update();
                         }
                         catch(Exception $ex)
                         {
                             errorReport($ex->getMessage());
-                            PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec mise &agrave; jour [date groupe] rendu");
-                            $failed = true;
+                            PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec mise &agrave; jour [date rendu] rendu");
+                            $dateFailed = true;
                             break;
                         }
                     }
                     else
                     {
-                        errorReport("Tentative d'utilisation d'une date de composition des groupes non valide. Format valide: JJ/MM/AAAA HH:MM.");
-                        PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Echec mise &agrave; jour [date groupe] rendu " . $subject->GetName() . "-" . $work->GetName() . "-" . $delivery->GetName() . ": format date invalide");
-                        $failed = true;
+                        errorReport("Tentative d'utilisation d'une date de rendu non valide. Format valide: JJ/MM/AAAA HH:MM.");
+                        PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Echec mise &agrave; jour [date renu] rendu " . $subject->GetName() . "-" . $work->GetName() . "-" . $delivery->GetName() . ": format date invalide");
+                        $dateFailed = true;
                         break;
                     }
-                }
-                
-                if(checkdate($_POST['deadline_month'], $_POST['deadline_day'], $_POST['deadline_year'])
-                    && preg_match("#^[0-9]{2}$#", $_POST['deadline_hour']) && preg_match("#^[0-9]{2}$#", $_POST['deadline_minute']))
-                {
-                    try
+                    
+                    $teachers = $subject->GetTeachers();
+                    PWHEvent::Notify($teachers, TEACHER_TYPE, "Les dates du rendu " . $subject->GetName() . "-" . $work->GetName() . "-" . $delivery->GetName() . " ont &eacute;t&eacute; modifi&eacute;es");
+                     PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Mise &agrave; jour [dates] rendu " . $subject->GetName() . "-" . $work->GetName() . "-" . $delivery->GetName());
+                    if($work->IsPublished())
                     {
-                        $delivery->SetDeadline($_POST['deadline_year'] . "-" . $_POST['deadline_month'] . "-" . $_POST['deadline_day'] . " " . $_POST['deadline_hour'] . ":" . $_POST['deadline_minute'] . ":00");   
-                        $delivery->Update();
-                    }
-                    catch(Exception $ex)
-                    {
-                        errorReport($ex->getMessage());
-                        PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec mise &agrave; jour [date rendu] rendu");
-                        $failed = true;
-                        break;
+                        $groups = $delivery->GetGroups();
+                        foreach($groups as $group)
+                        {
+                            $students = $group->GetStudents();
+                            PWHEvent::Notify($students, STUDENT_TYPE, "Les dates du travail " . $subject->GetName() . "-" . $work->GetName() . " ont &eacute;t&eacute; modifi&eacute;es");
+                        }
                     }
                 }
-                else
+                if(isset($_POST['publish']) && !$dateFailed)
                 {
-                    errorReport("Tentative d'utilisation d'une date de rendu non valide. Format valide: JJ/MM/AAAA HH:MM.");
-                    PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Echec mise &agrave; jour [date renu] rendu " . $subject->GetName() . "-" . $work->GetName() . "-" . $delivery->GetName() . ": format date invalide");
-                    $failed = true;
-                    break;
-                }
-                
-                $teachers = $subject->GetTeachers();
-                PWHEvent::Notify($teachers, TEACHER_TYPE, "Les dates du rendu " . $subject->GetName() . "-" . $work->GetName() . "-" . $delivery->GetName() . " ont &eacute;t&eacute; modifi&eacute;es");
-                 PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Mise &agrave; jour [dates] rendu " . $subject->GetName() . "-" . $work->GetName() . "-" . $delivery->GetName());
-                if($work->IsPublished())
-                {
-                    $groups = $delivery->GetGroups();
-                    foreach($groups as $group)
+                    $work->SetPublished(true);
+                    $work->Update();
+                    foreach($deliveries as $delivery)
                     {
-                        $students = $group->GetStudents();
-                        PWHEvent::Notify($students, STUDENT_TYPE, "Les dates du travail " . $subject->GetName() . "-" . $work->GetName() . " ont &eacute;t&eacute; modifi&eacute;es");
+                        $groups = $delivery->GetGroups();
+                        foreach($groups as $group)
+                        {
+                            $students = $group->GetStudents();
+                            PWHEvent::Notify($students, STUDENT_TYPE, "Le travail " . $subject->GetName() . "-" . $work->GetName() . " a &eacute;t&eacute; ajout&eacute;");
+                        }       
                     }
+                    $teachers = $subject->GetTeachers();
+                    PWHEvent::Notify($teachers, TEACHER_TYPE, "Le travail " . $subject->GetName() . "-" . $work->GetName() . " a &eacute;t&eacute; publi&eacute; aupr&egrave;s des &eacute;tudiants");
+                    PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Publication travail " . $subject->GetName() . "-" . $work->GetName());
+                    redirect("index.php?page=teacher_list_deliveries&amp;subject_id=" . $subject->GetID() . "&amp;work_id=" . $work->GetID());
+                }
+                else if(!$failed)
+                {
+                    redirect("index.php?page=teacher_list_deliveries&amp;subject_id=" . $subject->GetID() . "&amp;work_id=" . $work->GetID());
                 }
             }
-            if(isset($_POST['publish']) && !$failed)
+            else if($_GET['action'] == 'set_date')
             {
-                $work->SetPublished(true);
-                $work->Update();
-                foreach($deliveries as $delivery)
-                {
-                    $groups = $delivery->GetGroups();
-                    foreach($groups as $group)
+               $dateFailed = false;
+               foreach($deliveries as $delivery)
+               {
+                    if(!$work->IsSimple() && $work->GetGroupMax() > 1)
                     {
-                        $students = $group->GetStudents();
-                        PWHEvent::Notify($students, STUDENT_TYPE, "Le travail " . $subject->GetName() . "-" . $work->GetName() . " a &eacute;t&eacute; ajout&eacute;");
-                    }       
-                }
-                $teachers = $subject->GetTeachers();
-                PWHEvent::Notify($teachers, TEACHER_TYPE, "Le travail " . $subject->GetName() . "-" . $work->GetName() . " a &eacute;t&eacute; publi&eacute; aupr&egrave;s des &eacute;tudiants");
-                PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Publication travail " . $subject->GetName() . "-" . $work->GetName());
-                redirect("index.php?page=teacher_list_deliveries&amp;subject_id=" . $subject->GetID() . "&amp;work_id=" . $work->GetID());
-            }
-            else if(!$failed)
-            {
-                redirect("index.php?page=teacher_list_deliveries&amp;subject_id=" . $subject->GetID() . "&amp;work_id=" . $work->GetID());
-            }
-        }
-        else if($_GET['action'] == 'set_date')
-        {
-           $failed = false;
-           foreach($deliveries as $delivery)
-           {
-                if(!$work->IsSimple() && $work->GetGroupMax() > 1)
-                {
-                    if(checkdate($_POST['groupCompositionDeadline' . $delivery->GetID() . '_month'], $_POST['groupCompositionDeadline' . $delivery->GetID() . '_day'], $_POST['groupCompositionDeadline' . $delivery->GetID() . '_year'])
-                        && preg_match("#^[0-9]{2}$#", $_POST['groupCompositionDeadline' . $delivery->GetID() . '_hour']) && preg_match("#^[0-9]{2}$#", $_POST['groupCompositionDeadline' . $delivery->GetID() . '_minute']))
+                        if(checkdate($_POST['groupCompositionDeadline' . $delivery->GetID() . '_month'], $_POST['groupCompositionDeadline' . $delivery->GetID() . '_day'], $_POST['groupCompositionDeadline' . $delivery->GetID() . '_year'])
+                            && preg_match("#^[0-9]{2}$#", $_POST['groupCompositionDeadline' . $delivery->GetID() . '_hour']) && preg_match("#^[0-9]{2}$#", $_POST['groupCompositionDeadline' . $delivery->GetID() . '_minute']))
+                        {
+                            try
+                            {
+                                $delivery->SetGroupCompositionDeadline($_POST['groupCompositionDeadline' . $delivery->GetID() . '_year'] . "-" . $_POST['groupCompositionDeadline' . $delivery->GetID() . '_month'] . "-" . $_POST['groupCompositionDeadline' . $delivery->GetID() . '_day'] . " " . $_POST['groupCompositionDeadline' . $delivery->GetID() . '_hour'] . ":" . $_POST['groupCompositionDeadline' . $delivery->GetID() . '_minute'] . ":00");   
+                                $delivery->Update();
+                            }
+                            catch(Exception $ex)
+                            {
+                                errorReport($ex->getMessage());
+                                PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec mise &agrave; jour [date groupe] rendu");
+                                $dateFailed = true;
+                            }
+                        }
+                        else
+                        {
+                            errorReport("Tentative d'utilisation d'une date de composition des groupes non valide pour le rendu " . $delivery->GetName() . ". Format valide: JJ/MM/AAAA HH:MM.");
+                            PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Echec mise &agrave; jour [date groupe] rendu " . $subject->GetName() . "-" . $work->GetName() . "-" . $delivery->GetName() . ": format date invalide");
+                            $dateFailed = true;
+                        }
+                    }
+                    
+                    if(checkdate($_POST['deadline' . $delivery->GetID() . '_month'], $_POST['deadline' . $delivery->GetID() . '_day'], $_POST['deadline' . $delivery->GetID() . '_year'])
+                        && preg_match("#^[0-9]{2}$#", $_POST['deadline' . $delivery->GetID() . '_hour']) && preg_match("#^[0-9]{2}$#", $_POST['deadline' . $delivery->GetID() . '_minute']))
                     {
                         try
                         {
-                            $delivery->SetGroupCompositionDeadline($_POST['groupCompositionDeadline' . $delivery->GetID() . '_year'] . "-" . $_POST['groupCompositionDeadline' . $delivery->GetID() . '_month'] . "-" . $_POST['groupCompositionDeadline' . $delivery->GetID() . '_day'] . " " . $_POST['groupCompositionDeadline' . $delivery->GetID() . '_hour'] . ":" . $_POST['groupCompositionDeadline' . $delivery->GetID() . '_minute'] . ":00");   
+                            $delivery->SetDeadline($_POST['deadline' . $delivery->GetID() . '_year'] . "-" . $_POST['deadline' . $delivery->GetID() . '_month'] . "-" . $_POST['deadline' . $delivery->GetID() . '_day'] . " " . $_POST['deadline' . $delivery->GetID() . '_hour'] . ":" . $_POST['deadline' . $delivery->GetID() . '_minute'] . ":00");   
                             $delivery->Update();
                         }
                         catch(Exception $ex)
                         {
                             errorReport($ex->getMessage());
-                            PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec mise &agrave; jour [date groupe] rendu");
-                            $failed = true;
+                            PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec mise &agrave; jour [date rendu] rendu");
+                            $dateFailed = true;
                         }
                     }
                     else
                     {
-                        errorReport("Tentative d'utilisation d'une date de composition des groupes non valide pour le rendu " . $delivery->GetName() . ". Format valide: JJ/MM/AAAA HH:MM.");
-                        PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Echec mise &agrave; jour [date groupe] rendu " . $subject->GetName() . "-" . $work->GetName() . "-" . $delivery->GetName() . ": format date invalide");
-                        $failed = true;
+                        errorReport("Tentative d'utilisation d'une date de rendu non valide pour le rendu " . $delivery->GetName() . ". Format valide: JJ/MM/AAAA HH:MM.");
+                        PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Echec mise &agrave; jour [date rendu] rendu " . $subject->GetName() . "-" . $work->GetName() . "-" . $delivery->GetName() . ": format date invalide");
+                        $dateFailed = true;
                     }
-                }
-                
-                if(checkdate($_POST['deadline' . $delivery->GetID() . '_month'], $_POST['deadline' . $delivery->GetID() . '_day'], $_POST['deadline' . $delivery->GetID() . '_year'])
-                    && preg_match("#^[0-9]{2}$#", $_POST['deadline' . $delivery->GetID() . '_hour']) && preg_match("#^[0-9]{2}$#", $_POST['deadline' . $delivery->GetID() . '_minute']))
-                {
-                    try
+                    
+                    $teachers = $subject->GetTeachers();
+                    PWHEvent::Notify($teachers, TEACHER_TYPE, "Les dates du rendu " . $subject->GetName() . "-" . $work->GetName() . "-" . $delivery->GetName() . " ont &eacute;t&eacute; modifi&eacute;es");
+                     PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Mise &agrave; jour [dates] rendu " . $subject->GetName() . "-" . $work->GetName() . "-" . $delivery->GetName());
+                    if($work->IsPublished())
                     {
-                        $delivery->SetDeadline($_POST['deadline' . $delivery->GetID() . '_year'] . "-" . $_POST['deadline' . $delivery->GetID() . '_month'] . "-" . $_POST['deadline' . $delivery->GetID() . '_day'] . " " . $_POST['deadline' . $delivery->GetID() . '_hour'] . ":" . $_POST['deadline' . $delivery->GetID() . '_minute'] . ":00");   
-                        $delivery->Update();
+                        $groups = $delivery->GetGroups();
+                        foreach($groups as $group)
+                        {
+                            $students = $group->GetStudents();
+                            PWHEvent::Notify($students, STUDENT_TYPE, "Les dates du travail " . $subject->GetName() . "-" . $work->GetName() . " ont &eacute;t&eacute; modifi&eacute;es");
+                        }
                     }
-                    catch(Exception $ex)
+               }
+               if(isset($_POST['publish']) && !$dateFailed)
+               {
+                    $work->SetPublished(true);
+                    $work->Update();
+                    foreach($deliveries as $delivery)
                     {
-                        errorReport($ex->getMessage());
-                        PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec mise &agrave; jour [date rendu] rendu");
-                        $failed = true;
+                        $groups = $delivery->GetGroups();
+                        foreach($groups as $group)
+                        {
+                            $students = $group->GetStudents();
+                            PWHEvent::Notify($students, STUDENT_TYPE, "Le travail " . $subject->GetName() . "-" . $work->GetName() . " a &eacute;t&eacute; ajout&eacute;");
+                        }       
                     }
-                }
-                else
-                {
-                    errorReport("Tentative d'utilisation d'une date de rendu non valide pour le rendu " . $delivery->GetName() . ". Format valide: JJ/MM/AAAA HH:MM.");
-                    PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Echec mise &agrave; jour [date rendu] rendu " . $subject->GetName() . "-" . $work->GetName() . "-" . $delivery->GetName() . ": format date invalide");
-                    $failed = true;
-                }
-                
-                $teachers = $subject->GetTeachers();
-                PWHEvent::Notify($teachers, TEACHER_TYPE, "Les dates du rendu " . $subject->GetName() . "-" . $work->GetName() . "-" . $delivery->GetName() . " ont &eacute;t&eacute; modifi&eacute;es");
-                 PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Mise &agrave; jour [dates] rendu " . $subject->GetName() . "-" . $work->GetName() . "-" . $delivery->GetName());
-                if($work->IsPublished())
-                {
-                    $groups = $delivery->GetGroups();
-                    foreach($groups as $group)
-                    {
-                        $students = $group->GetStudents();
-                        PWHEvent::Notify($students, STUDENT_TYPE, "Les dates du travail " . $subject->GetName() . "-" . $work->GetName() . " ont &eacute;t&eacute; modifi&eacute;es");
-                    }
-                }
-           }
-           if(isset($_POST['publish']) && !$failed)
-           {
-                $work->SetPublished(true);
-                $work->Update();
-                foreach($deliveries as $delivery)
-                {
-                    $groups = $delivery->GetGroups();
-                    foreach($groups as $group)
-                    {
-                        $students = $group->GetStudents();
-                        PWHEvent::Notify($students, STUDENT_TYPE, "Le travail " . $subject->GetName() . "-" . $work->GetName() . " a &eacute;t&eacute; ajout&eacute;");
-                    }       
-                }
-                $teachers = $subject->GetTeachers();
-                PWHEvent::Notify($teachers, TEACHER_TYPE, "Le travail " . $subject->GetName() . "-" . $work->GetName() . " a &eacute;t&eacute; publi&eacute; aupr&egrave;s des &eacute;tudiants");
-                PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Publication travail " . $subject->GetName() . "-" . $work->GetName());
-                redirect("index.php?page=teacher_list_deliveries&amp;subject_id=" . $subject->GetID() . "&amp;work_id=" . $work->GetID());
-           }
-           else if(!$failed)
-           {
-                redirect("index.php?page=teacher_list_deliveries&amp;subject_id=" . $subject->GetID() . "&amp;work_id=" . $work->GetID());
-           }
-        }
-    }
-    
-    $link = "";
-    $selector = "";
-    $same = true;
-    $i = 0;
-    while($i < count($deliveries) - 1)
-    {
-        if($work->IsSimple() || $work->GetGroupMax == 1)
-        {
-            if($deliveries[$i]->GetDeadline() != $deliveries[$i+1]->GetDeadline())
-            {    
-                $same = false;
-                break;
+                    $teachers = $subject->GetTeachers();
+                    PWHEvent::Notify($teachers, TEACHER_TYPE, "Le travail " . $subject->GetName() . "-" . $work->GetName() . " a &eacute;t&eacute; publi&eacute; aupr&egrave;s des &eacute;tudiants");
+                    PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Publication travail " . $subject->GetName() . "-" . $work->GetName());
+                    redirect("index.php?page=teacher_list_deliveries&amp;subject_id=" . $subject->GetID() . "&amp;work_id=" . $work->GetID());
+               }
+               else if(!$failed)
+               {
+                    redirect("index.php?page=teacher_list_deliveries&amp;subject_id=" . $subject->GetID() . "&amp;work_id=" . $work->GetID());
+               }
             }
+        }
+        
+        $link = "";
+        $selector = "";
+        $same = true;
+        $i = 0;
+        while($i < count($deliveries) - 1)
+        {
+            if($work->IsSimple() || $work->GetGroupMax == 1)
+            {
+                if($deliveries[$i]->GetDeadline() != $deliveries[$i+1]->GetDeadline())
+                {    
+                    $same = false;
+                    break;
+                }
+            }
+            else
+            {
+                if($deliveries[$i]->GetGroupCompositionDeadline() != $deliveries[$i+1]->GetGroupCompositionDeadline() || $deliveries[$i]->GetDeadline() != $deliveries[$i+1]->GetDeadline())
+                {    
+                    $same = false;
+                    break;
+                }
+            }
+            $i++;
+        }
+        if($same)
+        {
+            $link = '<a class="next_form" id="toggle" href="javascript:toggle();"><img src="img/zoom_in.png"/>Configuration avanc&eacute;e</a>';
+            $selector = "true";
         }
         else
         {
-            if($deliveries[$i]->GetGroupCompositionDeadline() != $deliveries[$i+1]->GetGroupCompositionDeadline() || $deliveries[$i]->GetDeadline() != $deliveries[$i+1]->GetDeadline())
-            {    
-                $same = false;
-                break;
-            }
+            $link = '<a class="next_form" id="toggle" href="javascript:toggle();"><img src="img/zoom_out.png"/>Configuration g&eacute;n&eacute;rale</a>';
+            $selector = "false";
         }
-        $i++;
     }
-    if($same)
+    
+    if($failed)
     {
-        $link = '<a class="next_form" id="toggle" href="javascript:toggle();"><img src="img/zoom_in.png"/>Configuration avanc&eacute;e</a>';
-        $selector = "true";
-    }
-    else
-    {
-        $link = '<a class="next_form" id="toggle" href="javascript:toggle();"><img src="img/zoom_out.png"/>Configuration g&eacute;n&eacute;rale</a>';
-        $selector = "false";
+        errorReport("Impossible d'afficher la page demand&eacute;e.");
     }
 ?>
 
@@ -250,7 +266,7 @@
 	    displayErrorReport();
 	    displaySuccessReport();
 	?>
-	<?php if(count($deliveries) > 0)
+	<?php if(!$failed && count($deliveries) > 0)
 	{ ?>
 	<div class="section">
 	    <?php echo $link; ?>

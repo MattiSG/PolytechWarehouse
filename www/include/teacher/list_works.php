@@ -3,9 +3,11 @@
     
     previousPage('teacher_list_subjects');
     addPreviousPageParameter('see', 'less');
+    $failed = false;
+    $subjectName = "???";
     
     // Retrieves the concerned subject and its works
-    if(isset($_GET['subject_id']))
+    if(isset($_GET['subject_id']) && PWHEntity::Valid("PWHSubject", $_GET['subject_id']))
     {
         try
         {
@@ -16,114 +18,117 @@
         }
         catch(Exception $ex)
         {
+            $failed = true;
             errorReport($ex->getMessage());
         }
     }
-    
-    if(isset($_GET['action']) && isset($_GET['work_id']))
+    else
     {
-        
-        $work = new PWHWork();
-        $work->Read($_GET['work_id']);
-        
-        if($_GET['action'] == 'delete')
-        {
-            if($_SESSION['id'] == $work->GetOwnerID())
+        $failed = true;
+    }
+    
+    if(!$failed)
+    {
+        if(isset($_GET['action']) && isset($_GET['work_id']) && PWHEntity::Valid("PWHWork", $_GET['work_id']))
+        {     
+            $work = new PWHWork();
+            $work->Read($_GET['work_id']);
+            
+            if($_GET['action'] == 'delete')
             {
-                try
-                {   
-                    $work->Delete();
-                    $subject->RemoveWorks(array($_GET['work_id']));
-                    $subject->Update();
-                    $deliveries = $work->GetDeliveries();
+                if($_SESSION['id'] == $work->GetOwnerID())
+                {
+                    try
+                    {   
+                        $work->Delete();
+                        $subject->RemoveWorks(array($_GET['work_id']));
+                        $subject->Update();
+                        $deliveries = $work->GetDeliveries();
+                        foreach($deliveries as $delivery)
+                        {
+                            $groups = $delivery->GetGroups();
+                            foreach($groups as $group)
+                            {
+                                $students = $group->GetStudents();
+                                PWHEvent::Notify($students, STUDENT_TYPE, "Le travail " . $subject->GetName() . "-" . $work->GetName() . " a &eacute;t&eacute; supprim&eacute;");
+                            }       
+                        }
+                        $teachers = $subject->GetTeachers();
+                        PWHEvent::Notify($teachers, TEACHER_TYPE, "Le travail " . $subject->GetName() . "-" . $work->GetName() . " a &eacute;t&eacute; supprim&eacute;");
+                        PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Suppression travail " . $subject->GetName() . "-" . $work->GetName());
+                        successReport("Le travail " . $work->GetName() . " a &eacute;t&eacute; supprim&eacute; de la mati&egrave;re " . $subject->GetName() . ".");    
+                    }
+                    catch(Exception $ex)
+                    {
+                        PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec suppression travail");
+                        errorReport($ex->getMessage());
+                    }
+                }
+                else
+                {
+                    PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Echec suppression travail " . $subject->GetName() . "-" . $work->GetName() . ": non propri&eacute;taire");
+                    errorReport("Echec de suppression du travail " . $work->GetName() . " : vous n'&ecirc;tes pas le propri&eacute;taire de ce travail.");
+                }
+            }
+            else if($_GET['action'] == 'publish')
+            {
+                $configured = true;
+                $deliveries = $work->GetDeliveries();
+                foreach($deliveries as $delivery)
+                {
+                    if(!$delivery->IsConfigured())
+                    {
+                        $configured = false;
+                    }
+                }
+                
+                if($configured)
+                {
+                    $work->SetPublished(true);
+                    $work->Update();
                     foreach($deliveries as $delivery)
                     {
                         $groups = $delivery->GetGroups();
                         foreach($groups as $group)
                         {
                             $students = $group->GetStudents();
-                            PWHEvent::Notify($students, STUDENT_TYPE, "Le travail " . $subject->GetName() . "-" . $work->GetName() . " a &eacute;t&eacute; supprim&eacute;");
+                            PWHEvent::Notify($students, STUDENT_TYPE, "Le travail " . $subject->GetName() . "-" . $work->GetName() . " a &eacute;t&eacute; ajout&eacute;");
                         }       
                     }
                     $teachers = $subject->GetTeachers();
-                    PWHEvent::Notify($teachers, TEACHER_TYPE, "Le travail " . $subject->GetName() . "-" . $work->GetName() . " a &eacute;t&eacute; supprim&eacute;");
-                    PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Suppression travail " . $subject->GetName() . "-" . $work->GetName());
-                    successReport("Le travail " . $work->GetName() . " a &eacute;t&eacute; supprim&eacute; de la mati&egrave;re " . $subject->GetName() . ".");    
+                    PWHEvent::Notify($teachers, TEACHER_TYPE, "Le travail " . $subject->GetName() . "-" . $work->GetName() . " a &eacute;t&eacute; publi&eacute; aupr&egrave;s des &eacute;tudiants");
+                    PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Publication travail " . $subject->GetName() . "-" . $work->GetName());
+                    successReport("Le travail " . $work->GetName() . " a &eacute;t&eacute; publi&eacute;.");
                 }
-                catch(Exception $ex)
+                else
                 {
-                    PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec suppression travail");
-                    errorReport($ex->getMessage());
+                    PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Echec publication travail " . $subject->GetName() . "-" . $work->GetName() . ": rendus non configur&eacute;s");
+                    errorReport("Le travail " . $work->GetName() . " ne peut pas &ecirc;tre publi&eacute; car les dates de rendu ne sont pas encore configur&eacute;es.");
                 }
-            }
-            else
-            {
-                PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Echec suppression travail " . $subject->GetName() . "-" . $work->GetName() . ": non propri&eacute;taire");
-                errorReport("Echec de suppression du travail " . $work->GetName() . " : vous n'&ecirc;tes pas le propri&eacute;taire de ce travail.");
             }
         }
-        else if($_GET['action'] == 'publish')
-        {
-            $configured = true;
-            $deliveries = $work->GetDeliveries();
-            foreach($deliveries as $delivery)
-            {
-                if(!$delivery->IsConfigured())
-                {
-                    $configured = false;
-                }
-            }
-            
-            if($configured)
-            {
-                $work->SetPublished(true);
-                $work->Update();
-                foreach($deliveries as $delivery)
-                {
-                    $groups = $delivery->GetGroups();
-                    foreach($groups as $group)
-                    {
-                        $students = $group->GetStudents();
-                        PWHEvent::Notify($students, STUDENT_TYPE, "Le travail " . $subject->GetName() . "-" . $work->GetName() . " a &eacute;t&eacute; ajout&eacute;");
-                    }       
-                }
-                $teachers = $subject->GetTeachers();
-                PWHEvent::Notify($teachers, TEACHER_TYPE, "Le travail " . $subject->GetName() . "-" . $work->GetName() . " a &eacute;t&eacute; publi&eacute; aupr&egrave;s des &eacute;tudiants");
-                PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Publication travail " . $subject->GetName() . "-" . $work->GetName());
-                successReport("Le travail " . $work->GetName() . " a &eacute;t&eacute; publi&eacute;.");
-            }
-            else
-            {
-                PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Echec publication travail " . $subject->GetName() . "-" . $work->GetName() . ": rendus non configur&eacute;s");
-                errorReport("Le travail " . $work->GetName() . " ne peut pas &ecirc;tre publi&eacute; car les dates de rendu ne sont pas encore configur&eacute;es.");
-            }
-        }
+        
+        $works = $subject->GetWorks();
+        $link = "<a class=\"next_form\" href=\"javascript:popup('include/teacher/subject_board.php?subject_id=" . $subject->GetID() . "', 1024, 768);\"><img src=\"img/zoom_in.png\"/>Voir le tableau de bord de la mati&egrave;re</a>";
+        $subjectName = mb_strtolower($subject->GetName());
     }
     
-    $works = $subject->GetWorks();
-    $link = "<a class=\"next_form\" href=\"javascript:popup('include/teacher/subject_board.php?subject_id=" . $subject->GetID() . "', 1024, 768);\"><img src=\"img/zoom_in.png\"/>Voir le tableau de bord de la mati&egrave;re</a>";
-?>
-
-<script type="text/javascript">
-<!--
-    function UserConfirmation(subject_id, work_id)
+    if($failed)
     {
-        if(confirm('Voulez-vous vraiment continuer ?'))
-        {
-            window.location = "index.php?page=teacher_list_works&action=delete&subject_id=" + subject_id + "&work_id=" + work_id;
-        }
+        errorReport("Impossible d'afficher la page demand&eacute;e.");
     }
-//-->
-</script>
-
+?>
 <fieldset>
-	<legend>travaux de <?php echo mb_strtolower($subject->GetName()); ?></legend>
+	<legend>travaux de <?php echo $subjectName; ?></legend>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/list_works.html', 800, 600);");
         
 	    displayErrorReport();
 	    displaySuccessReport();
+	    
+	    if(!$failed)
+	    {
     ?>
     <h4>R&eacute;capitulatif</h4>
     <div class="section">
@@ -251,4 +256,16 @@
     <div class="section">
 	    <?php echo $link; ?>
 	</div>
+	<?php } ?>
 </fieldset>
+<script type="text/javascript">
+<!--
+    function UserConfirmation(subject_id, work_id)
+    {
+        if(confirm('Voulez-vous vraiment continuer ?'))
+        {
+            window.location = "index.php?page=teacher_list_works&action=delete&subject_id=" + subject_id + "&work_id=" + work_id;
+        }
+    }
+//-->
+</script>

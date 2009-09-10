@@ -20,18 +20,37 @@
     // [FORM]  Update a teacher
     if(isset($_POST['teacherLogin']) && isset($_POST['teacherFirstName']) && isset($_POST['teacherLastName']) && isset($_POST['teacherEmail']))
     {
-        try
+        if(!preg_match("#^[a-zA-Z0-9]+$#", $_POST['teacherLogin']))
         {
-            $teacher->SetLogin(stripslashes($_POST['teacherLogin']));
-            $teacher->SetFirstName(stripslashes($_POST['teacherFirstName']));
-            $teacher->SetLastName(stripslashes($_POST['teacherLastName']));
-            $teacher->SetEmail(stripslashes($_POST['teacherEmail']));
-            $teacher->Update();      
-            successReport("L'enseignant " . $teacher->GetLogin() . " a &eacute;t&eacute; mis &agrave; jour.");
+            errorReport("Echec de la mise &agrave; jour du profil: le login ne doit comporter que des chiffres et des lettres");  
         }
-        catch(Exception $ex)
+        else if(!preg_match("#^[-éèêëàâäïîûùüöôç'a-zA-Z0-9 ]+$#", $_POST['teacherFirstName']))
         {
-            errorReport($ex->getMessage());
+            errorReport("Echec de la mise &agrave; jour du profil: le pr&eacute;nom ne doit comporter des lettres, espaces, apostrophes ou tir&eacute;s");  
+        }
+        else if(!preg_match("#^[-éèêëàâäïîûùüöôç'a-zA-Z0-9 ]+$#", $_POST['teacherLastName']))
+        {
+            errorReport("Echec de la mise &agrave; jour du profil: le nom ne doit comporter des lettres, espaces, apostrophes ou tir&eacute;s");  
+        }
+        else if(!preg_match("#^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$#", $_POST['teacherEmail']))
+        {
+            errorReport("Echec de la mise &agrave; jour du profil: l'email est invalide");  
+        }
+        else
+        {
+            try
+            {
+                $teacher->SetLogin(stripslashes($_POST['teacherLogin']));
+                $teacher->SetFirstName(stripslashes($_POST['teacherFirstName']));
+                $teacher->SetLastName(stripslashes($_POST['teacherLastName']));
+                $teacher->SetEmail(stripslashes($_POST['teacherEmail']));
+                $teacher->Update();      
+                successReport("L'enseignant " . $teacher->GetLogin() . " a &eacute;t&eacute; mis &agrave; jour.");
+            }
+            catch(Exception $ex)
+            {
+                errorReport($ex->getMessage());
+            }
         }
     }
 ?>

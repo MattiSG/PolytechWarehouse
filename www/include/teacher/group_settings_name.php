@@ -2,9 +2,11 @@
     PWHLog::Write(PWHLog::INFO, $_SESSION['login'], "Acc&egrave;s page group_settings_name");
     
     previousPage("teacher_list_groups");
+    $failed = false;
+    $groupName = "???";
       
     // Retrieves the concerned group
-    if(isset($_GET['group_id']))
+    if(isset($_GET['group_id']) && PWHEntity::Valid("PWHGroup", $_GET['group_id']))
     {
         try
         {
@@ -13,41 +15,59 @@
         }
         catch(Exception $ex)
         {
+            $failed = true;
             errorReport($ex->getMessage);
         }
     }
-    
-    // [FORM] Changes the name of the group
-    if(isset($_POST['groupName']))
-    {       
-        try
-        {
-            $oldName = $group->GetName();
-            $group->SetName(stripslashes($_POST['groupName']));
-            $group->Update();
-            PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Mise &agrave; jour [nom] groupe " . $group->GetName());
-            successReport("Le groupe " . $oldName . " a &eacute;t&eacute; renomm&eacute; en " . $group->GetName() . ".");
-        }
-        catch(Exception $ex)
-        {
-             PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec mise &agrave; jour [nom] groupe");
-            errorReport($ex->getMessage());
-        }
+    else
+    {
+        $failed = true;
     }
     
-    $existingStudents = $group->GetStudents();
-    usort($existingStudents, "person_comparator");
-    $link = '<a class="next_form" id="toggle" href="javascript:toggle();"><img src="img/zoom_in.png"/>Voir les &eacute;tudiants d&eacute;j&agrave; pr&eacute;sents</a>';
+    if(!$failed)
+    {
+        // [FORM] Changes the name of the group
+        if(isset($_POST['groupName']))
+        {       
+            try
+            {
+                $oldName = $group->GetName();
+                $group->SetName(stripslashes($_POST['groupName']));
+                $group->Update();
+                PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Mise &agrave; jour [nom] groupe " . $group->GetName());
+                successReport("Le groupe " . $oldName . " a &eacute;t&eacute; renomm&eacute; en " . $group->GetName() . ".");
+            }
+            catch(Exception $ex)
+            {
+                 PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec mise &agrave; jour [nom] groupe");
+                errorReport($ex->getMessage());
+            }
+        }
+    
+        $existingStudents = $group->GetStudents();
+        usort($existingStudents, "person_comparator");
+        $link = '<a class="next_form" id="toggle" href="javascript:toggle();"><img src="img/zoom_in.png"/>Voir les &eacute;tudiants d&eacute;j&agrave; pr&eacute;sents</a>';
+        $groupName = mb_strtolower($group->GetName());
+    }
+    
+    if($failed)
+    {
+        errorReport("Impossible d'afficher la page demand&eacute;e.");
+    }
+
 ?>
 
 <fieldset>
-	<legend>configuration de <?php echo mb_strtolower($group->GetName()); ?></legend>
+	<legend>configuration de <?php echo $groupName; ?></legend>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/group_settings_name.html', 800, 550);");
         
 	    displayErrorReport();
 	    displaySuccessReport();
+	    
+	    if(!$failed)
+	    {
 	?>
 	<div class="tab">
       <ul>
@@ -106,8 +126,8 @@
             </table>
         </div>
     </div>
+    <?php } ?>
 </fieldset>
-
 <script type="text/javascript">
 <!--
     function CheckForm()

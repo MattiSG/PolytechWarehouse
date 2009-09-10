@@ -3,7 +3,8 @@
     // Array of all the authorized page to display and their name for a kind of user
     $validPages = array(
         'login' => 'include/login.php',
-        'logout' => 'include/logout.php');
+        'logout' => 'include/logout.php',
+        'credits' => 'include/credits.php');
     
     if($_SESSION['type'] == STUDENT_TYPE)
     {
@@ -50,7 +51,6 @@
 				    'teacher_list_deliveries' => 'include/teacher/list_deliveries.php',
 				    'teacher_delivery_settings' => 'include/teacher/delivery_settings.php',
 				    'teacher_deliveries_settings' => 'include/teacher/deliveries_settings.php',
-				    'teacher_display_delivery' => 'include/teacher/display_delivery.php',
 				    'teacher_display_board' => 'include/teacher/display_board.php',
 				    'teacher_create_deliverygroup' => 'include/teacher/create_deliverygroup.php',
 				    'teacher_list_groups_deliveries' => 'include/teacher/list_groups_deliveries.php',

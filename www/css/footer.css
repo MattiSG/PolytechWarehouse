@@ -16,6 +16,14 @@
 #footer p a
 {
     padding-top: 5px;
+    text-decoration: none;
+    color: #7ba5d9;
+}
+
+#footer p a:hover
+{
+    text-decoration: none;
+    color: #e72d43;
 }
 
 #footer p img

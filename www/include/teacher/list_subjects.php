@@ -1,44 +1,8 @@
 <?php
     PWHLog::Write(PWHLog::INFO, $_SESSION['login'], "Acc&egrave;s page list_subjects");
     previousPage('teacher_home');
-    
-    // [LINK ACTION] Delete the specified subject 
-    if(isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['subject_id']))
-    {
-        try 
-        {
-            $subject = new PWHSubject();
-            $subject->Read($_GET['subject_id']);
-            
-            if($subject->TeacherExists($_SESSION['id']))
-            {
-                if(!$subject->HasWorks())
-                {
-                    $subject->Delete();
-                    $teachers = $subject->GetTeachers();
-                    PWHEvent::Notify($teachers, TEACHER_TYPE, "La mati&egrave;re " . $subject->GetName() . " a &eacute;t&eacute; supprim&eacute;e");
-                    PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Suppression mati&egrave;re " . $subject->GetName());
-                    successReport("La mati&egrave;re " . $subject->GetName() . " a &eacute;t&eacute; supprim&eacute;e.");
-                }
-                else
-                {
-                    PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Echec suppression mati&egrave;re " . $subject->GetName() . ": travaux existants");
-                    errorReport("La mati&egrave;re ne peut pas &ecirc;tre supprim&eacute;e car elle contient des travaux.");
-                }
-            }
-            else
-            {
-                PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Echec suppression mati&egrave;re " . $subject->GetName() . ": non responsable");
-                errorReport("Echec de suppression de la mati&egrave;re " . $subject->GetName() . " : vous n'appartenez pas aux enseignants responsables de cette mati&egrave;re.");
-            }
-        }
-        catch(Exception $ex)
-        {
-            errorReport($ex->getMessage());
-            PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec suppression mati&egrave;re");
-        }
-    }
-    
+    $failed = false;
+      
     // Retrieves the list of all subjects or the concerned subjects only
     $toggle = "see=more";
     $link = "[+] Voir toutes les mati&egrave;res";
@@ -55,8 +19,8 @@
             }
             catch(Exception $ex)
             {
+                $failed = true;
                 errorReport($ex->getMessage());
-                $subjects = array();
             }
         }
         else if($_GET['see'] == "less")
@@ -70,26 +34,65 @@
             }
             catch(Exception $ex)
             {
+                $failed = true;
                 errorReport($ex->getMessage());
-                $subjects = array();
             }
         }
-   }
-        
-?>
-
-<script type="text/javascript">
-<!--
-    function UserConfirmation(see, subject_id)
-    {
-        if(confirm('Voulez-vous vraiment continuer ?'))
+        else
         {
-            window.location = "index.php?page=teacher_list_subjects&see=" + see + "&action=delete&subject_id=" + subject_id;
+            $failed = true;
         }
     }
-//-->
-</script>
-
+    else
+    {
+        $failed = true;
+    }
+   
+    if(!$failed)
+    {
+        // [FORM] Delete the specified subject 
+        if(isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['subject_id']))
+        {
+            try 
+            {
+                $subject = new PWHSubject();
+                $subject->Read($_GET['subject_id']);
+                
+                if($subject->TeacherExists($_SESSION['id']))
+                {
+                    if(!$subject->HasWorks())
+                    {
+                        $subject->Delete();
+                        $teachers = $subject->GetTeachers();
+                        PWHEvent::Notify($teachers, TEACHER_TYPE, "La mati&egrave;re " . $subject->GetName() . " a &eacute;t&eacute; supprim&eacute;e");
+                        PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Suppression mati&egrave;re " . $subject->GetName());
+                        successReport("La mati&egrave;re " . $subject->GetName() . " a &eacute;t&eacute; supprim&eacute;e.");
+                    }
+                    else
+                    {
+                        PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Echec suppression mati&egrave;re " . $subject->GetName() . ": travaux existants");
+                        errorReport("La mati&egrave;re ne peut pas &ecirc;tre supprim&eacute;e car elle contient des travaux.");
+                    }
+                }
+                else
+                {
+                    PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Echec suppression mati&egrave;re " . $subject->GetName() . ": non responsable");
+                    errorReport("Echec de suppression de la mati&egrave;re " . $subject->GetName() . " : vous n'appartenez pas aux enseignants responsables de cette mati&egrave;re.");
+                }
+            }
+            catch(Exception $ex)
+            {
+                errorReport($ex->getMessage());
+                PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec suppression mati&egrave;re");
+            }
+        }
+    }
+    
+    if($failed)
+    {
+        errorReport("Impossible d'afficher la page demand&eacute;e.");
+    }
+?>
 <fieldset>
 	<legend>gestion des mati&egrave;res</legend>
 	<?php
@@ -98,6 +101,9 @@
         
 	    displayErrorReport();
 	    displaySuccessReport();
+	    
+	    if(!$failed)
+	    {
 	?>
 	<h4>Cr&eacute;ation de mati&egrave;res</h4>
 	<div class="section">
@@ -156,4 +162,16 @@
             
         </table>
     </div>
+    <?php } ?>
 </fieldset>
+<script type="text/javascript">
+<!--
+    function UserConfirmation(see, subject_id)
+    {
+        if(confirm('Voulez-vous vraiment continuer ?'))
+        {
+            window.location = "index.php?page=teacher_list_subjects&see=" + see + "&action=delete&subject_id=" + subject_id;
+        }
+    }
+//-->
+</script>
