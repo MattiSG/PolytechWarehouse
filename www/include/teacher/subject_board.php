@@ -28,7 +28,7 @@
     }
     if(!$failed)
     {
-        $subjectName = mb_strtolower($subjects->GetName());
+        $subjectName = mb_strtolower($subject->GetName());
     }
 
     if($failed)
