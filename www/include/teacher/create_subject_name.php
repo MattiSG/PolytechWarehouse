@@ -3,7 +3,7 @@
     
     previousPage('teacher_list_subjects');
     addPreviousPageParameter('see', 'less');
-    $failed = true;
+    $failed = false;
     
     // Clean session variables that will be used during the creation of the subject
     if(isset($_SESSION['subject_name']))
