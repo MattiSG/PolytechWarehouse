@@ -75,6 +75,7 @@
         
         $dateTranslator = new PWHDateTranslator();
         $deliveryName = mb_strtolower($delivery->GetName());
+        $deliverygroups = $delivery->GetDeliverygroups();
     }
     
     if($failed)

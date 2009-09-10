@@ -1,7 +1,7 @@
 <?php
     PWHLog::Write(PWHLog::INFO, $_SESSION['login'], "Acc&egrave;s page create_subject_teachers");
-    
     previousPage('teacher_create_subject_name');
+    $failed = false;
         
     // Retrieves the list of teachers sorted, corresponding to the value of the index
     if(isset($_GET['index']) && preg_match("#^[A-Z]$#", $_GET['index']))
@@ -26,24 +26,19 @@
         $failed = true;
     }
     
-    // [FORM] Save the name of the subject into the session
-    if(isset($_POST['subjectName']) && isset($_POST['promo']))
+    if(!$failed)
     {
-        $_SESSION['subject_name'] = stripslashes($_POST['subjectName']);
-        $_SESSION['promo'] = $_POST['promo'];
+        // [FORM] Save the name of the subject into the session
+        if(isset($_POST['subjectName']) && isset($_POST['promo']))
+        {
+            $_SESSION['subject_name'] = stripslashes($_POST['subjectName']);
+            $_SESSION['promo'] = $_POST['promo'];
+        }
         // Saves the specified name when go back to the previous page
         addPreviousPageParameter('subject_name', $_SESSION['subject_name']);   
         // Saves the specified promo when go back to the previous page
         addPreviousPageParameter('promo', $_SESSION['promo']);
-    }
-    else
-    {
-        $failed = true;
-    }    
     
-
-    if(!$failed)
-    {
         if(!isset($_SESSION['teachers']))
         {
             $_SESSION['teachers'] = array();
@@ -98,10 +93,9 @@
         displayErrorReport();
         displaySuccessReport();
         
-	    echo $memo->Html();
-	    
 	    if(!$failed)
 	    {
+	        echo $memo->Html();
 	?>
 	<h4>Liste des enseignants disponibles</h4>
 	<div class="section">

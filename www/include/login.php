@@ -24,39 +24,47 @@ if($action == 'login')
     $pwd_admin =  ADMIN_PASS;
     
     // Looks if the login and password matches
-    if ($login == $login_admin && $pwd = $pwd_admin)
+    if ($login == $login_admin)
       {
-	$_SESSION['logged'] = true;
-	$_SESSION['login'] = $login;
-	$_SESSION['type'] = ADMIN_TYPE;
-	$_SESSION['id'] = 0;
-	PWHLog::Write(PWHLog::INFO, "admin", "Connexion de l'administrateur");
-	redirect('index.php');		
+        if($pwd == $pwd_admin)
+        {
+	        $_SESSION['logged'] = true;
+	        $_SESSION['login'] = $login;
+	        $_SESSION['type'] = ADMIN_TYPE;
+	        $_SESSION['id'] = 0;
+	        PWHLog::Write(PWHLog::INFO, "admin", "Connexion de l'administrateur");
+	        redirect('index.php');
+	    }
+	    else
+	    {
+	        PWHLog::Write(PWHLog::ERROR, "__not_logged", "Echec de la connexion: identifiant et/ou mot de passe incorrects");
+	errorReport("Echec de la connexion : L'identifiant et/ou le mot de passe sont incorrects."); 
+	    }
       }
     else if(PWHLogger::CheckPassword($login, $pwd))
       {
-	$_SESSION['type'] = PWHLogger::GetUserType($login);
-	if($_SESSION['type'] != UNREGISTERED_TYPE)
-	  {
-	    $_SESSION['id'] = PWHLogger::GetUserID($login, $_SESSION['type']);
-	    if($_SESSION['id'] != NO_ID)
+	    $_SESSION['type'] = PWHLogger::GetUserType($login);
+	    if($_SESSION['type'] != UNREGISTERED_TYPE)
 	      {
-		$_SESSION['logged'] = true;
-		$_SESSION['login'] = $login;
-		PWHLog::Write(PWHLog::INFO, $_SESSION['login'], "Connexion de l'utilisateur");
-		redirect('index.php');
+	        $_SESSION['id'] = PWHLogger::GetUserID($login, $_SESSION['type']);
+	        if($_SESSION['id'] != NO_ID)
+	          {
+		        $_SESSION['logged'] = true;
+		        $_SESSION['login'] = $login;
+		        PWHLog::Write(PWHLog::INFO, $_SESSION['login'], "Connexion de l'utilisateur");
+		        redirect('index.php');
+	          }
+	        else
+	          {
+		        PWHLog::Write(PWHLog::ERROR, $login, "Echec de la connexion: utilisateur LDAP non charg&eacute;");
+		        errorReport("Echec de la connexion : Vos identifiants sont corrects mais vous n'avez pas encore &eacute;t&eacute; enregistr&eacute; dans le d&eacute;p&ocirc;t. Veuillez le signaler &agrave; votre responsable de parcours ou &agrave; l'administrateur.");   
+	          }
 	      }
 	    else
 	      {
-		PWHLog::Write(PWHLog::ERROR, $login, "Echec de la connexion: utilisateur LDAP non charg&eacute;");
-		errorReport("Echec de la connexion : Vos identifiants sont corrects mais vous n'avez pas encore &eacute;t&eacute; enregistr&eacute; dans le d&eacute;p&ocirc;t. Veuillez le signaler &agrave; votre responsable de parcours ou &agrave; l'administrateur.");   
+	        PWHLog::Write(PWHLog::ERROR, $login, "Echec de la connexion: utilisateur LDAP non charg&eacute;");
+	        errorReport("Echec de la connexion : Vos identifiants sont corrects mais vous n'avez pas encore &eacute;t&eacute; enregistr&eacute; dans le d&eacute;p&ocirc;t. Veuillez le signaler &agrave; votre responsable de parcours ou &agrave; l'administrateur.");
 	      }
-	  }
-	else
-	  {
-	    PWHLog::Write(PWHLog::ERROR, $login, "Echec de la connexion: utilisateur LDAP non charg&eacute;");
-	    errorReport("Echec de la connexion : Vos identifiants sont corrects mais vous n'avez pas encore &eacute;t&eacute; enregistr&eacute; dans le d&eacute;p&ocirc;t. Veuillez le signaler &agrave; votre responsable de parcours ou &agrave; l'administrateur.");
-	  }
       }
     else
       { 
