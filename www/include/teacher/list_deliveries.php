@@ -290,7 +290,7 @@
 <!--
     function UserConfirmation(subject_id, work_id, delivery_id)
     {
-        if(confirm('Voulez-vous vraiment continuer ?'))
+        if(confirm('****** ATTENTION ******\n\nLa suppression d\'un rendu est définitive ! \n\nEtes vous sur de vouloir continuer ? \n\nCliquez sur \'OK\' pour confirmer votre choix, ou sur \'Annuler\' pour ne pas poursuivre.'))
         {
             window.location = "index.php?page=teacher_list_deliveries&action=delete&subject_id=" + subject_id + "&work_id=" + work_id + "&delivery_id=" + delivery_id;
         }

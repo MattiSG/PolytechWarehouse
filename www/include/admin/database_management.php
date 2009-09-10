@@ -24,7 +24,7 @@
 <!--
     function UserConfirmation()
     {
-        if(confirm('Voulez-vous vraiment continuer ?'))
+        if(confirm('****** ATTENTION ******\n\nLa suppression de la base de données est définitive ! \n\nEtes vous sur de vouloir continuer ? \n\nCliquez sur \'OK\' pour confirmer votre choix, ou sur \'Annuler\' pour ne pas poursuivre.'))
         {
             window.location = "index.php?page=admin_database_management&action=erase_all";
         }

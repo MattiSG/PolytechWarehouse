@@ -6,7 +6,11 @@
         'logout' => 'include/logout.php',
         'credits' => 'include/credits.php');
     
-    if($_SESSION['type'] == STUDENT_TYPE)
+if (! array_key_exists('type',$_SESSION))
+  {
+    $validPages = array_merge($validPages, array());
+  }
+else if($_SESSION['type'] == STUDENT_TYPE)
     {
         $validPages = array_merge($validPages, array(
 				    'student_home' => 'include/student/home.php',

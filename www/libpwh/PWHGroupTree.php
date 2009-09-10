@@ -69,7 +69,7 @@
 		    }
 		    else
 		    {
-		        $strbuf .= '<a><img src="' . IMG_PATH() . 'square.png" id="node'. $id .'"></a>';
+		        $strbuf = '<a><img src="' . IMG_PATH() . 'square.png" id="node'. $id .'"></a>';
 		    }
 		    if($id != 0)
 		    {

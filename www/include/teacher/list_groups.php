@@ -97,7 +97,7 @@
 <!--
     function UserConfirmation(group_id)
     {
-        if(confirm('Voulez-vous vraiment continuer ?'))
+        if(confirm('****** ATTENTION ******\n\nLa suppression d\'un groupe est définitive ! \nLes étudiants ne seront pas effacés du système, mais juste désaffecté du groupe que vous supprimez.\n\nEtes vous sur de vouloir continuer ? \n\nCliquez sur \'OK\' pour confirmer votre choix, ou sur \'Annuler\' pour ne pas poursuivre.'))
         {
             window.location = "index.php?page=teacher_list_groups&action=delete&group_id=" + group_id;
         }

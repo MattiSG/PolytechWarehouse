@@ -23,7 +23,7 @@
 <!--
     function UserConfirmation()
     {
-        if(confirm('Voulez-vous vraiment continuer ?'))
+        if(confirm('****** ATTENTION ******\n\nLa suppression du fichier de log est définitive ! \n\nEtes vous sur de vouloir continuer ? \n\nCliquez sur \'OK\' pour confirmer votre choix, ou sur \'Annuler\' pour ne pas poursuivre.'))
         {
             window.location = "index.php?page=admin_log_management&action=erase_all";
         }
