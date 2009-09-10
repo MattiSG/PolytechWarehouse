@@ -5,7 +5,7 @@
     $failed = false;
     
     // Definition of the parent group
-    if(isset($_POST['parentGroup']) && PWHEntity::Valid("PWHGroup", $_POST['parent_group']) && isset($_POST['groupName']))
+    if(isset($_POST['parentGroup']) && PWHEntity::Valid("PWHGroup", $_POST['parentGroup']) && isset($_POST['groupName']))
     {
         $_SESSION['parent_group'] = (int)$_POST['parentGroup'];
         
@@ -24,11 +24,6 @@
         // Saves the specified name when go back to the previous page
         addPreviousPageParameter('group_name', $_SESSION['group_name']);
     }
-    else
-    {
-        $failed = true;
-    }
-    
        
     // Retrieves the list of students sorted, corresponding to the value of the index
     if(isset($_GET['index']) && preg_match("#^[A-Z]$#", $_GET['index']))
@@ -107,7 +102,7 @@
                     PWHLog::Write(PWHLog::ERROR, $_SESSION['login'], "Echec cr&eacute;ation groupe");
                 }
             }
-         }
+        }
          
         // Creates a new memo for the user     
         $memo = new PWHGroupCreationMemo();
@@ -167,7 +162,7 @@
 	            echo $table->Html($students, "Ajouter +");
 	        ?>
 	   </form>
-	   <form id="submit_group" method="post" action="index.php?page=teacher_create_group_students&amp;action=create">
+	   <form id="submit_group" method="post" action="index.php?page=teacher_create_group_students&amp;action=create&amp;index=<?php echo $_GET['index']; ?>">
             <input onclick="javascript:UserConfirmSubmit();" class="next_form" <?php echo $disabled; ?> type="submit" value="Cr&eacute;er !"/>
         </form>
 	</div>
