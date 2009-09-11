@@ -19,7 +19,7 @@
             else if($this->_Type == STUDENT_TYPE)
             {
                 $strbuf .= '<li><a href="index.php?page=student_list_deliveries"><img src="img/package.png"/>Mes rendus</a></li>';
-                $strbuf .= '<li><a href="export/index.php?id='. $_SESSION['id'] . '&amp;action=show_cal"><img src="img/calendar.png"/>iCalendar</a></li>';
+                $strbuf .= '<li><a href="export/index.php?type=student&amp;student_id=' . $_SESSION['id'] . '&amp;action=show_cal"><img src="img/calendar.png"/>iCalendar</a></li>';
                 $strbuf .= '<li><a href="index.php?page=student_email_groups"><img src="img/email.png"/>Mailing</a></li>';
             }
             else if($this->_Type == ADMIN_TYPE)
