@@ -4,7 +4,7 @@
     $failed = false;
         
     // Retrieves the list of teachers sorted, corresponding to the value of the index
-    if(isset($_GET['index']) && preg_match("#^[A-Z]$#", $_GET['index']))
+    if(isset($_GET['index']) && preg_match("#^[*A-Z]$#", $_GET['index']))
     {
         try
         {

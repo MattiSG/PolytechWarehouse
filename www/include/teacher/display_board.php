@@ -19,7 +19,8 @@
     {
         unset($_SESSION['students']);
     }
-    if(isset($_GET['subject_id']) && isset($_GET['work_id']) && isset($_GET['delivery_id'])
+    
+    if(isset($_GET['subject_id']) && isset($_GET['work_id']) && isset($_GET['delivery_id']) && isset($_GET['index']) && preg_match("#^[*A-Z]$#", $_GET['index'])
         && PWHEntity::Valid("PWHSubject", $_GET['subject_id'])
         && PWHEntity::Valid("PWHWork", $_GET['work_id'])
         && PWHEntity::Valid("PWHDelivery", $_GET['delivery_id']))

@@ -42,7 +42,7 @@
     }
     
     // Retrieves the list of students of the concerned group and the list of all students
-    if(isset($_GET['index']) && preg_match("#^[A-Z]$#", $_GET['index']))
+    if(isset($_GET['index']) && preg_match("#^[*A-Z]$#", $_GET['index']))
     {
         try
         {

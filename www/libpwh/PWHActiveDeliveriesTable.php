@@ -101,7 +101,7 @@
                         }
                     }
                     
-                    $strbuf .= '<tr' . $class . '>';
+                    $strbuf .= '<tr class="delivered_line">';
                     $strbuf .= '<td><a href="index.php?page=student_display_delivery&amp;subject_id=' . $subject->GetID() . '&amp;work_id=' . $work->GetID() . '&amp;delivery_id=' . $delivery->GetID() . '"><img src="img/bullet_go.png"/>' . $subject->GetName() .' / ' . $work->GetName() . '</a></td>';
                     $strbuf .= '<td id="delivery_days_left' . $id . '">' . ($groupDaysLeft < 0 ? 0 : $groupDaysLeft) . '</td>';
                     $strbuf .= '<td id="extra_time_left' . $id . '">' . ($deliveryDaysLeft < 0 ? 0 : $deliveryDaysLeft) . '</td>';

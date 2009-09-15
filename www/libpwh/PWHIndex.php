@@ -4,11 +4,28 @@
         public function Html($link, $active, $secure, $persons)
         {
             $strbuf = '<div class="index">';
-            if($secure)
+            if($persons == null)
             {
-                if($persons == null || count($persons) > 0)
+                $strbuf .= '<a class="empty">*</a>';
+                for($letter = 'A'; $letter < 'Z'; ++$letter)
                 {
-                    $strbuf .= '<a href="javascript:MakeIndex(\'' . $link . '\', \'*\');">*</a> ';
+                    $strbuf .= '<a class="empty">' . $letter . '</a>';
+                }
+                $strbuf .= '<a class="empty">Z</a>';
+            }
+            else if($secure)
+            {
+                if(count($persons) > 0)
+                {
+                    if(strcmp('*', $active) == 0)
+                    {
+                        $strbuf .= '<a class="active" ';
+                    }
+                    else
+                    {
+                        $strbuf .= '<a ';
+                    }
+                    $strbuf .= 'href="javascript:MakeIndex(\'' . $link . '\', \'*\');">*</a>' ;
                 }
                 else
                 {
@@ -16,12 +33,8 @@
                 }
                 for($letter = 'A'; $letter < 'Z'; ++$letter)
                 {
-                    if($persons != null)
-                    {
-                        $filter = $this->FilterPersons($persons, $letter);
-                    }
-                    
-                    if($persons == null || count($filter) > 0)
+                    $filtered = $this->FilterPersons($persons, $letter);
+                    if(count($filtered) > 0)
                     {
                         if(strcmp($letter, $active) == 0)
                         {
@@ -39,14 +52,18 @@
                     }
                 }
                 
-                if($persons != null)
+                $filtered = $this->FilterPersons($persons, "Z");
+                if(count($filtered) > 0)
                 {
-                    $filter = $this->FilterPersons($persons, "Z");
-                }
-                
-                if($persons == null || count($filter) > 0)
-                {
-                    $strbuf .= '<a href="javascript:MakeIndex(\'' . $link . '\', \'Z\');">Z</a> ';
+                    if(strcmp('Z', $active) == 0)
+                    {
+                        $strbuf .= '<a class="active" ';
+                    }
+                    else
+                    {
+                        $strbuf .= '<a ';
+                    }
+                    $strbuf .= 'href="javascript:MakeIndex(\'' . $link . '\', \'Z\');">Z</a>' ;
                 }
                 else
                 {
@@ -55,22 +72,26 @@
             }
             else
             {
-                if($persons == null || count($persons) > 0)
+                if(count($persons) > 0)
                 {
-                    $strbuf .= '<a href="' . $link . '&amp;index=*">*</a> ';
+                    if(strcmp('*', $active) == 0)
+                    {
+                        $strbuf .= '<a class="active" ';
+                    }
+                    else
+                    {
+                        $strbuf .= '<a ';
+                    }
+                    $strbuf .= 'href="' . $link . '&amp;index=*">*</a>' ;
                 }
                 else
                 {
-                    '<a class="empty">*</a>';
+                    $strbuf .= '<a class="empty">*</a>';
                 }
                 for($letter = 'A'; $letter < 'Z'; ++$letter)
                 {
-                    if($persons != null)
-                    {
-                        $filter = $this->FilterPersons($persons, $letter);
-                    }
-                    
-                    if($persons == null || count($filter) > 0)
+                    $filtered = $this->FilterPersons($persons, $letter);
+                    if(count($filtered) > 0)
                     {
                         if(strcmp($letter, $active) == 0)
                         {
@@ -87,19 +108,23 @@
                         $strbuf .= '<a class="empty">' . $letter . '</a>';
                     }
                 }
-                
-                if($persons != null)
+
+                $filtered = $this->FilterPersons($persons, "Z");
+                if(count($filtered) > 0)
                 {
-                    $filter = $this->FilterPersons($persons, "Z");
-                }
-                
-                if($persons == null || count($filter) > 0)
-                {
-                    $strbuf .= '<a href="' . $link . '&amp;index=Z">Z</a> ';
+                    if(strcmp('Z', $active) == 0)
+                    {
+                        $strbuf .= '<a class="active" ';
+                    }
+                    else
+                    {
+                        $strbuf .= '<a ';
+                    }
+                    $strbuf .= 'href="' . $link . '&amp;index=Z">Z</a>' ;
                 }
                 else
                 {
-                    '<a class="empty">Z</a>';
+                    $strbuf .= '<a class="empty">Z</a>';
                 }
             }
             return $strbuf . '</div>';
@@ -123,6 +148,6 @@
                 }
             }
             return $persons;
-        }  
+        }
     }
 ?>

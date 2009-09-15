@@ -6,7 +6,7 @@
     $groupName = "???";
     
     // Retrieves the concerned group and students
-    if(isset($_GET['group_id']) && PWHEntity::Valid("PWHGroup", $_GET['group_id']) && isset($_GET['index']) && preg_match("#^[A-Z]$#", $_GET['index']))
+    if(isset($_GET['group_id']) && PWHEntity::Valid("PWHGroup", $_GET['group_id']) && isset($_GET['index']) && preg_match("#^[*A-Z]$#", $_GET['index']))
     {
         try
         {
