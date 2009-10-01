@@ -289,7 +289,6 @@
 		                        <td><?php echo $dateTranslator->Html($delivery->GetDeadline(), PWHDateTranslator::DATE_AND_TIME); ?></td>
 	                        </tr>     
 	                        <?php
-	                        $id++;
 	                        $i++;
 	                    }
                     }
