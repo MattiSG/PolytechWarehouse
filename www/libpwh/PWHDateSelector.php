@@ -123,7 +123,7 @@
             {
                 $strbuf .= 'selected="selected" ';
             }
-            $strbuf .= 'value="11">D&eacute;cembre</option>';
+            $strbuf .= 'value="12">D&eacute;cembre</option>';
             $strbuf .= '</select>';
             
             $year = (int)date('Y');

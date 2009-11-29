@@ -26,7 +26,7 @@
             try
             {
                 $teacher = new PWHTeacher();
-                $teacher->SetLogin(stripslashes($_POST['teacherLogin']));
+                $teacher->SetLogin(strtolower(stripslashes($_POST['teacherLogin'])));
                 $teacher->SetFirstName(stripslashes($_POST['teacherFirstName']));
                 $teacher->SetLastName(stripslashes($_POST['teacherLastName']));
                 $teacher->SetEmail(stripslashes($_POST['teacherEmail']));

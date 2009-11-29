@@ -50,7 +50,7 @@
                 try
                 {
                     $student = new PWHStudent();
-                    $student->SetLogin(stripslashes($_POST['studentLogin']));
+                    $student->SetLogin(strtolower(stripslashes($_POST['studentLogin'])));
                     $student->SetFirstName(stripslashes($_POST['studentFirstName']));
                     $student->SetLastName(stripslashes($_POST['studentLastName']));
                     $student->SetEmail(stripslashes($_POST['studentEmail']));

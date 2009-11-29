@@ -144,7 +144,7 @@
                         {
                             $info = explode(';', $line);
                             $student = new PWHStudent();
-                            $student->SetLogin($info[0]);
+                            $student->SetLogin(strtolower($info[0]));
                             $student->SetFirstName($info[3]);
                             $student->SetLastName($info[2]);
                             $student->SetEmail($info[1]);
