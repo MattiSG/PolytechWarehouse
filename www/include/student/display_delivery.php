@@ -231,7 +231,7 @@
         
         displayErrorReport();
 	    displaySuccessReport();   
-    if(!$failed)
+    if(!$failed && $exist)
     {     
 	    foreach($memos as $memo)
 	    {

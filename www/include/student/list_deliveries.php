@@ -36,8 +36,8 @@
         
         $activeDelivered = array();
         $activeUndelivered = array();
-        $unactiveDelivered = array();
-        $unactiveUndelivered = array();
+        $inactiveDelivered = array();
+        $inactiveUndelivered = array();
         
         foreach($deliveries as $delivery)
         {
@@ -56,11 +56,11 @@
             {
                 if($student->HasDeliverygroup($delivery->GetID()) && $student->GetDeliverygroup($delivery->GetID())->GetLastDelivery() != "")
                 {
-                   array_push($unactiveDelivered, $delivery);
+                   array_push($inactiveDelivered, $delivery);
                 }
                 else
                 {
-                    array_push($unactiveUndelivered, $delivery);
+                    array_push($inactiveUndelivered, $delivery);
                 }
             }
         }
