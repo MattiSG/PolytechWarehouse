@@ -64,7 +64,7 @@
             $_SESSION['files'] = array();
             for($i=1; $i<=$_POST['numberFiles']; $i++)
             {
-                $_SESSION['files'][str_replace(" ", "_", stripslashes($_POST['fileName' . $i]))] = $_POST['fileFormat' . $i];
+                $_SESSION['files'][str_replace(array(" ","."), "_", stripslashes($_POST['fileName' . $i]))] = $_POST['fileFormat' . $i];
             }
         }
         
