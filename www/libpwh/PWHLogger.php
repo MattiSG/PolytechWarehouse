@@ -17,7 +17,7 @@
         public static function CheckPassword($userName, $plainTextPassword)
         {
             $userName = addslashes($userName);
-            $plainTextPassword = addslashes($plainTextPassword);
+            $plainTextPassword = stripslashes($plainTextPassword);
             if(BROKEN_GLASS)
             {
                 return true;

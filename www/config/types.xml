@@ -2,6 +2,7 @@
 <!-- metatypes used in work constraints --><metatypes>
 	    <metatype id="1" name="libre">
 	      <pattern id="1-1" name="libre">.*</pattern>
+	      <pattern id="1-2" name="crypt">.\cpt</pattern>
 	    </metatype>
 	    <metatype id="2" name="archive">
 	        <pattern id="2-1" name="zip">.*\.zip</pattern>
