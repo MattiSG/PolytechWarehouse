@@ -327,7 +327,6 @@
                 {
                     if($result = @sqlite_query($db, 'SELECT delivery_id FROM PWHGroupDelivery WHERE group_id = ' . sqlite_escape_string($this->_ID) . ';'))
                     {
-                        sqlite_close($db);                  
                         $deliveries = array();
                         while($tuple = sqlite_fetch_array($result))
                         {
@@ -335,6 +334,8 @@
                             $delivery->Read((int)$tuple['delivery_id']);
                             array_push($deliveries, $delivery);
                         }
+                        sqlite_close($db);
+
                         if($recursive)
                         {
                             $children = self::GetChildrenOf($this->_ID);
@@ -369,8 +370,8 @@
                 {
                     if($result = @sqlite_query($db, 'SELECT COUNT(delivery_id) AS count FROM PWHGroupDelivery WHERE group_id  = ' . sqlite_escape_string($this->_ID) . ';'))
                     {
-                        sqlite_close($db);                  
                         $result = sqlite_fetch_single($result);
+                        sqlite_close($db);
                         return $result['count'] > 0;
                     }
                     else
@@ -397,7 +398,6 @@
                 {
                     if($result = @sqlite_query($db, 'SELECT COUNT(subject_id) AS count FROM PWHGroupSubject WHERE group_id  = ' . sqlite_escape_string($this->_ID) . ';'))
                     {
-                        sqlite_close($db);                  
                         $result = sqlite_fetch_single($result);
                         $children = self::GetChildrenOf($this->_ID);
                         $childHas = false;
@@ -411,6 +411,7 @@
                                 }
                             }
                         }
+                        sqlite_close($db);
                         return $result['count'] > 0 || $childHas;
                     }
                     else
@@ -436,7 +437,6 @@
                 {
                     if($result = @sqlite_query($db, 'SELECT subject_id FROM PWHGroupSubject WHERE group_id = ' . sqlite_escape_string($this->_ID) . ';'))
                     {
-                        sqlite_close($db);                  
                         $subjects = array();
                         while($tuple = sqlite_fetch_array($result))
                         {
@@ -444,6 +444,7 @@
                             $subject->Read((int)$tuple['subject_id']);
                             array_push($subjects, $subject);
                         }
+                        sqlite_close($db);
                         
                         if($recursive)
                         {
@@ -538,7 +539,6 @@
             {
                 if($result = @sqlite_query($db, 'SELECT * FROM PWHGroupTree WHERE parent_id = ' . sqlite_escape_string($id) . ';'))
                 {
-                    sqlite_close($db);                  
                     $groups = array();
                     while($tuple = sqlite_fetch_array($result))
                     {
@@ -546,6 +546,7 @@
                         $group->Read((int)$tuple['child_id']);
                         array_push($groups, $group);
                     }
+                    sqlite_close($db);
                     usort($groups, "entity_comparator");
                     return $groups;
                 }
@@ -566,7 +567,6 @@
             {
                 if($result = @sqlite_query($db, 'SELECT * FROM PWHGroupTree WHERE parent_id = -1;'))
                 {
-                    sqlite_close($db);                  
                     $promos = array();
                     while($tuple = sqlite_fetch_array($result))
                     {
@@ -574,6 +574,7 @@
                         $promo->Read((int)$tuple['child_id']);
                         array_push($promos, $promo);
                     }
+                    sqlite_close($db);
                     usort($promos, "entity_comparator");
                     return $promos;
                 }

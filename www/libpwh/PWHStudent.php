@@ -60,13 +60,13 @@
                 $query = 'SELECT * FROM ' . __CLASS__ . ' WHERE id = '. sqlite_escape_string($id) . ';';             
                 if($result = @sqlite_query($db, $query))
                 {
-                    sqlite_close($db);
                     $entry = sqlite_fetch_array($result);
                     $this->_ID = $id;
                     $this->_Login = $entry['login'];
                     $this->_FirstName = $entry['firstname'];
                     $this->_LastName = $entry['lastname'];
                     $this->_Email = $entry['email'];
+                    sqlite_close($db);
                     return true;
                 }
                 else
@@ -186,7 +186,6 @@
                 {
                     if($result = @sqlite_query($db, 'SELECT group_id FROM PWHStudentGroup WHERE student_id = ' . sqlite_escape_string($this->_ID) . ';'))
                     {
-                        sqlite_close($db);                  
                         $groups = array();
                         while($tuple = sqlite_fetch_array($result))
                         {
@@ -194,6 +193,7 @@
                             $group->Read((int)$tuple['group_id']);
                             array_push($groups, $group);
                         }
+                        sqlite_close($db);
                         return $groups;
                     }
                     else
@@ -220,8 +220,8 @@
                 {
                     if($result = @sqlite_query($db, 'SELECT COUNT(group_id) AS count FROM PWHStudentGroup WHERE student_id  = ' . sqlite_escape_string($this->_ID) . ';'))
                     {
-                        sqlite_close($db);                  
                         $result = sqlite_fetch_single($result);
+                        sqlite_close($db);
                         return $result['count'] > 0;
                     }
                     else
