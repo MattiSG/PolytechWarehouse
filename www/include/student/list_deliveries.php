@@ -17,7 +17,7 @@
             $deliveries = array_merge($deliveries, $group->GetDeliveries(false));
         }
         
-        $level;
+        $level = 0;
         $i = 0;
         while($i < count($deliveries))
         {
@@ -107,7 +107,7 @@
             }
             $summary = new PWHSummary();
             $summary->SetInfo('Nombre de travaux actifs', count($activeDelivered) + count($activeUndelivered));
-            $summary->SetInfo('Nombre de travaux inactifs', count($unactiveDelivered) + count($unactiveUndelivered));
+            $summary->SetInfo('Nombre de travaux inactifs', count($inactiveDelivered) + count($inactiveUndelivered));
             $summary->SetInfo('Charge de travail approximative', $workLevel);
             echo $summary->HTML();
         ?>
