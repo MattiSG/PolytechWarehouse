@@ -158,7 +158,7 @@
                 if(!$deliverygroup->IsSuper() && !$work->IsSimple() && $delivery->IsStillTimeForGroupComposition(date("Y-m-d H:i:s")) && $deliverygroup->StudentExists($student->GetID()))
                 { ?>
                 <li><a href="index.php?page=student_display_deliverygroup&amp;action=leave&amp;subject_id=<?php echo $_GET['subject_id']; ?>&amp;work_id=<?php echo $_GET['work_id']; ?>&amp;delivery_id=<?php echo $delivery->GetID(); ?>&amp;deliverygroup_id=<?php echo $deliverygroup->GetID(); ?>"><img src="img/group_delete"/>Quitter le groupe de rendu</a></li>
-                <? } ?>
+                <?php } ?>
             </ul>
         </div>
    </div>
