@@ -4,4 +4,3 @@
   AuthUserFile "/data/entrepot/passwd/entrepot.passwd"
   Require valid-user
 </LIMIT>
-

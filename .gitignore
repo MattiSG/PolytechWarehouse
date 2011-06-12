@@ -3,3 +3,4 @@ Thumbs.db
 *~
 *.bak
 *.sqlite
+www/config/local.conf.php
