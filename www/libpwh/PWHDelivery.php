@@ -388,7 +388,6 @@
             {
                 if($result = @sqlite_query($db, 'SELECT * FROM PWHDeliverygroupDelivery WHERE delivery_id = ' . sqlite_escape_string($this->_ID) . ';'))
                 {
-                    sqlite_close($db);                  
                     $groups = array();
                     while($tuple = sqlite_fetch_array($result))
                     {
@@ -396,6 +395,7 @@
                         $group->Read((int)$tuple['deliverygroup_id']);
                         array_push($groups, $group);
                     }
+                    sqlite_close($db);
                     return $groups;
                 }
                 else

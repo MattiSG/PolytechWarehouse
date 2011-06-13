@@ -60,13 +60,13 @@
                 $query = 'SELECT * FROM ' . __CLASS__ . ' WHERE id = '. sqlite_escape_string($id) . ';';             
                 if($result = @sqlite_query($db, $query))
                 {
-                    sqlite_close($db);
                     $entry = sqlite_fetch_array($result);
                     $this->_ID = $id;
                     $this->_Login = $entry['login'];
                     $this->_FirstName = $entry['firstname'];
                     $this->_LastName = $entry['lastname'];
                     $this->_Email = $entry['email'];
+                    sqlite_close($db);
                     return true;
                 }
                 else
@@ -185,8 +185,7 @@
                 if ($db = @sqlite_open(DATABASE_FILE())) 
                 {
                     if($result = @sqlite_query($db, 'SELECT subject_id FROM PWHTeacherSubject WHERE teacher_id = ' . sqlite_escape_string($this->_ID) . ';'))
-                    {
-                        sqlite_close($db);                  
+                    {                 
                         $subjects = array();
                         while($tuple = sqlite_fetch_array($result))
                         {
@@ -194,6 +193,7 @@
                             $subject->Read((int)$tuple['subject_id']);
                             array_push($subjects, $subject);
                         }
+                        sqlite_close($db);
                         return $subjects;
                     }
                     else

@@ -62,13 +62,13 @@
                 $query = 'SELECT * FROM ' . __CLASS__ . ' WHERE id = '. sqlite_escape_string($id) . ';';             
                 if($result = @sqlite_query($db, $query))
                 {
-                    sqlite_close($db);
                     $entry = sqlite_fetch_array($result);
                     $this->_ID = $id;
                     $this->_TargetID = $entry['target_id'];
                     $this->_TargetType = $entry['target_type'];
                     $this->_Creation = $entry['creation'];
                     $this->_Message = $entry['message'];
+                    sqlite_close($db);
                     return true;
                 }
                 else
@@ -195,7 +195,6 @@
                 $query = 'SELECT * FROM ' . __CLASS__ . " WHERE target_id = '". sqlite_escape_string($id) . "' AND target_type = '" . sqlite_escape_string($type) . "';";             
                 if($result = @sqlite_query($db, $query))
                 {
-                    sqlite_close($db);
                     $events = array();
                     while($entry = sqlite_fetch_array($result))
                     {
@@ -203,6 +202,7 @@
                         $event->Read($entry['id']);
                         array_push($events, $event);
                     }
+                    sqlite_close($db);
                     
                     if($size == self::ALL_EVENTS || count($events) <= $size)
                     {

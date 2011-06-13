@@ -40,7 +40,6 @@
             {
                 if($result = @sqlite_query($db, "SELECT id FROM $entityName;"))
                 {
-                    sqlite_close($db);                  
                     $entities = array();
                     while($tuple = sqlite_fetch_array($result))
                     {
@@ -48,6 +47,7 @@
                         $entity->Read((int)$tuple['id']);
                         array_push($entities, $entity);
                     }
+                    sqlite_close($db);                  
                     return $entities;
                 }
                 else
@@ -67,8 +67,8 @@
             {
                 if($result = @sqlite_query($db, "SELECT COUNT(id) AS count FROM $entityName;"))
                 {
-                    sqlite_close($db);                  
                     $result = sqlite_fetch_single($result);
+                    sqlite_close($db);
                     return $result['count'] > 0;
                 }
                 else
@@ -88,8 +88,8 @@
             {
                 if($result = @sqlite_query($db, "SELECT COUNT(id) AS count FROM $entityName WHERE id = '" . sqlite_escape_string($id) . "';"))
                 {
-                    sqlite_close($db);                  
                     $result = sqlite_fetch_single($result);
+                    sqlite_close($db);
                     return $result['count'] > 0;
                 }
                 else
