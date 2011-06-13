@@ -1,33 +1,42 @@
-
-
+<!doctype html>  
+<html lang="fr-FR">
+	<head>
+		<meta charset="utf-8">
+	
+		<title>Initialisation des bases de données</title>
+	</head>
+	
+	<body>
+		<h1>Initialisation des bases de données</h1>
+		<dl>
 <?php
 
-$GLOBALS['PWH_PATH'] = "../";
+$GLOBALS['PWH_PATH'] = '../';
 require_once($GLOBALS['PWH_PATH'] . 'libpwh/PWHHeader.php');
 require_once($GLOBALS['PWH_PATH'] . 'include/util.php');
 
-try {
-	if (!file_exists(LOG_FILE())) {
-    	@unlink(LOG_FILE());
-    	require_once(LIB_PATH() . "PWHLogSetup.php");
-    	echo "<p>" . LOG_FILE() . " supprimé et recréé</p>";
-	} else {
-		echo "<p>Rien à faire pour : " . LOG_FILE() . "</p>";
+
+function handleDatabase($path, $initializerPath) {
+	echo '<dt><code>' . basename($path) . '</code></dt><dd>';
+
+	try {		
+		if (! file_exists($path)) {
+			include_once($initializerPath);
+			echo 'Base initialisée.';
+		} else {
+			echo 'Rien à faire !';
+		}
+	} catch (Exception $ex) {
+		echo 'Une erreur est survenue !';
 	}
-} catch(Exception $ex) {
-    echo "<p>Une erreur est survenue pour : " . LOG_FILE() . "</p>";
+	
+	echo '</dd>';
 }
 
-try {
-	if (!file_exists(DATABASE_FILE())) {
-    	@unlink(DATABASE_FILE());
-    	require_once(LIB_PATH() . "PWHSQLiteSetup.php");
-    	echo "<p>" . DATABASE_FILE() . " supprimé et recréé</p>";
-	} else {
-		echo "<p>Rien à faire pour : " . DATABASE_FILE() . "</p>";
-	}
-} catch(Exception $ex) {
-        echo "<p>Une erreur est survenue pour : " . DATABASE_FILE() . "</p>";
-}
+handleDatabase(LOG_FILE(), LIB_PATH() . 'PWHLogSetup.php');
+handleDatabase(DATABASE_FILE(), LIB_PATH() . 'PWHSQLiteSetup.php');
 
 ?>
+		</dl>
+	</body>
+</html>
