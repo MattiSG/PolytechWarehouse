@@ -11,31 +11,26 @@
         echo $help->Html("javascript:popup('include/teacher/help/home.html', 800, 600);");
     ?>
     <h1>Mes matières</h1>
-    <dl id="promos">
-        <dt><a href="??">CiP1</a></dt>
-    	<dd>
-    		<ul>
-    			<li>4 rendus dont 1 mien</li>
-    			<li>Prochain : IntroInternet le 6 octobre</li>
-    		</ul>
-    	</dd>
-    
-    	<dt><a href="??">SI3</a></dt>
-    	<dd>
-    		<ul>
-    			<li>6 rendus dont 2 miens</li>
-    			<li>Prochain : POO le 12 novembre</li>
-    		</ul>
-    	</dd>
+    <table id="promos">
+    	<tr>
+	        <th><a href="??">CiP1</a></th>
+			<td>4 rendus dont 1 mien</td>
+			<td>Prochain : IntroInternet le 6 octobre</td>
+    	</tr>
     	
-    	<dt><a href="??">SI4</a></dt>
-    	<dd>
-    		<ul>
-    			<li>5 rendus dont 0 miens</li>
-    			<li>Prochain : &#8212;</li>
-    		</ul>
-    	</dd>
-    </dl>
+    	<tr>
+	    	<th><a href="??">SI3</a></th>
+			<td>6 rendus dont 2 miens</td>
+			<td>Prochain : POO le 12 novembre</td>
+		</tr>
+    	
+    	<tr>
+	    	<th><a href="??">SI4</a></th>
+    		<td>5 rendus dont 0 miens</td>
+    		<td>Prochain : &#8212;</td>
+    	</tr>
+    </table>
+    
 	<p class="add"><a href="index.php?page=teacher_create_subject_name"><img src="<?php echo IMG_PATH(); ?>book_open.png"/>Ajouter une matière</a></p>
 	
 	<a href="index.php?page=teacher_list_groups_deliveries"><img src="<?php echo IMG_PATH(); ?>package.png"/>Tous mes rendus</a>
