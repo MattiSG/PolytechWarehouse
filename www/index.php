@@ -37,8 +37,10 @@
         <?php INIT_JS(); ?>
 	</head>
 	<body>
-		<header>
-		</header>
+		<a href="index.php">
+			<header></header>
+		</a>
+		
 		<div id="main" role="main">
 		    <?php		    
 			     
