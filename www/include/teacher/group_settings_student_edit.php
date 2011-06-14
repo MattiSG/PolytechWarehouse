@@ -77,8 +77,8 @@
     }
 ?>
 
-<fieldset>
-	<legend>Profil de <?php echo $studentName; ?></legend>
+<section>
+	<h2>Profil de <?php echo $studentName; ?></h2>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/group_settings_student_edit.html', 800, 600);");
@@ -107,7 +107,7 @@
 	    </form>
     </div>
     <?php } ?>
-</fieldset>
+</section>
 
 <script type="text/javascript">
 <!--

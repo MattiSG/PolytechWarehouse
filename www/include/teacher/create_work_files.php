@@ -135,8 +135,8 @@
     }
 ?>
 
-<fieldset>
-	<legend>fichiers - etape 2/3</legend>
+<section>
+	<h2>fichiers - etape 2/3</h2>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/create_work_files.html', 800, 600);");
@@ -181,7 +181,7 @@
          </div>
     </form>
     <?php } ?>
-</fieldset>
+</section>
 
 <script type="text/javascript">
 <!--

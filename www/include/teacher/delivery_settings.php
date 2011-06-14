@@ -118,8 +118,8 @@
    
 ?>
 
-<fieldset>
-	<legend>configuration de <?php echo $deliveryName; ?></legend>
+<section>
+	<h2>configuration de <?php echo $deliveryName; ?></h2>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/delivery_settings.html', 800, 600);");
@@ -155,4 +155,4 @@
         </form>
     </div>
     <?php } ?>
-</fieldset>
+</section>

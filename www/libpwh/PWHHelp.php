@@ -3,7 +3,7 @@
     {
         public function Html($link)
         {
-            return '<div id="help"><a href="' . $link . '"><img src="img/help.png"/>Aide</a></div>';
+            return '<div id="help" class="more"><a href="' . $link . '"><img src="img/help.png"/>Aide</a></div>';
         }  
     }
 ?>

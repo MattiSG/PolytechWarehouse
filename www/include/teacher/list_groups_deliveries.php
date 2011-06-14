@@ -4,8 +4,8 @@
     previousPage("teacher_home");
 ?>
 
-<fieldset>
-    <legend>Etats des rendus</legend>
+<section>
+    <h2>Etats des rendus</h2>
     <?php
         $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/list_groups_deliveries.html', 800, 550);");
@@ -18,5 +18,5 @@
             echo $groupTree->Html(PWHGroupTree::DELIVERY_TREE, PWHGroupTree::TEACHER); 
         ?>
     </div>
-</fieldset>
+</section>
 

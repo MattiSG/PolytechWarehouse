@@ -6,7 +6,7 @@ body
 	width: 754px;
 }
 
-#header 
+header 
 {
 	height: 126px;
 	background: url("../img/header.png");

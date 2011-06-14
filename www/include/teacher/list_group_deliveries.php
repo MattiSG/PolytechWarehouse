@@ -97,8 +97,8 @@
         errorReport("Impossible d'afficher la page demand&eacute;e.");
     }
 ?>
-<fieldset>
-	<legend>Travaux du groupe <?php echo $groupName; ?></legend>
+<section>
+	<h2>Travaux du groupe <?php echo $groupName; ?></h2>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/list_group_deliveries.html', 800, 550);");
@@ -297,7 +297,7 @@
         </div>
     </div>
     <?php } ?>
-</fieldset>
+</section>
 <script type="text/javascript">
 <!--
     var numberDeliveries = <?php echo $id-1; ?>;

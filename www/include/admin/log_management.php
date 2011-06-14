@@ -31,8 +31,8 @@
 //-->
 </script>
 
-<fieldset>
-    <legend>gestion des logs</legend>
+<section>
+    <h2>gestion des logs</h2>
     <?php
         $help = new PWHHelp();
         echo $help->Html("#");
@@ -55,4 +55,4 @@
             </ul>
         </div>
     </div>
-</fieldset>
+</section>

@@ -1,5 +1,5 @@
-<fieldset>
-    <legend>espace personnel administrateur</legend>
+<section>
+    <h2>espace personnel administrateur</h2>
     <?php
         $help = new PWHHelp();
         echo $help->Html("#");
@@ -13,5 +13,5 @@
             </ul>
         </div>
    </div>
-</fieldset>
+</section>
 

@@ -85,8 +85,8 @@
 
 ?>
 
-<fieldset>
-    <legend>enseignants</legend>
+<section>
+    <h2>enseignants</h2>
     <?php
         $help = new PWHHelp();
         echo $help->Html("#");
@@ -104,4 +104,4 @@
             </div>
        </form>
    </div>
-</fieldset>
+</section>

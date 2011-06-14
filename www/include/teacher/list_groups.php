@@ -54,8 +54,8 @@
         errorReport("Impossible d'afficher la page demand&eacute;e.");
     }
 ?>
-<fieldset>
-    <legend>gestion des groupes</legend>
+<section>
+    <h2>gestion des groupes</h2>
     <?php
         $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/list_groups.html', 800, 550);");
@@ -92,7 +92,7 @@
         ?>
     </div>
     <?php } ?>
-</fieldset>
+</section>
 <script type="text/javascript">
 <!--
     function UserConfirmation(group_id)

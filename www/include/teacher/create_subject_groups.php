@@ -90,8 +90,8 @@
     }
 ?>
 
-<fieldset>
-	<legend>groupes - etape 3/3</legend>
+<section>
+	<h2>groupes - etape 3/3</h2>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/create_subject_groups.html', 800, 550);");
@@ -116,7 +116,7 @@
 	    </form>	 
 	</div>
 	<?php } ?>
-</fieldset>
+</section>
 <script type="text/javascript" charset="iso-8859-1">
 <!--
     function MakeIndex(link, letter)

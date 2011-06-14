@@ -12,8 +12,8 @@
         previousPage("admin_home");
     }
 ?>  
-<fieldset>
-    <legend>credits</legend>
+<section>
+    <h2>credits</h2>
     <?php
         $help = new PWHHelp();
         echo $help->Html("#");
@@ -49,4 +49,4 @@
             </ul>
         </div>
     </div>
-</fieldset>
+</section>

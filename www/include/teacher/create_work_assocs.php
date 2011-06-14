@@ -165,8 +165,8 @@
     }
 ?>
 
-<fieldset>
-	<legend>responsables - etape 3/3</legend>
+<section>
+	<h2>responsables - etape 3/3</h2>
 	
 	<?php
 	    $help = new PWHHelp();
@@ -211,4 +211,4 @@
 	    </form>	    
     </div>
     <?php } ?>
-</fieldset>
+</section>

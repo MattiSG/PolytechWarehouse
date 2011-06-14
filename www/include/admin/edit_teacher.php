@@ -55,8 +55,8 @@
     }
 ?>
 
-<fieldset>
-	<legend>Profil de <?php echo $teacher->GetLastname() . " " . $teacher->GetFirstName(); ?></legend>
+<section>
+	<h2>Profil de <?php echo $teacher->GetLastname() . " " . $teacher->GetFirstName(); ?></h2>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("#");
@@ -81,7 +81,7 @@
 		    </div>
 	    </form>
     </div>
-</fieldset>
+</section>
 
 <script type="text/javascript">
 <!--

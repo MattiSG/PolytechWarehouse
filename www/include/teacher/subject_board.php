@@ -45,8 +45,8 @@
 	</head>
 	<body>
         <div id="content_alt">
-            <fieldset>
-                <legend>&eacute;tats des travaux dans la mati&egrave;re <?php echo $subjectName; ?></legend>
+            <section>
+                <h2>&eacute;tats des travaux dans la mati&egrave;re <?php echo $subjectName; ?></h2>
                 <?php
                     displayErrorReport();
                     
@@ -104,7 +104,7 @@
                     </table>
                 </div>
                 <?php } ?>
-            </fieldset>
+            </section>
         </div>
     </body>
 </html>

@@ -205,8 +205,8 @@
         errorReport("Vous n'&ecirc;tes pas concern&eacute; par ce rendu.");
     }
 ?>
-<fieldset>
-	<legend>&eacute;tudiants disponibles</legend>
+<section>
+	<h2>&eacute;tudiants disponibles</h2>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/student/help/create_deliverygroup.html', 800, 550);");
@@ -232,7 +232,7 @@
 	   </form>
 	</div>
 	<?php } ?>
-</fieldset>
+</section>
 
 <script type="text/javascript" charset="iso-8859-1">
 <!--

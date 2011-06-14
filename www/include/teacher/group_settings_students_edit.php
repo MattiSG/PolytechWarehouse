@@ -34,8 +34,8 @@
     }
 ?>
 
-<fieldset>
-	<legend>Edition de profil</legend>
+<section>
+	<h2>Edition de profil</h2>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/group_settings_students_edit.html', 800, 550);");
@@ -97,6 +97,6 @@
         </table>
 	</div>
 	<?php } ?>
-</fieldset>
+</section>
 			
 
