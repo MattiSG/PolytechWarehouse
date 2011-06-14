@@ -6,7 +6,7 @@
 	background: url("../img/bg.png");
 }
 
-#main section 
+section
 {
 	width: 89%;
 	margin: 0 auto 0 auto;
@@ -21,14 +21,6 @@
 	background-color: white;
 	border: 1px solid #d1d1d1;
 	font-size: 13px;
-}
-
-#main section h2, #content_alt section h2 
-{
-	color: #3e7cdb;
-	margin: 0;
-	padding: 0 5px 0 5px;
-	font-variant: small-caps;
 }
 
 #main section h4, #content_alt section h4
@@ -498,3 +490,67 @@
     font-style: italic;
 }
 
+/* Proms list */
+#promos
+{
+	font-family: "Lucida Grande", "Lucida Sans";
+	font-size: 120%;
+	width: 100%;
+	border-collapse: collapse;
+}
+
+#promos tr
+{
+	height: 2.5em;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#BBB), to(#999));
+	background-image: -webkit-linear-gradient(top left, #BBB, #999);
+	background-image: -moz-linear-gradient(top left, #BBB, #999);
+	background-color: gray;
+	border-top: 2px solid white;
+}
+
+#promos th {
+	width: 6em;
+	text-align: left;
+	text-overflow: ellipsis;
+	
+	-webkit-border-top-left-radius: 0.5em;
+	-webkit-border-bottom-left-radius: 0.5em;
+	-moz-border-radius-topleft: 0.5em;
+	-moz-border-radius-bottomleft: 0.5em;
+	border: none;
+}
+
+#promos th a
+{
+	font-weight: bold;
+	color: inherit;
+	text-decoration: none;
+	display: block;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+}
+
+#promos td
+{
+	text-align: center;
+	text-overflow: ellipsis;
+}
+
+#promos td:last-child
+{
+	background: right center url(../img/rpager_p.png) no-repeat;
+
+	-webkit-border-top-right-radius: 0.5em;
+	-webkit-border-bottom-right-radius: 0.5em;
+	-moz-border-radius-topright: 0.5em;
+	-moz-border-radius-bottomright: 0.5em;	
+}
+
+.add
+{
+	background: left center url(../img/add.png) no-repeat;
+	padding-left: 1.5em;
+	font-size: 120%;
+	margin-top: 0.2em;
+}

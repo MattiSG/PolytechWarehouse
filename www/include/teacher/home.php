@@ -10,7 +10,7 @@
         $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/home.html', 800, 600);");
     ?>
-    <h1>Mes matières</h1>
+    <h2>Mes matières</h2>
     <table id="promos">
     	<tr>
 	        <th><a href="??">CiP1</a></th>
@@ -31,7 +31,7 @@
     	</tr>
     </table>
     
-	<p class="add"><a href="index.php?page=teacher_create_subject_name"><img src="<?php echo IMG_PATH(); ?>book_open.png"/>Ajouter une matière</a></p>
+	<p class="add"><a href="index.php?page=teacher_create_subject_name">Ajouter une matière</a></p>
 	
 	<a href="index.php?page=teacher_list_groups_deliveries"><img src="<?php echo IMG_PATH(); ?>package.png"/>Tous mes rendus</a>
 	
@@ -40,7 +40,7 @@
 	<p>Gérer les <a href="index.php?page=teacher_list_groups"><img src="<?php echo IMG_PATH(); ?>group.png"/>groupes</a> ou les <a href="index.php?page=teacher_list_subjects&amp;see=less"><img src="<?php echo IMG_PATH(); ?>book_open.png"/>mati&egrave;res</a></p>
 </section>
 <section>
-	<h2>&eacute;v&egrave;nements r&eacute;cents</h2>
+	<h2>&Eacute;v&egrave;nements r&eacute;cents</h2>
 	<?php
 	    $history = new PWHHistory();
         echo $history->Html("index.php?page=teacher_history");
