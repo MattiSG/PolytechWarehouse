@@ -33,11 +33,11 @@
     
 	<p class="add"><a href="index.php?page=teacher_create_subject_name">Ajouter une matière</a></p>
 	
+	<h2>Mes rendus</h2>
 	<a href="index.php?page=teacher_list_groups_deliveries"><img src="<?php echo IMG_PATH(); ?>package.png"/>Tous mes rendus</a>
 	
+	<h2>Mails</h2>
 	<p><a href="index.php?page=teacher_email_groups"><img src="<?php echo IMG_PATH(); ?>email.png"/>Mailing lists</a></p>
-
-	<p>Gérer les <a href="index.php?page=teacher_list_groups"><img src="<?php echo IMG_PATH(); ?>group.png"/>groupes</a> ou les <a href="index.php?page=teacher_list_subjects&amp;see=less"><img src="<?php echo IMG_PATH(); ?>book_open.png"/>mati&egrave;res</a></p>
 </section>
 <section>
 	<h2>&Eacute;v&egrave;nements r&eacute;cents</h2>
@@ -54,4 +54,9 @@
             echo $list->Html(); 
         ?>
 	</div>
+</section>
+
+<section>
+	<h3>Gestion</h3>
+	<p>Gérer les <a href="index.php?page=teacher_list_groups"><img src="<?php echo IMG_PATH(); ?>group.png"/>groupes</a> ou les <a href="index.php?page=teacher_list_subjects&amp;see=less"><img src="<?php echo IMG_PATH(); ?>book_open.png"/>mati&egrave;res</a>.</p>
 </section>
