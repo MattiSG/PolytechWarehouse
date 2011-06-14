@@ -503,21 +503,17 @@ section
 {
 	height: 2.5em;
 	background-image: -webkit-gradient(linear, left top, left bottom, from(#E0e4f8), to(#8aa7fb));
-	background-image: -webkit-linear-gradient(top left, #E0e4f8, #8aa7fb);
-	background-image: -moz-linear-gradient(top left, #E0e4f8, #8aa7fb);
+	background-image: -webkit-linear-gradient(top, #E0e4f8, #8aa7fb);
+	background-image: -moz-linear-gradient(top, #E0e4f8, #8aa7fb);
 	background-color: gray;
 	border-top: 2px solid white;
 }
 
-#promos th {
+#promos th
+{
 	width: 6em;
 	text-align: left;
 	text-overflow: ellipsis;
-	
-	-webkit-border-top-left-radius: 0.5em;
-	-webkit-border-bottom-left-radius: 0.5em;
-	-moz-border-radius-topleft: 0.5em;
-	-moz-border-radius-bottomleft: 0.5em;
 	border: none;
 }
 
@@ -540,11 +536,6 @@ section
 #promos td:last-child
 {
 	background: right center url(../img/rpager_p.png) no-repeat;
-
-	-webkit-border-top-right-radius: 0.5em;
-	-webkit-border-bottom-right-radius: 0.5em;
-	-moz-border-radius-topright: 0.5em;
-	-moz-border-radius-bottomright: 0.5em;	
 }
 
 .add
