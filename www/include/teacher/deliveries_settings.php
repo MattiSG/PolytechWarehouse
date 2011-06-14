@@ -102,7 +102,7 @@
                         }
                     }
                 }
-                if(isset($_POST['publish']) && !$dateFailed)
+                if(!$dateFailed)
                 {
                     $work->SetPublished(true);
                     $work->Update();
@@ -190,7 +190,7 @@
                         }
                     }
                }
-               if(isset($_POST['publish']) && !$dateFailed)
+               if(!$dateFailed)
                {
                     $work->SetPublished(true);
                     $work->Update();
@@ -308,14 +308,6 @@
                 </div>
             </div>
             <div class="section">
-                <?php 
-                    if(!$work->IsPublished())
-                    { ?>
-                        <div class="input">
-                            <label>Publier le rendu:</label>
-                            <input type="checkbox" name="publish" checked="checked" />
-                       </div>
-              <?php } ?>
                 <input class="next_form" type="submit" name="apply" value="Appliquer !"/>
             </div>
 	    </form>
@@ -350,14 +342,6 @@
 	                </div>
 	    <?php } ?>
 	            <div class="section">
-	                <?php 
-	                    if(!$work->IsPublished())
-	                    { ?>
-	                        <div class="input">
-	                            <label>Publier le rendu:</label>
-	                            <input type="checkbox" name="publish" checked="checked" />
-	                       </div>
-	              <?php } ?>
 	                <input class="next_form" type="submit" name="apply" value="Appliquer !"/>
 	            </div>
         </form>

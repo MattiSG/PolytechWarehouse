@@ -65,7 +65,8 @@
             
             if(count($children) > 0)
             {
-		        $strbuf = '<a href="javascript:showhide(\'node' . $id . '\', \'' . $id . '\');"><img src="' . IMG_PATH() . 'minus.png" id="node'. $id .'"></a>';
+		        $imgName = ($group->GetName() == '&eacute;cole') ? "minus.png" : "plus.png";
+		        $strbuf = '<a href="javascript:showhide(\'node' . $id . '\', \'' . $id . '\');"><img src="' . IMG_PATH() . $imgName . '" id="node'. $id .'"></a>';
 		    }
 		    else
 		    {

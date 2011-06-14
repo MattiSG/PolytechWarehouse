@@ -162,7 +162,7 @@
 	            <input type="text" id="link" name="link" size="20" value="<?php echo $link; ?>"/>
 	        </div>
 	        <div class="input">
-                <label for="level">Charge de travail (en hrs):</label>
+                <label for="level">Charge de travail (en hrs) (*):</label>
 	            <input type="text" id="level" name="level" size="20" value="<?php echo $level; ?>"/>
 	        </div>
 	        <div class="input">
@@ -191,8 +191,10 @@
         var inputName = document.getElementById("work_name");
         var inputGroupMin = document.getElementById("group_min");
         var inputGroupMax = document.getElementById("group_max");
+		var inputLevel = document.getElementById("level");
+        
         var inputSubmit = document.getElementById("next");
-        if(inputName.value == "" || inputGroupMin.value == "" || inputGroupMax.value == "")
+        if(inputName.value == "" || inputGroupMin.value == "" || inputGroupMax.value == "" || inputLevel.value == "")
         {
             inputSubmit.disabled = true;
         }
@@ -205,13 +207,16 @@
     var inputName = document.getElementById("work_name");
     var inputGroupMin = document.getElementById("group_min");
     var inputGroupMax = document.getElementById("group_max");
+	var inputLevel = document.getElementById("level");
+    		
     var inputSubmit = document.getElementById("next");
-    if(inputName.value == "" || inputGroupMin.value == "" || inputGroupMax.value == "")
+    if(inputName.value == "" || inputGroupMin.value == "" || inputGroupMax.value == "" || inputLevel.value == "")
     {
         inputSubmit.disabled = true;
     }
     inputName.onkeyup = CheckForm;
     inputGroupMin.onkeyup = CheckForm;
     inputGroupMax.onkeyup = CheckForm;
+	inputLevel.onkeyup = CheckForm;
 //-->
 </script>

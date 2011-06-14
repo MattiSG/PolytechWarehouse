@@ -124,11 +124,11 @@
 					echo 'if (obj.style.display == "none"){';
 						echo 'obj.style.display = "";';
 						echo 'obj = document.getElementById(node);';
-						echo 'obj.src="' . IMG_PATH(). 'plus.png";';
+						echo 'obj.src="' . IMG_PATH(). 'minus.png";';
 					echo '} else {';
 						echo 'obj.style.display = "none";';
 						echo 'obj = document.getElementById(node);';
-						echo 'obj.src="' . IMG_PATH() . 'minus.png";';
+						echo 'obj.src="' . IMG_PATH() . 'plus.png";';
 					echo '}';
 				echo '}';
 			echo '}';
@@ -137,7 +137,8 @@
                 echo 'var top=(screen.height-height)/2;';
                 echo 'var left=(screen.width-width)/2;';
                 echo 'window.open(page,"","top="+top+",left="+left+",width="+width+",height="+height+",toolbar=no, menubar=no, scrollbars=yes, resizable=no, location=no, directories=no, status=no");';
-           echo '}';
+           echo '}';
+
 		echo '</script>';
 	}
 ?>

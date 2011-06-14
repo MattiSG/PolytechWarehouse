@@ -179,7 +179,6 @@
 	            <th>Nom</th>
 	            <th>Type</th>
 	            <th>Configurer</th>
-	            <th>Publier</th>
 	            <th>T&eacute;l&eacute;charger</th>
 	            <th>Supprimer</th>
             </tr>
@@ -217,18 +216,6 @@
 	                        <a href="index.php?page=teacher_work_settings&amp;subject_id=<?php echo $subject->GetID() ?>&amp;work_id=<?php echo $work->GetID() ?>">
 	                            <img src="<?php echo IMG_PATH() ?>bullet_wrench.png"/>
 	                        </a>
-	                    </td>
-	                    <td>
-	                        <?php
-	                            if(!$work->IsPublished())
-	                            { ?>
-	                        <a href="index.php?page=teacher_list_works&amp;action=publish&amp;subject_id=<?php echo $subject->GetID() ?>&amp;work_id=<?php echo $work->GetID() ?>">
-	                            <img src="img/unpublished.png"/>
-	                            <?php }
-	                            else
-	                            { ?>
-	                                <a><img src="img/published.png"/></a>
-	                            <?php } ?>
 	                    </td>
 	                    <td>
 	                        <a href="downloads/index.php?type=work&amp;subject_id=<?php echo $subject->GetID(); ?>&amp;work_id=<?php echo$work->GetID(); ?>">
