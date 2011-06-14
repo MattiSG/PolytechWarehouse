@@ -132,6 +132,7 @@
                             array_push($persons, $person);
                         }
 
+                        $strbuf = "";
                         foreach($persons as $person)
                         {
                             $strbuf .= $person->GetLastName() . " " . $person->GetFirstName() . ", ";
