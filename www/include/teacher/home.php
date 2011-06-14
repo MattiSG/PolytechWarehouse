@@ -64,13 +64,15 @@
 						
 						$subjects = $promo->GetSubjects(true);
 						echo '<td>';
+						$strbuf = "";
 						if (count($subjects) >= 1)
-							echo $subjects[0]->GetName();
+							$strbuf .= $subjects[0]->GetName();
 						$i = 1;
-						while ($i < 3 && $i < count($subjects))
-							echo ', '.$subjects[$i++]->GetName();
-						if (count($subjects) >= 3)
-							echo ', ...';
+						while ($i < count($subjects) && strlen($strbuf) + strlen($subjects[$i]->GetName()) < 30)
+							$strbuf .= ', '.$subjects[$i++]->GetName();
+						if ($i < count($subjects))
+							$strbuf .= ', ...';
+						echo $strbuf;
 						echo '</td>';
 						
     					echo "<td>".count($active_deliveries)." rendus dont ".count($mine_deliveries)." mien</td>";
