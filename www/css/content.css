@@ -502,9 +502,9 @@ section
 #promos tr
 {
 	height: 2.5em;
-	background-image: -webkit-gradient(linear, left top, left bottom, from(#BBB), to(#999));
-	background-image: -webkit-linear-gradient(top left, #BBB, #999);
-	background-image: -moz-linear-gradient(top left, #BBB, #999);
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#E0e4f8), to(#8aa7fb));
+	background-image: -webkit-linear-gradient(top left, #E0e4f8, #8aa7fb);
+	background-image: -moz-linear-gradient(top left, #E0e4f8, #8aa7fb);
 	background-color: gray;
 	border-top: 2px solid white;
 }
