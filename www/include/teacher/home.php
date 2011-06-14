@@ -1,8 +1,20 @@
 <?php
     PWHLog::Write(PWHLog::INFO, $_SESSION['login'], "Acc&egrave;s page home");
     
-    $teacher = new PWHTeacher();
-    $teacher->Read($_SESSION['id']);
+    try {
+		$teacher = new PWHTeacher();
+		$teacher->Read($_SESSION['id']);
+		$subjects = $teacher->GetSubjects();
+		
+		$promos = array();
+		foreach($subjects as $subject)
+			$promos[$subject->GetPromotion()->GetID()] = $subject->GetPromotion();
+				
+		usort($promos, "entity_comparator");
+    } catch(Exception $ex) {
+        $failed = true;
+        errorReport($ex->getMessage());
+    }
 ?>
 
 <section>
@@ -10,25 +22,64 @@
         $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/home.html', 800, 600);");
     ?>
-    <h2>Mes matières</h2>
+
+    <h2>Mes matières</h2>    
+    <?php
+    	if(count($promos) == 0) {
+    		echo '<p>Aucune promo concern&eacute;e</p>';
+    	} else {
+    ?>
+    
     <table id="promos">
-    	<tr>
-	        <th><a href="??">CiP1</a></th>
-			<td>4 rendus dont 1 mien</td>
-			<td>Prochain : IntroInternet le 6 octobre</td>
-    	</tr>
-    	
-    	<tr>
-	    	<th><a href="??">SI3</a></th>
-			<td>6 rendus dont 2 miens</td>
-			<td>Prochain : POO le 12 novembre</td>
-		</tr>
-    	
-    	<tr>
-	    	<th><a href="??">SI4</a></th>
-    		<td>5 rendus dont 0 miens</td>
-    		<td>Prochain : &#8212;</td>
-    	</tr>
+    	<?php
+        	foreach($promos as $promo) {
+        ?>
+        		<tr>
+	    		    <th>
+	    		    	<a href="index.php?page=teacher_list_group_deliveries&amp;group_id=<?php echo $promo->GetID(); ?>">
+	                    	<?php echo $promo->GetName(); ?>
+	                    </a>
+	    		    </th>
+	    		    <?php
+    					$all_deliveries = $promo->GetDeliveries(true);
+    					
+    					$active_deliveries = array();
+    					$mine_deliveries = array();
+    					$next_deliveries = false;
+   						
+  						foreach ($all_deliveries as $delivery) {
+    						if ($delivery->IsStillTimeForDelivery(date("Y-m-d H:i:s")))
+		   						$active_deliveries[] = $delivery;
+						}
+						
+						foreach ($active_deliveries as $delivery) {
+							$work = new PWHWork();
+			                $work->Read($delivery->GetWorkID());
+							$subject = new PWHSubject();
+	                    	$subject->Read($work->GetSubjectID());
+	                    	
+							if ($subject->TeacherExists($teacher->GetID()))
+								$mine_deliveries[] = $delivery;
+						}
+						
+						$subjects = $promo->GetSubjects(true);
+						echo '<td>';
+						if (count($subjects) >= 1)
+							echo $subjects[0]->GetName();
+						$i = 1;
+						while ($i < 3 && $i < count($subjects))
+							echo ', '.$subjects[$i++]->GetName();
+						if (count($subjects) >= 3)
+							echo ', ...';
+						echo '</td>';
+						
+    					echo "<td>".count($active_deliveries)." rendus dont ".count($mine_deliveries)." mien</td>";
+    				?>
+		    	</tr>
+		<?php
+        	}
+       	}
+        ?>
     </table>
     
 	<p class="add"><a href="index.php?page=teacher_create_subject_name">Ajouter une matière</a></p>
