@@ -85,7 +85,7 @@ class Calendar extends Event_Subject {
 		$format = ($length === TRUE OR $length > 3) ? '%A' : '%a';
 
 		// Days of the week
-		$days = array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
+		$days = array('Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi');
 		
 		if ($this->config['week_start'] > 0)
 		{
@@ -107,13 +107,6 @@ class Calendar extends Event_Subject {
 			}
 			
 			$days = array_values($days);
-		}
-
-		// This is a bit awkward, but it works properly and is reliable
-		foreach ($days as $i => $day)
-		{
-			// Convert the English names to i18n names
-			$days[$i] = strftime($format, strtotime($day));
 		}
 
 		if (is_int($length) OR ctype_digit($length))
