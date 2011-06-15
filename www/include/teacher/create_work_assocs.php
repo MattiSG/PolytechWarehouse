@@ -2,16 +2,16 @@
     PWHLog::Write(PWHLog::INFO, $_SESSION['login'], "Acc&egrave;s page create_work_assocs");
     
     previousPage('teacher_create_work_files');
-    addPreviousPageParameter('subject_id', $_GET['subject_id']);
+    addPreviousPageParameter('group_id', $_GET['group_id']);
     $failed = false;
         
-    // Retrieves the concerned subject
-    if(isset($_GET['subject_id']) && PWHEntity::Valid("PWHSubject", $_GET['subject_id']))
+	// Retrieves the concerned group
+    if(isset($_GET['group_id']) && PWHEntity::Valid("PWHGroup", $_GET['group_id']))
     {     
         try
         {
-            $subject = new PWHSubject(null);
-            $subject->Read($_GET['subject_id']);
+            $group = new PWHGroup();
+            $group->Read($_GET['group_id']);
         }
         catch(Exception $ex)
         {
@@ -25,12 +25,11 @@
     }
     
     // Retrieves the list of concerned groups
-    try
-    {
+    try {
+    	$subject = new PWHSubject();
+        $subject->Read($_SESSION['subject_id']);
         $groups = $subject->GetGroups();
-    }
-    catch(Exception $ex)
-    {
+    } catch(Exception $ex) {
         errorReport($ex->getMessage());
         $failed = true;
     }
@@ -56,7 +55,7 @@
             {
                 if($_POST['fileName' . $i] == "")
                 {
-                    redirect("index.php?page=teacher_create_work_files&amp;subject_id=" . $subject->GetID() . "&amp;action=alert_empty");
+                    redirect("index.php?page=teacher_create_work_files&amp;group_id=" . $group->GetID() . "&amp;action=alert_empty");
                 }
             }
             
@@ -141,6 +140,7 @@
                 unset($_SESSION['group_max']);
                 unset($_SESSION['link']);
                 unset($_SESSION['level']);
+                unset($_SESSION['subject_id']);
                 
                 PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Cr&eacute;ation travail " . $subject->GetName() . "-" . $work->GetName());
                 redirect("index.php?page=teacher_deliveries_settings&amp;subject_id=" . $subject->GetID() . "&amp;work_id=" . $work->GetID());
@@ -184,7 +184,7 @@
 	?>
 	<h4>Affectation des groupes aux enseignants</h4>
 	<div class="section">
-		<form method="post" action="index.php?page=teacher_create_work_assocs&amp;subject_id=<?php echo $_GET['subject_id']; ?>&amp;n_assoc=<?php echo $nAssoc; ?>&amp;action=create">
+		<form method="post" action="index.php?page=teacher_create_work_assocs&amp;group_id=<?php echo $_GET['group_id']; ?>&amp;n_assoc=<?php echo $nAssoc; ?>&amp;action=create">
 	        <table class="colored_table underlined_table">
 		        <tr>
 			        <th>Groupe</th>

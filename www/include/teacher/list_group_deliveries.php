@@ -146,43 +146,7 @@
 
 	<h2>Travaux du groupe <?php echo $groupName; ?></h2>
 	
-		<div class="section">
-	    <table class="summary">
-            <tr>
-                <td>Nombre de travaux actifs</td>
-                <td><?php echo count($activeSorted); ?></td>
-            </tr>
-            <tr>
-                <td>Nombre de travaux inactifs</td>
-                <td><?php echo count($unactiveSorted); ?></td>
-            </tr>
-            <tr>
-                <td>Charge de travail approximative</td>
-                <td><?php 
-                        if($level == 0)
-                        {
-                            echo "-";
-                        }
-                        else if($level == 1)
-                        {
-                            echo $level . " heure"; 
-                        }
-                        else if($level > 1)
-                        {
-                            echo $level . " heures";
-                        }
-                     ?>
-                </td>
-            </tr>
-        </table>
-	</div>
-	<?php
-	    $legend = new PWHLegend();
-	    $legend->SetType($_SESSION['type']);
-	    echo $legend->Html();
-	?>
-
-	
+				
 		<div style="width:600px; padding:20px; margin:50px auto">
 			<table class="calendar">
 				<thead>
@@ -227,6 +191,42 @@
 			</table>
 		</div>
 
+	<h4>Statistiques</h4>
+	<div class="section">
+	    <table class="summary">
+            <tr>
+                <td>Nombre de travaux actifs</td>
+                <td><?php echo count($activeSorted); ?></td>
+            </tr>
+            <tr>
+                <td>Nombre de travaux inactifs</td>
+                <td><?php echo count($unactiveSorted); ?></td>
+            </tr>
+            <tr>
+                <td>Charge de travail approximative</td>
+                <td><?php 
+                        if($level == 0)
+                        {
+                            echo "-";
+                        }
+                        else if($level == 1)
+                        {
+                            echo $level . " heure"; 
+                        }
+                        else if($level > 1)
+                        {
+                            echo $level . " heures";
+                        }
+                     ?>
+                </td>
+            </tr>
+        </table>
+	</div>
+	<?php
+	    $legend = new PWHLegend();
+	    $legend->SetType($_SESSION['type']);
+	    echo $legend->Html();
+	?>
 	<h4>Liste des rendus actifs</h4>
     <div class="section">
         <table id="active" class="colored_table underlined_table">

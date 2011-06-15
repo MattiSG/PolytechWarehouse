@@ -167,8 +167,15 @@
     <div class="section">
 	    <div class="list">
 	        <ul>
-	            <li><a href="index.php?page=teacher_create_work_name_constraints&amp;subject_id=<?php echo $subject->GetID(); ?>">
-	            <img src="img/package_add.png"/>Cr&eacute;er un nouveau travail</a></li>
+	        	<?php 
+	        		$groups = $subject->GetGroups();
+		        	if (count($groups > 0)) {
+		        ?>
+		            <li><a href="index.php?page=teacher_create_work_name_constraints&amp;group_id=<?php echo $groups[0]->GetPromotion()->GetID(); ?>&amp;subject_id=<?php echo $subject->GetID(); ?>">
+		            <img src="img/package_add.png"/>Cr&eacute;er un nouveau travail</a></li>
+		        <?php
+		        	}
+	            ?>
 	        </ul>
 	    </div>
 	</div>

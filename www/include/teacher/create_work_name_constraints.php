@@ -2,10 +2,11 @@
     PWHLog::Write(PWHLog::INFO, $_SESSION['login'], "Acc&egrave;s page create_work_name_constraints");
     
     previousPage('teacher_list_works');
-    addPreviousPageParameter('subject_id', $_GET['subject_id']);
+    addPreviousPageParameter('group_id', $_GET['group_id']);
     $failed = false;
-    
-    // Clean session variables that will be used during the creation of the subject
+
+// TODO is it really useful ?    
+/*     // Clean session variables that will be used during the creation of the subject
     if(isset($_SESSION['work_name']))
     {
         unset($_SESSION['work_name']);
@@ -42,13 +43,19 @@
     {
         unset($_SESSION['level']);
     }
-        
-    if(isset($_GET['subject_id']) && PWHEntity::Valid("PWHSubject", $_GET['subject_id']))
+    if(isset($_SESSION['subject_id']))
     {
+        unset($_SESSION['subject_id']);
+    }
+*/
+    
+	// Retrieves the concerned group
+    if(isset($_GET['group_id']) && PWHEntity::Valid("PWHGroup", $_GET['group_id']))
+    {     
         try
         {
-            $subject = new PWHSubject();
-            $subject->Read($_GET['subject_id']);
+            $group = new PWHGroup();
+            $group->Read($_GET['group_id']);
         }
         catch(Exception $ex)
         {
@@ -69,22 +76,22 @@
             $workName = stripslashes($_GET['work_name']);
             $extraTime = $_GET['extra_time'];
             $size = $_GET['size'];
-            $format = $_GET['format'];
             $groupMin = $_GET['group_min'];
             $groupMax = $_GET['group_max'];
             $link = $_GET['link'];
             $level = $_GET['level'];
+            $subject_id = $_GET['subject_id'];
         }
         else
         {
             $workName = "";
             $extraTime = "";
             $size = "";
-            $format = "";
             $groupMin = "";
             $groupMax = "";
             $link = "";
             $level = "";
+            $subject_id = 0;
         }
         
         if(isset($_GET['action']))
@@ -107,18 +114,6 @@
             }
        }
        
-        $memos = array();
-        if(!$subject->TeacherExists($_SESSION['id']))
-        {
-            $memo = new PWHMemo();
-            $memo->SetText("Vous &ecirc;tes sur le point de cr&eacute;er un travail dans une mati&egrave;re dont vous n'&ecirc;tes pas responsable. Vous ne pourez pas &ecirc;tre responsable des rendus qui seront cr&eacute;&eacute;s.");
-            array_push($memos, $memo);
-        }
-        
-        if($subject->CountTeachers() == 0)
-        {
-            errorReport("Aucun enseignant n'a &eacute;t&eacute; design&eacute; responsable de cette mati&egrave;re. Vous ne pouvez pas cr&eacute;er de travaux.");
-        }
     }
     
     if($failed)
@@ -135,17 +130,30 @@
         
         displayErrorReport();
         
-        if(!$failed && $subject->CountTeachers() > 0)
+//        if(!$failed && $subject->CountTeachers() > 0)
+        if(!$failed)
         {
-            foreach($memos as $memo)
-            {
-                echo $memo->Html();
-            }
-    ?>
+    ?>    
     <h4>Contraintes du travail</h4>
 	<div class="section">
-		<form method="post" action="index.php?page=teacher_create_work_files&amp;subject_id=<?php echo $_GET['subject_id']; ?>">
-	        <div class="input">
+		<form method="post" action="index.php?page=teacher_create_work_files&amp;group_id=<?php echo $_GET['group_id']; ?>">
+			<div class="input">
+	    		Mati&egrave;re : 
+	    		<select name="subject_id" id="subject_id">
+	    		     <?php
+	                 	foreach($group->GetSubjects(true) as $sub) {
+	                 		if ($subject_id == $sub->GetID())
+		    	            	echo '<option value="'.$sub->GetID().'" selected="selected">';
+		    	            else
+								echo '<option value="'.$sub->GetID().'">';
+		    	           	?>
+	    	            		<?php echo $sub->GetName(); ?>
+	    	            	</option>
+	    	         <?php } ?>
+	    	    </select>
+		    </div>
+
+			<div class="input">
                 <label for="workName">Nom du travail (*):</label>
 	            <input type="text" id="work_name" name="workName" size="20" value="<?php echo $workName; ?>"/>
 	        </div>

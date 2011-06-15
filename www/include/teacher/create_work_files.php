@@ -2,16 +2,16 @@
     PWHLog::Write(PWHLog::INFO, $_SESSION['login'], "Acc&egrave;s page create_work_files");
     
     previousPage('teacher_create_work_name_constraints');
-    addPreviousPageParameter('subject_id', $_GET['subject_id']);
+    addPreviousPageParameter('group_id', $_GET['group_id']);
     $failed = false;
     
-    // Retrieves the concerned subject
-    if(isset($_GET['subject_id']) && PWHEntity::Valid("PWHSubject", $_GET['subject_id']))
+	// Retrieves the concerned group
+    if(isset($_GET['group_id']) && PWHEntity::Valid("PWHGroup", $_GET['group_id']))
     {     
         try
         {
-            $subject = new PWHSubject(null);
-            $subject->Read($_GET['subject_id']);
+            $group = new PWHGroup();
+            $group->Read($_GET['group_id']);
         }
         catch(Exception $ex)
         {
@@ -23,6 +23,8 @@
     {
         $failed = true;
     }
+    
+	$memos = array();
     
     // Clean sessions variables
     if(isset($_SESSION['files']))
@@ -67,21 +69,21 @@
         {
             if($_POST['workName'] == "" || $_POST['groupMin'] == "" || $_POST['groupMax'] == "")
             {
-                redirect("index.php?page=teacher_create_work_name_constraints&amp;subject_id=" . $subject->GetID() . "&amp;action=alert_empty");
+                redirect("index.php?page=teacher_create_work_name_constraints&amp;group_id=" . $_GET['group_id'] . "&amp;action=alert_empty");
             }
             else if(!preg_match("#^[0-9]+$#", $_POST['groupMin']) || !preg_match("#^[0-9]+$#", $_POST['groupMax']))
             {
-                redirect("index.php?page=teacher_create_work_name_constraints&amp;subject_id=" . $subject->GetID() . "&amp;action=alert_type_req");
+                redirect("index.php?page=teacher_create_work_name_constraints&amp;group_id=" . $_GET['group_id'] . "&amp;action=alert_type_req");
             }
             else if($_POST['groupMin'] > $_POST['groupMax'])
             {
-                redirect("index.php?page=teacher_create_work_name_constraints&amp;subject_id=" . $subject->GetID() . "&amp;action=alert_err");
+                redirect("index.php?page=teacher_create_work_name_constraints&amp;group_id=" . $_GET['group_id'] . "&amp;action=alert_err");
             }
             else if(($_POST['extraTime'] != "" && !preg_match("#^[0-9]+$#", $_POST['extraTime']))
                      || ($_POST['size'] != "" && !preg_match("#^[0-9]+$#", $_POST['size']))
                      || ($_POST['level'] != "" && $_POST['level'] != "-" && !preg_match("#^[0-9]+$#", $_POST['level'])))
             {
-                redirect("index.php?page=teacher_create_work_name_constraints&amp;subject_id=" . $subject->GetID() . "&amp;action=alert_type_nreq");  
+                redirect("index.php?page=teacher_create_work_name_constraints&amp;group_id=" . $_GET['group_id'] . "&amp;action=alert_type_nreq");  
             }
             else
             {
@@ -92,6 +94,23 @@
                 $_SESSION['level'] = $_POST['level'];
                 $_SESSION['extra_time'] = $_POST['extraTime'];
                 $_SESSION['size'] = $_POST['size'];
+                $_SESSION['subject_id'] = $_POST['subject_id'];
+ 
+ 				
+ 				$subject = new PWHSubject();
+            	$subject->Read($_SESSION['subject_id']);
+		        if(!$subject->TeacherExists($_SESSION['id']))
+		        {
+		            $memo = new PWHMemo();
+		            $memo->SetText("Vous &ecirc;tes sur le point de cr&eacute;er un travail dans une mati&egrave;re dont vous n'&ecirc;tes pas responsable. Vous ne pourez pas &ecirc;tre responsable des rendus qui seront cr&eacute;&eacute;s.");
+		            array_push($memos, $memo);
+		        }
+		        
+		        if($subject->CountTeachers() == 0)
+		        {
+		            errorReport("Aucun enseignant n'a &eacute;t&eacute; design&eacute; responsable de cette mati&egrave;re. Vous ne pouvez pas cr&eacute;er de travaux.");
+		        }
+
                 
                 if($_SESSION['extra_time'] == "")
                 {
@@ -127,6 +146,7 @@
         addPreviousPageParameter('group_max', $_SESSION['group_max']);
         addPreviousPageParameter('link', $_SESSION['link']);
         addPreviousPageParameter('level', $_SESSION['level']);
+        addPreviousPageParameter('subject_id', $_SESSION['subject_id']);
     }
     
     if($failed)
@@ -145,8 +165,12 @@
         
         if(!$failed)
         {
+			foreach($memos as $memo)
+            {
+                echo $memo->Html();
+            }
     ?>
-	<form method="post" action="index.php?page=teacher_create_work_assocs&amp;subject_id=<?php echo $_GET['subject_id']; ?>">
+	<form method="post" action="index.php?page=teacher_create_work_assocs&amp;group_id=<?php echo $_GET['group_id']; ?>">
         <?php
 	        for($i=1; $i<=$numberFiles; $i++)
 	        { ?>
@@ -168,10 +192,10 @@
 	     <?php } ?>
 	     <div class="section">
 	         <div class="input">
-                <a href="index.php?page=teacher_create_work_files&amp;subject_id=<?php echo $_GET['subject_id']; ?>&amp;number_files=<?php echo $numberFiles+1; ?>"><img src="img/plus.png"/>Ajouter un fichier</a>
+                <a href="index.php?page=teacher_create_work_files&amp;group_id=<?php echo $_GET['group_id']; ?>&amp;number_files=<?php echo $numberFiles+1; ?>"><img src="img/plus.png"/>Ajouter un fichier</a>
                 <?php if($numberFiles > 1)
                 { ?>
-               <a href="index.php?page=teacher_create_work_files&amp;subject_id=<?php echo $_GET['subject_id']; ?>&amp;number_files=<?php echo $numberFiles-1; ?>"><img src="img/minus.png"/>Supprimer un fichier</a> 
+               <a href="index.php?page=teacher_create_work_files&amp;group_id=<?php echo $_GET['group_id']; ?>&amp;number_files=<?php echo $numberFiles-1; ?>"><img src="img/minus.png"/>Supprimer un fichier</a> 
                 <?php } ?>
             <div>
          </div>
