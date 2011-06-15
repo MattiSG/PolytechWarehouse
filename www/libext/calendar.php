@@ -8,9 +8,11 @@ include 'calendar_event.php';
 /**
  * Calendar creation class.
  *
- * @author     Kohana Team, Corey Worrell
+ * @author 	Kohana Team, Corey Worrell
  * @copyright  (c) 2007-2008 Kohana Team
- * @version    1.0
+ * @version	1.0
+ *
+ * French translation by Matti Schneider-Ghibaudo (setlocale won't work)
  */
 class Calendar extends Event_Subject {
 
@@ -83,7 +85,7 @@ class Calendar extends Event_Subject {
 		$format = ($length === TRUE OR $length > 3) ? '%A' : '%a';
 
 		// Days of the week
-		$days = array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
+		$days = array('Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi');
 		
 		if ($this->config['week_start'] > 0)
 		{
@@ -105,13 +107,6 @@ class Calendar extends Event_Subject {
 			}
 			
 			$days = array_values($days);
-		}
-
-		// This is a bit awkward, but it works properly and is reliable
-		foreach ($days as $i => $day)
-		{
-			// Convert the English names to i18n names
-			$days[$i] = strftime($format, strtotime($day));
 		}
 
 		if (is_int($length) OR ctype_digit($length))
@@ -354,17 +349,14 @@ class Calendar extends Event_Subject {
 	 * Get the previous month name
 	 *
 	 * @param   int/bool   Length of month name. Or 'TRUE' for full name, '0' or 'FALSE' for just '$before'
-	 * @param   string     String to show before the month name
-	 * @return  string     Month name
+	 * @param   string 	String to show before the month name
+	 * @return  string 	Month name
 	 */
 	public function prev_month($length = TRUE, $before = '&lsaquo; ')
 	{
-		$format = ($length === TRUE OR $length > 3) ? '%B' : '%b';
-		
-		$date = mktime(0, 0, 0, $this->month - 1, 1, $this->year);
-		
-		$month = strftime($format, $date);
-		
+		if ($length === TRUE OR $length > 3)
+			$month = $this->french_month($this->month - 1);
+					
 		if (is_int($length) OR ctype_digit($length))
 		{
 			$month = substr($month, 0, $length);
@@ -382,16 +374,13 @@ class Calendar extends Event_Subject {
 	 * Get the current month name.
 	 *
 	 * @param   int/bool   Length of month name. Or 'TRUE' for full name.
-	 * @return  string     Current month name
+	 * @return  string 	Current month name
 	 */
 	public function month($length = TRUE)
 	{
-		$format = ($length === TRUE OR $length > 3) ? '%B' : '%b';
-		
-		$date = mktime(0, 0, 0, $this->month, 1, $this->year);
-		
-		$month = strftime($format, $date);
-		
+		if ($length === TRUE OR $length > 3)
+			$month = $this->french_month($this->month);
+					
 		if (is_int($length) OR ctype_digit($length))
 		{
 			$month = substr($month, 0, $length);
@@ -419,16 +408,13 @@ class Calendar extends Event_Subject {
 	 * Get the next month name
 	 *
 	 * @param   int/bool   Length of month name. Or 'TRUE' for full name, '0' or 'FALSE' for just '$after'
-	 * @param   string     String to show after the month name
-	 * @return  string     Month name
+	 * @param   string 	String to show after the month name
+	 * @return  string 	Month name
 	 */
 	public function next_month($length = TRUE, $after = ' &rsaquo;')
 	{
-		$format = ($length === TRUE OR $length > 3) ? '%B' : '%b';
-		
-		$date = mktime(0, 0, 0, $this->month + 1, 1, $this->year);
-		
-		$month = strftime($format, $date);
+		if ($length === TRUE OR $length > 3)
+			$month = $this->french_month($this->month + 1);
 		
 		if (is_int($length) OR ctype_digit($length))
 		{
@@ -441,6 +427,37 @@ class Calendar extends Event_Subject {
 		}
 		
 		return $month.$after;
+	}
+	
+
+	public function french_month($index) {
+		switch($index % 12)
+		{
+			case 0:
+				return "Janvier";
+			case 1:
+				return "F&eacute;vrier";
+			case 2:
+				return "Mars";
+			case 3:
+				return "Avril";
+			case 4:
+				return "Mai";
+			case 5:
+				return "Juin";
+			case 6:
+				return "Juillet";
+			case 7:
+				return "Ao&ucirc;t";
+			case 8:
+				return "Septembre";
+			case 9:
+				return "Octobre";
+			case 10:
+				return "Novembre";
+			case 11:
+				return "D&eacute;cembre";
+		}
 	}
 
 
@@ -506,15 +523,15 @@ class Calendar extends Event_Subject {
 	 * Merges the current GET parameters with an array of new or overloaded
 	 * parameters and returns the resulting query string.
 	 *
-	 *     // Returns "?sort=title&limit=10" combined with any existing GET values
-	 *     $query = URL::query(array('sort' => 'title', 'limit' => 10));
+	 * 	// Returns "?sort=title&limit=10" combined with any existing GET values
+	 * 	$query = URL::query(array('sort' => 'title', 'limit' => 10));
 	 *
 	 * Typically you would use this when you are sorting query results,
 	 * or something similar.
 	 *
 	 * [!!] Parameters with a NULL value are left out.
 	 *
-	 * @param   array    array of GET parameters
+	 * @param   array	array of GET parameters
 	 * @param   boolean  include current request GET parameters
 	 * @return  string
 	 */

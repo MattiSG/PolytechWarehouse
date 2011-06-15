@@ -146,50 +146,87 @@
 
 	<h2>Travaux du groupe <?php echo $groupName; ?></h2>
 	
-				
-		<div style="width:600px; padding:20px; margin:50px auto">
-			<table class="calendar">
-				<thead>
-					<tr class="navigation">
-						<th class="prev-month"><a href="<?php echo htmlspecialchars($calendar->prev_month_url()) ?>"><?php echo $calendar->prev_month() ?></a></th>
-						<th colspan="5" class="current-month"><?php echo $calendar->month() ?></th>
-						<th class="next-month"><a href="<?php echo htmlspecialchars($calendar->next_month_url()) ?>"><?php echo $calendar->next_month() ?></a></th>
-					</tr>
-					<tr class="weekdays">
-						<?php foreach ($calendar->days() as $day): ?>
-							<th><?php echo $day ?></th>
+
+		<div class="section">
+	    <table class="summary">
+            <tr>
+                <td>Nombre de travaux actifs</td>
+                <td><?php echo count($activeSorted); ?></td>
+            </tr>
+            <tr>
+                <td>Nombre de travaux inactifs</td>
+                <td><?php echo count($unactiveSorted); ?></td>
+            </tr>
+            <tr>
+                <td>Charge de travail approximative</td>
+                <td><?php 
+                        if($level == 0)
+                        {
+                            echo "-";
+                        }
+                        else if($level == 1)
+                        {
+                            echo $level . " heure"; 
+                        }
+                        else if($level > 1)
+                        {
+                            echo $level . " heures";
+                        }
+                     ?>
+                </td>
+            </tr>
+        </table>
+	</div>
+	<?php
+	    $legend = new PWHLegend();
+	    $legend->SetType($_SESSION['type']);
+	    echo $legend->Html();
+	?>
+
+	<article>
+		<h4>Cliquez sur un jour pour ajouter un rendu :</h4>
+		<table class="calendar" id="calendar">
+			<thead>
+				<tr class="navigation">
+					<th class="prev-month"><a id="prev-month" href="<?php echo htmlspecialchars($calendar->prev_month_url()) ?>"><?php echo $calendar->prev_month() ?></a></th>
+					<th colspan="5" class="current-month"><?php echo $calendar->month() ?></th>
+					<th class="next-month"><a id="next-month" href="<?php echo htmlspecialchars($calendar->next_month_url()) ?>"><?php echo $calendar->next_month() ?></a></th>
+				</tr>
+				<tr class="weekdays">
+					<?php foreach ($calendar->days() as $day): ?>
+						<th><?php echo $day ?></th>
+					<?php endforeach ?>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach ($calendar->weeks() as $week): ?>
+					<tr>
+						<?php foreach ($week as $day): ?>
+							<?php
+							list($number, $current, $data) = $day;
+							
+							$classes = array();
+							$output  = '';
+							
+							if (is_array($data))
+							{
+								$classes = $data['classes'];
+								$title   = $data['title'];
+								$output  = empty($data['output']) ? '' : '<ul class="output"><li>'.implode('</li><li>', $data['output']).'</li></ul>';
+							}
+							?>
+							<td class="day <?php echo implode(' ', $classes) ?>">
+								<span class="date" title="<?php echo implode(' / ', $title) ?>"><?php echo $number ?></span>
+								<div class="day-content">
+									<?php echo $output ?>
+								</div>
+							</td>
 						<?php endforeach ?>
 					</tr>
-				</thead>
-				<tbody>
-					<?php foreach ($calendar->weeks() as $week): ?>
-						<tr>
-							<?php foreach ($week as $day): ?>
-								<?php
-								list($number, $current, $data) = $day;
-								
-								$classes = array();
-								$output  = '';
-								
-								if (is_array($data))
-								{
-									$classes = $data['classes'];
-									$title   = $data['title'];
-									$output  = empty($data['output']) ? '' : '<ul class="output"><li>'.implode('</li><li>', $data['output']).'</li></ul>';
-								}
-								?>
-								<td class="day <?php echo implode(' ', $classes) ?>">
-									<span class="date" title="<?php echo implode(' / ', $title) ?>"><?php echo $number ?></span>
-									<div class="day-content">
-										<?php echo $output ?>
-									</div>
-								</td>
-							<?php endforeach ?>
-						</tr>
-					<?php endforeach ?>
-				</tbody>
-			</table>
-		</div>
+				<?php endforeach ?>
+			</tbody>
+		</table>
+	</article>
 
 	<h4>Statistiques</h4>
 	<div class="section">
@@ -358,7 +395,7 @@
 	                    {	                
                             $class = ' class="delivered_locked_line"';
                             ?>
-	                        <tr id="<?php echo $work->GetID() . "-" . $delivery->GetID(); ?><?php echo $class; ?>>
+	                        <tr id="<?php echo $work->GetID() . "-" . $delivery->GetID(); ?><?php echo $class; ?>">
 		                        <td>
 		                            <a href="index.php?page=teacher_display_board&amp;previous=teacher_list_group_deliveries&amp;group_id=<?php echo $group->GetID(); ?>&amp;subject_id=<?php echo $subject->GetID(); ?>&amp;work_id=<?php echo $work->GetID(); ?>&amp;delivery_id=<?php echo $delivery->GetID(); ?>&amp;index=A">
 		                                <img src="img/bullet_go.png"/><?php echo $delivery->GetName(); ?>
@@ -376,8 +413,23 @@
     </div>
     <?php } ?>
 </section>
+
+
+
+<script language="javascript" type="text/javascript" src="js/PWHCalendar.js"></script>
+
 <script type="text/javascript">
-<!--
+//<![CDATA[
+	window.addEvent('domready', function() {
+		new PWHCalendar('calendar').addLinks();
+	});
+//]]>
+</script>
+
+
+
+<script type="text/javascript">
+//<![CDATA[
     var numberDeliveries = <?php echo $id-1; ?>;
     var counterDeliveries = new Array();
     var counterGroups = new Array();
@@ -479,10 +531,7 @@
     }
     
     window.setInterval("time()", 1000); 
-//-->
-</script>
-<script type="text/javascript">
-<!--
+
     function toggle()
     {
         
@@ -502,9 +551,7 @@
     }
     
     document.getElementById("inactive").style.display = "none";
-</script>
-<script type="text/javascript">
-<!--
+
     var numberWorks = <?php echo $JSID-1 ?>;
     var workVisible = new Array();
     for(var i=1; i<=numberWorks; i++)
@@ -555,4 +602,5 @@
             }
         }
     }
+//]]>
 </script>
