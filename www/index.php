@@ -104,7 +104,7 @@
 				    // Logout link, for logged user
 				    if(isset($_SESSION['logged'])) 
 				    { ?>
-					    <p id="links"><a href="index.php?page=logout"><img src="<?php echo IMG_PATH(); ?>logout.png"/>D&eacute;connexion</a></p>
+					    <p id="links"><a href="index.php?page=logout"><img src="<?php echo IMG_PATH(); ?>logout.png"/>D&eacute;connecter <?php echo $_SESSION['login'] ?></a></p>
 		    <?php	}
 			    }?>
 		</div>
