@@ -33,21 +33,42 @@ var PWHCalendar = new Class({
 	},
 	
 	addLinks: function addLinks() {
-		this.tds.each(this.addLink, this);
+		this.tds.each(this.storeLink, this);
+		this.tds.each(this.attachLink, this);
 		return this;
 	},
 	
-	addLink: function addLink(td) {
-		td.addEvent('click', function() {
+	storeLink: function storeLink(td) {
+		var day = td.getChildren('.date')[0].get('text');
+		var destination; // URI
+		var cursor = "pointer";
+		
+		if (td.hasClass('prev-next')) {
+			if (day > 15) { //heuristic to determine whether it is a "prev-month" day or "next-month" day, since the calendar does not do any difference
+				destination = new URI($('next-month').get('href'));
+				cursor = 'w-resize';
+			} else {
+				destination = new URI($('prev-month').get('href'));
+				cursor = 'e-resize';
+			}
+		} else {
 			var destination = new URI(this.options.linksFile);
 			destination.setData(this.locationURI.getData())
 						.setData(this.options.linksParams, true) // second param means "merge" instead of "overwrite"
 						.setData({
-							d: td.getChildren('.date')[0].get('text')
+							d: day
 						}, true);
-			destination.go();
-		}.bind(this));
+		}
 		
-		td.setStyle('cursor', 'pointer');
+		td.store('destination', destination);
+		td.store('cursor', cursor);
+	},
+	
+	attachLink: function attachLink(td) {
+		td.addEvent('click', function() {
+			this.retrieve('destination').go();
+		});
+		
+		td.setStyle('cursor', td.retrieve('cursor'));
 	}
 });

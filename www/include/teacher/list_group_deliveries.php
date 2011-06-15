@@ -187,9 +187,9 @@
 		<table class="calendar" id="calendar">
 			<thead>
 				<tr class="navigation">
-					<th class="prev-month"><a href="<?php echo htmlspecialchars($calendar->prev_month_url()) ?>"><?php echo $calendar->prev_month() ?></a></th>
+					<th class="prev-month"><a id="prev-month" href="<?php echo htmlspecialchars($calendar->prev_month_url()) ?>"><?php echo $calendar->prev_month() ?></a></th>
 					<th colspan="5" class="current-month"><?php echo $calendar->month() ?></th>
-					<th class="next-month"><a href="<?php echo htmlspecialchars($calendar->next_month_url()) ?>"><?php echo $calendar->next_month() ?></a></th>
+					<th class="next-month"><a id="next-month" href="<?php echo htmlspecialchars($calendar->next_month_url()) ?>"><?php echo $calendar->next_month() ?></a></th>
 				</tr>
 				<tr class="weekdays">
 					<?php foreach ($calendar->days() as $day): ?>
