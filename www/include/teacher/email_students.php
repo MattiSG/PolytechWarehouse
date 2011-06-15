@@ -41,8 +41,8 @@
     }
 ?>
 
-<fieldset>
-	<legend>envoi d'emails</legend>
+<section>
+	<h2>envoi d'emails</h2>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("#");
@@ -64,6 +64,6 @@
         ?>
 	</div>
 	<?php } ?>
-</fieldset>
+</section>
 			
 

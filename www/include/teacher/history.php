@@ -6,8 +6,8 @@
     $student = new PWHStudent();
     $student->Read($_SESSION['id']);
 ?>
-<fieldset>
-	<legend>historique des &eacute;v&egrave;nements</legend>
+<section>
+	<h2>historique des &eacute;v&egrave;nements</h2>
 	<?php 
 	    $help = new PWHHelp();
         echo $help->Html("#");
@@ -21,5 +21,5 @@
             echo $list->Html(); 
         ?>
 	</div>
-</fieldset>
+</section>
 

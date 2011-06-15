@@ -135,8 +135,8 @@
 ?>
 
 
-<fieldset>
-	<legend>groupe de rendu de <?php echo $studentName; ?></legend>
+<section>
+	<h2>groupe de rendu de <?php echo $studentName; ?></h2>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/student/help/display_deliverygroup.html', 800, 550);");
@@ -240,4 +240,4 @@
         </table>
    </div>
    <?php } ?>
-</fieldset>
+</section>

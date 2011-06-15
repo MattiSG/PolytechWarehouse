@@ -41,8 +41,8 @@
     }
 ?>
 
-<fieldset>
-	<legend>Creation express d'enseignants</legend>
+<section>
+	<h2>Cr&eacute;ation express d'enseignants</h2>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("#");
@@ -67,7 +67,7 @@
 		    </div>
 	    </form>
     </div>
-</fieldset>
+</section>
 
 <script type="text/javascript">
 <!--

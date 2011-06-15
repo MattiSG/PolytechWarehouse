@@ -128,8 +128,8 @@
         errorReport("Impossible d'afficher la page demand&eacute;e.");
     }
 ?>
-<fieldset>
-	<legend>configuration de <?php echo $groupName; ?></legend>
+<section>
+	<h2>configuration de <?php echo $groupName; ?></h2>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/group_settings_students_add.html', 800, 550);");
@@ -262,7 +262,7 @@
         </div>
     </div>
     <?php } ?>
-</fieldset>
+</section>
 
 <script type="text/javascript" charset="iso-8859-1">
 <!--

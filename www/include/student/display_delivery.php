@@ -223,8 +223,8 @@
         errorReport("Vous n'&ecirc;tes pas concern&eacute; par ce rendu.");
     }
 ?>
-<fieldset>
-	<legend><?php echo 'travail ' . $workName; ?></legend>
+<section>
+	<h2><?php echo 'travail ' . $workName; ?></h2>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/student/help/display_delivery.html', 800, 550);");
@@ -401,4 +401,4 @@
         <?php } ?>
     <?php } 
     } ?>
-</fieldset>
+</section>

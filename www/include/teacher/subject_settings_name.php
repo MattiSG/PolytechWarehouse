@@ -59,8 +59,8 @@
         errorReport("Impossible d'afficher la page demand&eacute;e.");
     }
 ?>
-<fieldset>
-	<legend>configuration de <?php echo $subjectName; ?></legend>
+<section>
+	<h2>configuration de <?php echo $subjectName; ?></h2>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/subject_settings_name.html', 800, 600);");
@@ -125,7 +125,7 @@
         </div>
     </div>
     <?php } ?>
-</fieldset>
+</section>
 <script type="text/javascript">
 <!--
     function CheckForm()

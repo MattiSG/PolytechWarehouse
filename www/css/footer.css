@@ -1,32 +1,33 @@
-#footer {
+footer {
     clear: both;
 	margin: 0;
 	height: 59px;
 	background: url("../img/footer.png");
 }
 
-#footer p {
+footer p {
 	line-height: 50px;
 	margin: 0;
 	text-align:center;
-	color:#7ba5d9;    font-weight: bold;
+	color:#7ba5d9;
+    font-weight: bold;
 	font-size:9px;
 }
 
-#footer p a
+footer p a
 {
     padding-top: 5px;
     text-decoration: none;
     color: #7ba5d9;
 }
 
-#footer p a:hover
+footer p a:hover
 {
     text-decoration: none;
     color: #e72d43;
 }
 
-#footer p img
+footer p img
 {
     border: 0;
     margin-right: 5px;

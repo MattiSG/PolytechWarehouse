@@ -74,8 +74,8 @@ if($action == 'login')
   }
 
 ?>
-<fieldset>
-<legend>connexion</legend>
+<section>
+<h2>connexion</h2>
 <?php
 $help = new PWHHelp();
 echo $help->Html("javascript:popup('include/help/login.html', 800, 550);");
@@ -93,5 +93,5 @@ displayErrorReport();
   </div>
   </form>
   </div>
-  </fieldset>
+  </section>
   

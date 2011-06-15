@@ -128,8 +128,8 @@
     }
 ?>
 
-<fieldset>
-	<legend>configuration de <?php echo $workName; ?></legend>
+<section>
+	<h2>configuration de <?php echo $workName; ?></h2>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/work_settings.html', 800, 600);");
@@ -174,7 +174,7 @@
         </form>
     </div>
     <?php } ?>
-</fieldset>
+</section>
 <script type="text/javascript">
 <!--
     function CheckForm()

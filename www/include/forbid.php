@@ -3,12 +3,12 @@
     PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Acc&egrave;s page prot&eacute;g&eacute;e ou inexistante");
 ?>
 
-<fieldset>
-    <legend>Erreur</legend>
+<section>
+    <h2>Erreur</h2>
     <?php 
         $help = new PWHHelp();
         echo $help->Html("#");
         
         displayErrorReport(); 
      ?>
-</fieldset>
+</section>

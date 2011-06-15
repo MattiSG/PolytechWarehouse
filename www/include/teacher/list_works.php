@@ -118,8 +118,8 @@
         errorReport("Impossible d'afficher la page demand&eacute;e.");
     }
 ?>
-<fieldset>
-	<legend>travaux de <?php echo $subjectName; ?></legend>
+<section>
+	<h2>travaux de <?php echo $subjectName; ?></h2>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/list_works.html', 800, 600);");
@@ -244,7 +244,7 @@
 	    <?php echo $link; ?>
 	</div>
 	<?php } ?>
-</fieldset>
+</section>
 <script type="text/javascript">
 <!--
     function UserConfirmation(subject_id, work_id)

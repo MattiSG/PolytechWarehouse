@@ -32,8 +32,8 @@
 //-->
 </script>
 
-<fieldset>
-    <legend>gestion de la base de donn&eacute;es</legend>
+<section>
+    <h2>gestion de la base de donn&eacute;es</h2>
     <?php
         $help = new PWHHelp();
         echo $help->Html("#");
@@ -75,4 +75,4 @@
             </ul>
         </div>
     </div>
-</fieldset>
+</section>

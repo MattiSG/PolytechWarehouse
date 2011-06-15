@@ -86,8 +86,8 @@
     }
 ?>
 
-<fieldset>
-    <legend>promotion</legend>
+<section>
+    <h2>promotion</h2>
     <?php
         $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/load_group.html', 800, 600);");
@@ -106,7 +106,7 @@
             </div>
 		</div>
     </form>
-</fieldset>
+</section>
 
 <script type="text/javascript">
 <!--

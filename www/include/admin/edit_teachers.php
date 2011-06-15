@@ -23,8 +23,8 @@
     }
 ?>
 
-<fieldset>
-	<legend>Edition de profil</legend>
+<section>
+	<h2>Edition de profil</h2>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("#");
@@ -71,6 +71,6 @@
                   } ?>
         </table>
 	</div>
-</fieldset>
+</section>
 			
 

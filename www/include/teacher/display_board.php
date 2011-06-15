@@ -86,8 +86,8 @@
 ?>
 
 
-<fieldset>
-	<legend>etat des rendus de <?php echo $deliveryName; ?></legend>
+<section>
+	<h2>etat des rendus de <?php echo $deliveryName; ?></h2>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/display_board.html', 800, 600);");
@@ -280,4 +280,4 @@
         </table>
    </div>
    <?php } ?>
-</fieldset>
+</section>

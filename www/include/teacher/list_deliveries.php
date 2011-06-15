@@ -81,8 +81,8 @@
         errorReport("Impossible d'afficher la page demand&eacute;e.");
     }
 ?>
-<fieldset>
-	<legend>rendus de <?php echo $workName; ?></legend>
+<section>
+	<h2>rendus de <?php echo $workName; ?></h2>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/list_deliveries.html', 800, 600);");
@@ -285,7 +285,7 @@
         </table>
     </div>
     <?php } ?>
-</fieldset>
+</section>
 <script type="text/javascript">
 <!--
     function UserConfirmation(subject_id, work_id, delivery_id)

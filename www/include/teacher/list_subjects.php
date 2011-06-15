@@ -93,8 +93,8 @@
         errorReport("Impossible d'afficher la page demand&eacute;e.");
     }
 ?>
-<fieldset>
-	<legend>gestion des mati&egrave;res</legend>
+<section>
+	<h2>gestion des mati&egrave;res</h2>
 	<?php
         $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/list_subjects.html', 800, 550);");
@@ -163,7 +163,7 @@
         </table>
     </div>
     <?php } ?>
-</fieldset>
+</section>
 <script type="text/javascript">
 <!--
     function UserConfirmation(see, subject_id)

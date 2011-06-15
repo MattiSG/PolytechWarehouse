@@ -91,8 +91,8 @@
         $subjectName = mb_strtolower($subject->GetName());
     }
 ?>
-<fieldset>
-	<legend>configuration de <?php echo $subjectName; ?></legend>
+<section>
+	<h2>configuration de <?php echo $subjectName; ?></h2>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/subject_settings_teachers_remove.html', 800, 600);");
@@ -123,7 +123,7 @@
 	   </form>
 	</div>
 	<?php } ?>
-</fieldset>
+</section>
 <script type="text/javascript" charset="iso-8859-1">
 <!--
     function MakeIndex(link, letter)

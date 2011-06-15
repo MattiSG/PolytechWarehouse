@@ -257,8 +257,8 @@
     }
 ?>
 
-<fieldset>
-	<legend>configuration des rendus</legend>
+<section>
+	<h2>configuration des rendus</h2>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/deliveries_settings.html', 800, 600);");
@@ -347,7 +347,7 @@
         </form>
     </div>
 <?php } ?>
-</fieldset>
+</section>
 <script type="text/javascript">
 <!--
     var selector = <?php echo $selector; ?>;

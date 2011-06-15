@@ -4,8 +4,8 @@
     $student = new PWHStudent();
     $student->Read($_SESSION['id']);
 ?>
-<fieldset>
-	<legend>&eacute;v&egrave;nements r&eacute;cents</legend>
+<section>
+	<h2>&eacute;v&egrave;nements r&eacute;cents</h2>
 	<?php 
 	    $history = new PWHHistory();
         echo $history->Html("index.php?page=student_history");
@@ -19,15 +19,15 @@
             echo $list->Html(); 
         ?>
 	</div>
-</fieldset>
-<fieldset>
-    <legend>espace personnel de <?php echo mb_strtolower($student->GetFirstName() . " " . $student->GetLastName()); ?></legend>
+</section>
+<section>
+    <h2>espace personnel de <?php echo mb_strtolower($student->GetFirstName() . " " . $student->GetLastName()); ?></h2>
 	<?php 
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/student/help/home.html', 800, 550);");
     ?>
     <h4>Menu principal</h4>
-	<div class="section">    
+	<div class="section"> 
 	    <div class="list">
             <ul>
                 <li><a href="index.php?page=student_list_deliveries"><img src="img/package_go.png"/>Gestion des travaux</a></li>
@@ -36,4 +36,4 @@
             </ul>
         </div>
    </div>
-</fieldset>
+</section>

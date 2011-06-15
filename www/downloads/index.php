@@ -108,7 +108,7 @@
         fprintf($file, '<table class="colored_table underlined_table"><tr><th>Email</th><th>Nom</th><th>Pr&eacute;nom</th></tr>');
         if(count($freeStudents) == 0)
         {         
-            fprintf($file, '<tr><td colspan="3">Il n\'y a aucun &eacute;tudiants sans groups de rendu</td></tr>');    
+            fprintf($file, '<tr><td colspan="3">Il n\'y a aucun &eacute;tudiants sans groupe de rendu</td></tr>');    
         }
         else
         {

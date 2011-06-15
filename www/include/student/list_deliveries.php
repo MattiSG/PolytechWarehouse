@@ -80,8 +80,8 @@
     }
 ?>
 
-<fieldset>
-	<legend>Travaux de <?php echo $studentName; ?></legend>
+<section>
+	<h2>Travaux de <?php echo $studentName; ?></h2>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/student/help/list_deliveries.html', 800, 550);");
@@ -142,7 +142,7 @@
         </div>
     </div>
     <?php } ?>
-</fieldset>
+</section>
 <script type="text/javascript">
 <!--
     var numberDeliveries = <?php echo count($activeDelivered) + count($activeUndelivered); ?>;
