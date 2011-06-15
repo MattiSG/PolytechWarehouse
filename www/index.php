@@ -37,6 +37,9 @@
 		<link type="text/css" rel="stylesheet" media="all" href="css/calendar.css" />
 
         <?php INIT_JS(); ?>
+        
+        <script language="javascript" type="text/javascript" src="js/mootools-core-1.3.2-full-nocompat-yc.js"></script>
+        <script language="javascript" type="text/javascript" src="js/mootools-more-1.3.2.1.js"></script>
 	</head>
 	<body>
 		<a href="index.php">
