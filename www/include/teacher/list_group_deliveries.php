@@ -100,34 +100,34 @@
 
 
 
-include $GLOBALS['EXTERNAL_LIB_DIRNAME'].'calendar.php'; // TODO : Move this include
-
-$month = isset($_GET['m']) ? $_GET['m'] : NULL;
-$year  = isset($_GET['y']) ? $_GET['y'] : NULL;
-
-$params['week_start'] = 1;
-
-$calendar = Calendar::factory($month, $year, $params);
-
-$calendar->standard('today')
-	->standard('prev-next');
-
-
-foreach($deliveries as $a_delivery)
-{
-	$a_work = new PWHWork();
-	$a_work->Read($a_delivery->GetWorkID());
+	include $GLOBALS['EXTERNAL_LIB_DIRNAME'].'calendar.php'; // TODO : Move this include
 	
-    $a_subject = new PWHSubject();
-    $a_subject->Read($a_work->GetSubjectID());
-
-	$event = $calendar->event()
-		->condition('timestamp', strtotime($a_delivery->GetDeadline()))
-		->title($a_subject->GetName()." / ".$a_work->GetName())
-		->output('<a href="./index.php?page=teacher_display_board&previous=teacher_list_group_deliveries&group_id='.$_GET['group_id'].'&subject_id='.$a_subject->GetID().'&work_id='.$a_work->GetID().'&delivery_id='.$a_delivery->GetID().'&index=A">'.$a_subject->GetName()." / ".$a_work->GetName().'</a>');
+	$month = isset($_GET['m']) ? $_GET['m'] : NULL;
+	$year  = isset($_GET['y']) ? $_GET['y'] : NULL;
+	
+	$params['week_start'] = 1;
+	
+	$calendar = Calendar::factory($month, $year, $params);
+	
+	$calendar->standard('today')
+		->standard('prev-next');
+	
+	
+	foreach($deliveries as $a_delivery)
+	{
+		$a_work = new PWHWork();
+		$a_work->Read($a_delivery->GetWorkID());
 		
-	$calendar->attach($event);
-}
+	    $a_subject = new PWHSubject();
+	    $a_subject->Read($a_work->GetSubjectID());
+	
+		$event = $calendar->event()
+			->condition('timestamp', strtotime($a_delivery->GetDeadline()))
+			->title($a_subject->GetName()." / ".$a_work->GetName())
+			->output('<a href="./index.php?page=teacher_display_board&previous=teacher_list_group_deliveries&group_id='.$_GET['group_id'].'&subject_id='.$a_subject->GetID().'&work_id='.$a_work->GetID().'&delivery_id='.$a_delivery->GetID().'&index=A">'.$a_subject->GetName()." / ".$a_work->GetName().'</a>');
+			
+		$calendar->attach($event);
+	}
 
 ?>
 <section>
@@ -146,7 +146,43 @@ foreach($deliveries as $a_delivery)
 
 	<h2>Travaux du groupe <?php echo $groupName; ?></h2>
 	
-				
+		<div class="section">
+	    <table class="summary">
+            <tr>
+                <td>Nombre de travaux actifs</td>
+                <td><?php echo count($activeSorted); ?></td>
+            </tr>
+            <tr>
+                <td>Nombre de travaux inactifs</td>
+                <td><?php echo count($unactiveSorted); ?></td>
+            </tr>
+            <tr>
+                <td>Charge de travail approximative</td>
+                <td><?php 
+                        if($level == 0)
+                        {
+                            echo "-";
+                        }
+                        else if($level == 1)
+                        {
+                            echo $level . " heure"; 
+                        }
+                        else if($level > 1)
+                        {
+                            echo $level . " heures";
+                        }
+                     ?>
+                </td>
+            </tr>
+        </table>
+	</div>
+	<?php
+	    $legend = new PWHLegend();
+	    $legend->SetType($_SESSION['type']);
+	    echo $legend->Html();
+	?>
+
+	
 		<div style="width:600px; padding:20px; margin:50px auto">
 			<table class="calendar">
 				<thead>
@@ -191,42 +227,6 @@ foreach($deliveries as $a_delivery)
 			</table>
 		</div>
 
-	<h4>Statistiques</h4>
-	<div class="section">
-	    <table class="summary">
-            <tr>
-                <td>Nombre de travaux actifs</td>
-                <td><?php echo count($activeSorted); ?></td>
-            </tr>
-            <tr>
-                <td>Nombre de travaux inactifs</td>
-                <td><?php echo count($unactiveSorted); ?></td>
-            </tr>
-            <tr>
-                <td>Charge de travail approximative</td>
-                <td><?php 
-                        if($level == 0)
-                        {
-                            echo "-";
-                        }
-                        else if($level == 1)
-                        {
-                            echo $level . " heure"; 
-                        }
-                        else if($level > 1)
-                        {
-                            echo $level . " heures";
-                        }
-                     ?>
-                </td>
-            </tr>
-        </table>
-	</div>
-	<?php
-	    $legend = new PWHLegend();
-	    $legend->SetType($_SESSION['type']);
-	    echo $legend->Html();
-	?>
 	<h4>Liste des rendus actifs</h4>
     <div class="section">
         <table id="active" class="colored_table underlined_table">
