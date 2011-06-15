@@ -10,7 +10,7 @@ var PWHCalendar = new Class({
 	tds: [], // Element[], the tds inside this.table
 	
 	options: {
-		linksFile: '/index.php',
+		linksFile: 'index.php',
 		linksParams: { // everything in the current query string will be passed, but anything could be overwritten in options
 			page: 'teacher_create_work_name_constraints'
 		}
