@@ -377,8 +377,23 @@
     </div>
     <?php } ?>
 </section>
+
+
+
+<script language="javascript" type="text/javascript" src="js/PWHCalendar.js"></script>
+
 <script type="text/javascript">
-<!--
+//<![CDATA[
+	window.addEvent('domready', function() {
+		new PWHCalendar('calendar').addLinks();
+	});
+//]]>
+</script>
+
+
+
+<script type="text/javascript">
+//<![CDATA[
     var numberDeliveries = <?php echo $id-1; ?>;
     var counterDeliveries = new Array();
     var counterGroups = new Array();
@@ -480,10 +495,7 @@
     }
     
     window.setInterval("time()", 1000); 
-//-->
-</script>
-<script type="text/javascript">
-<!--
+
     function toggle()
     {
         
@@ -503,9 +515,7 @@
     }
     
     document.getElementById("inactive").style.display = "none";
-</script>
-<script type="text/javascript">
-<!--
+
     var numberWorks = <?php echo $JSID-1 ?>;
     var workVisible = new Array();
     for(var i=1; i<=numberWorks; i++)
@@ -556,4 +566,5 @@
             }
         }
     }
+//]]>
 </script>
