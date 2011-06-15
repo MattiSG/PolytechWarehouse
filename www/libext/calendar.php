@@ -12,7 +12,7 @@ include 'calendar_event.php';
  * @copyright  (c) 2007-2008 Kohana Team
  * @version	1.0
  *
- * French translation by Matti Schneider-Ghibaudo
+ * French translation by Matti Schneider-Ghibaudo (setlocale won't work)
  */
 class Calendar extends Event_Subject {
 
