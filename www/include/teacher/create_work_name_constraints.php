@@ -130,18 +130,39 @@
         
         displayErrorReport();
         
-//        if(!$failed && $subject->CountTeachers() > 0)
+//        if(!$failed && $subject->CountTeachers() > 0) FIXME : Why check for teachers ?
         if(!$failed)
         {
     ?>    
     <h4>Contraintes du travail</h4>
+    
+    <?php
+    	$promo = $group->GetPromotion();
+    ?>
+    <p>Actuellement s&eacute;l&eacute;ctionn&eacute; : <?php echo $group->GetName(); ?></p>
+    	<?php 
+    		if ($group->GetID() != $promo->GetID())
+    			echo '<p>Changer pour la promo : <a href="index.php?page=teacher_create_work_name_constraints&group_id='.$promo->GetID().'&m=6&y=2011&d=9">'.$promo->GetName().'</a></p>';
+    	?>
+    <p>Changer pour un sous groupe : 
+    	<?php
+    		
+         	foreach(PWHGroup::GetChildrenOf($promo->GetID()) as $g) {
+         		if ($group->GetID() == $g->GetID())
+	            	echo $g->GetName();
+	            else
+    				echo '<a href="index.php?page=teacher_create_work_name_constraints&group_id='.$g->GetID().'&m=6&y=2011&d=9">'.$g->GetName().'</a>';
+        	}
+        ?>
+    </p>
+    
 	<div class="section">
 		<form method="post" action="index.php?page=teacher_create_work_files&amp;group_id=<?php echo $_GET['group_id']; ?>">
 			<div class="input">
 	    		Mati&egrave;re : 
 	    		<select name="subject_id" id="subject_id">
 	    		     <?php
-	                 	foreach($group->GetSubjects(true) as $sub) {
+	                 	foreach($group->GetPromotion()->GetSubjects(true) as $sub) {
 	                 		if ($subject_id == $sub->GetID())
 		    	            	echo '<option value="'.$sub->GetID().'" selected="selected">';
 		    	            else
