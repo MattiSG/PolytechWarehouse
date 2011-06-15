@@ -183,8 +183,9 @@
 	?>
 
 	
-		<div style="width:600px; padding:20px; margin:50px auto">
-			<table class="calendar">
+		<article>
+			<h4>Cliquez sur un jour pour ajouter un rendu :</h4>
+			<table class="calendar" id="calendar">
 				<thead>
 					<tr class="navigation">
 						<th class="prev-month"><a href="<?php echo htmlspecialchars($calendar->prev_month_url()) ?>"><?php echo $calendar->prev_month() ?></a></th>
@@ -225,7 +226,7 @@
 					<?php endforeach ?>
 				</tbody>
 			</table>
-		</div>
+		</article>
 
 	<h4>Liste des rendus actifs</h4>
     <div class="section">
@@ -358,7 +359,7 @@
 	                    {	                
                             $class = ' class="delivered_locked_line"';
                             ?>
-	                        <tr id="<?php echo $work->GetID() . "-" . $delivery->GetID(); ?><?php echo $class; ?>>
+	                        <tr id="<?php echo $work->GetID() . "-" . $delivery->GetID(); ?><?php echo $class; ?>">
 		                        <td>
 		                            <a href="index.php?page=teacher_display_board&amp;previous=teacher_list_group_deliveries&amp;group_id=<?php echo $group->GetID(); ?>&amp;subject_id=<?php echo $subject->GetID(); ?>&amp;work_id=<?php echo $work->GetID(); ?>&amp;delivery_id=<?php echo $delivery->GetID(); ?>&amp;index=A">
 		                                <img src="img/bullet_go.png"/><?php echo $delivery->GetName(); ?>
