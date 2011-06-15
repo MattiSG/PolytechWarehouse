@@ -34,6 +34,8 @@
 		<link rel="stylesheet" type="text/css" href="css/log.css"/>
 		<link rel="stylesheet" type="text/css" href="css/content.css"/>
 		<link rel="stylesheet" type="text/css" href="css/footer.css"/>
+		<link type="text/css" rel="stylesheet" media="all" href="css/calendar.css" />
+
         <?php INIT_JS(); ?>
 	</head>
 	<body>

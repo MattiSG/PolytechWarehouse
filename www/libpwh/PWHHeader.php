@@ -3,6 +3,7 @@
 	
 	// Global variables
 	$GLOBALS['PWH_LIB_DIRNAME'] = 'libpwh/';
+	$GLOBALS['EXTERNAL_LIB_DIRNAME'] = 'libext/';
 	$GLOBALS['PWH_DATABASE_DIRNAME'] = 'database/';
 	$GLOBALS['PWH_LOG_DIRNAME'] = 'log/';
 	$GLOBALS['PWH_CONFIG_DIRNAME'] = 'config/';

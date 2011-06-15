@@ -123,6 +123,9 @@
                     
                     $delivery->Create(true);
                     $delivery->CreateDirectory();
+// TODO if date avaible
+//                    $delivery->SetDeadline($_POST['deadline_year'] . "-" . $_POST['deadline_month'] . "-" . $_POST['deadline_day'] . " " . $_POST['deadline_hour'] . ":" . $_POST['deadline_minute'] . ":00");
+                    
                     PWHEvent::Notify(array($teacher), TEACHER_TYPE, "Vous avez &eacute;t&eacute; design&eacute; responsable du rendu " . $subject->GetName() . "-" . $work->GetName() . "-" . $delivery->GetName());
                     $work->AddDeliveries(array($delivery->GetID()));
                 }

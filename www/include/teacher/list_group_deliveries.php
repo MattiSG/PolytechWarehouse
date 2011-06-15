@@ -96,9 +96,42 @@
     {
         errorReport("Impossible d'afficher la page demand&eacute;e.");
     }
+
+
+
+
+include $GLOBALS['EXTERNAL_LIB_DIRNAME'].'calendar.php'; // TODO : Move this include
+
+$month = isset($_GET['m']) ? $_GET['m'] : NULL;
+$year  = isset($_GET['y']) ? $_GET['y'] : NULL;
+
+$params['week_start'] = 1;
+
+$calendar = Calendar::factory($month, $year, $params);
+
+$calendar->standard('today')
+	->standard('prev-next');
+
+
+foreach($deliveries as $a_delivery)
+{
+	$a_work = new PWHWork();
+	$a_work->Read($a_delivery->GetWorkID());
+	
+    $a_subject = new PWHSubject();
+    $a_subject->Read($a_work->GetSubjectID());
+
+	$event = $calendar->event()
+		->condition('timestamp', strtotime($a_delivery->GetDeadline()))
+		->title($a_subject->GetName()." / ".$a_work->GetName())
+		->output('<a href="./index.php?page=teacher_display_board&previous=teacher_list_group_deliveries&group_id='.$_GET['group_id'].'&subject_id='.$a_subject->GetID().'&work_id='.$a_work->GetID().'&delivery_id='.$a_delivery->GetID().'&index=A">'.$a_subject->GetName()." / ".$a_work->GetName().'</a>');
+		
+	$calendar->attach($event);
+}
+
 ?>
 <section>
-	<h2>Travaux du groupe <?php echo $groupName; ?></h2>
+
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/list_group_deliveries.html', 800, 550);");
@@ -109,6 +142,55 @@
 	    if(!$failed)
 	    {
 	?>
+
+
+	<h2>Travaux du groupe <?php echo $groupName; ?></h2>
+	
+				
+		<div style="width:600px; padding:20px; margin:50px auto">
+			<table class="calendar">
+				<thead>
+					<tr class="navigation">
+						<th class="prev-month"><a href="<?php echo htmlspecialchars($calendar->prev_month_url()) ?>"><?php echo $calendar->prev_month() ?></a></th>
+						<th colspan="5" class="current-month"><?php echo $calendar->month() ?></th>
+						<th class="next-month"><a href="<?php echo htmlspecialchars($calendar->next_month_url()) ?>"><?php echo $calendar->next_month() ?></a></th>
+					</tr>
+					<tr class="weekdays">
+						<?php foreach ($calendar->days() as $day): ?>
+							<th><?php echo $day ?></th>
+						<?php endforeach ?>
+					</tr>
+				</thead>
+				<tbody>
+					<?php foreach ($calendar->weeks() as $week): ?>
+						<tr>
+							<?php foreach ($week as $day): ?>
+								<?php
+								list($number, $current, $data) = $day;
+								
+								$classes = array();
+								$output  = '';
+								
+								if (is_array($data))
+								{
+									$classes = $data['classes'];
+									$title   = $data['title'];
+									$output  = empty($data['output']) ? '' : '<ul class="output"><li>'.implode('</li><li>', $data['output']).'</li></ul>';
+								}
+								?>
+								<td class="day <?php echo implode(' ', $classes) ?>">
+									<span class="date" title="<?php echo implode(' / ', $title) ?>"><?php echo $number ?></span>
+									<div class="day-content">
+										<?php echo $output ?>
+									</div>
+								</td>
+							<?php endforeach ?>
+						</tr>
+					<?php endforeach ?>
+				</tbody>
+			</table>
+		</div>
+
 	<h4>Statistiques</h4>
 	<div class="section">
 	    <table class="summary">
@@ -162,20 +244,16 @@
 	            }
 	            else
 	            {
-	                foreach($activeSorted as $active)
-	                {
+	                foreach($activeSorted as $active) {
 	                    $work = $active[0];
 	                    
 	                    $subject = new PWHSubject();
 	                    $subject->Read($work->GetSubjectID());
 	                    
 	                    $class = ' class="active_work"';
-	                    if(!$work->IsPublished())
-	                    {
+	                    if (!$work->IsPublished()) {
 	                        $class = ' class="unpublished_line"';
-	                    }
-                        else if($work->IsExtraTimeUsed(date("Y-m-d H:i:s")))
-                        {
+	                    } else if($work->IsExtraTimeUsed(date("Y-m-d H:i:s"))) {
                             $class = ' class="extra_time_line"';
                         }
                         ?>
