@@ -12,6 +12,16 @@ header
 	background: url("../img/header.png");
 }
 
+header a
+{
+	float: right;
+	margin-top: 132px;
+	margin-bottom: 6px;
+	margin-right: 1em;
+	font-size: 90%;
+	color: black;
+}
+
 #menu 
 {
 	margin: 0;
