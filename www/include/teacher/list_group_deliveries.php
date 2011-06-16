@@ -195,10 +195,6 @@
 	<div class="section">
 	    <table class="summary">
             <tr>
-                <td>Nombre de travaux actifs</td>
-                <td><?php echo count($activeSorted); ?></td>
-            </tr>
-            <tr>
                 <td>Charge de travail approximative</td>
                 <td><?php 
                         if($level == 0)
@@ -218,7 +214,7 @@
             </tr>
         </table>
 	</div>
-	<h4>Liste des rendus actifs</h4>
+	<h4>Liste des rendus actifs : <?php echo count($activeSorted).' / '.(count($activeSorted)+count($unactiveSorted)); ?></h4>
     <div class="section">
         <table id="active" class="colored_table underlined_table">
 	        <tr>
@@ -313,7 +309,7 @@
 	    <?php echo $link; ?>
 	</div>
 	<div id="inactive">
-        <h4>Listes des rendus inactif</h4>
+        <h4>Listes des rendus inactif : <?php echo count($unactiveSorted).' / '.(count($activeSorted)+count($unactiveSorted)); ?></h4>
         <div class="section">
             <table class="colored_table underlined_table">
 	            <tr>
@@ -341,7 +337,7 @@
 	                    $JSID++;
 	                    $i = 1;
 	                    while($i < count($unactive))
-	                    {	                
+	                    {
                             $class = ' class="delivered_locked_line"';
                             ?>
 	                        <tr id="<?php echo $work->GetID() . "-" . $delivery->GetID(); ?><?php echo $class; ?>">
@@ -488,7 +484,7 @@
     }
     
     window.setInterval("time()", 1000); 
-
+/*
     function toggle()
     {
         
@@ -508,7 +504,7 @@
     }
     
     document.getElementById("inactive").style.display = "none";
-
+*/
     var numberWorks = <?php echo $JSID-1 ?>;
     var workVisible = new Array();
     for(var i=1; i<=numberWorks; i++)
