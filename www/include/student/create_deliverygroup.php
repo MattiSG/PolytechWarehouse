@@ -224,7 +224,7 @@
 	        $index = new PWHIndex();
 	        echo $index->Html("index.php?page=student_create_deliverygroup&amp;subject_id=" . $_GET['subject_id'] . "&amp;work_id=" . $_GET['work_id'] . "&amp;delivery_id=" . $_GET['delivery_id'], $_GET['index'], true, $allStudents);
 	    ?>
-		<form id="person_index" method="post" action="index.php?page=student_create_deliverygroup&amp;action=create&amp;subject_id=<?echo $_GET['subject_id']; ?>&amp;work_id=<?php echo $_GET['work_id']; ?>&amp;delivery_id=<?php echo $_GET['delivery_id']; ?>&amp;index=<?php echo $_GET['index']; ?>">
+		<form id="person_index" method="post" action="index.php?page=student_create_deliverygroup&amp;action=create&amp;subject_id=<?php echo $_GET['subject_id']; ?>&amp;work_id=<?php echo $_GET['work_id']; ?>&amp;delivery_id=<?php echo $_GET['delivery_id']; ?>&amp;index=<?php echo $_GET['index']; ?>">
 		    <input type="hidden" name="action" id="action" value="create"/>
 	        <?php
 	            $table = new PWHPersonTable();
