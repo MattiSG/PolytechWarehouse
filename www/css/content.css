@@ -505,7 +505,7 @@ section
 	background-image: -webkit-gradient(linear, left top, left bottom, from(#E0e4f8), to(#8aa7fb));
 	background-image: -webkit-linear-gradient(top, #E0e4f8, #8aa7fb);
 	background-image: -moz-linear-gradient(top, #E0e4f8, #8aa7fb);
-	background-color: gray;
+	background-color: #8aa7fb;
 	border-top: 2px solid white;
 }
 
