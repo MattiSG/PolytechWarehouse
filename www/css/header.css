@@ -1,3 +1,19 @@
+/* HTML5 */
+
+header, footer, section, article
+{
+	display: block;
+}
+
+/* older browsers */
+
+a img
+{
+	border: none;
+}
+
+/* header & stuff */
+
 body 
 {
 	font-family: Verdana, arial, helvetica, sans-serif;
