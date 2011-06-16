@@ -42,9 +42,14 @@
         <script language="javascript" type="text/javascript" src="js/mootools-more-1.3.2.1.js"></script>
 	</head>
 	<body>
-		<a href="index.php">
-			<header></header>
-		</a>
+		<header>
+		<?php
+			// Logout link, for logged user
+			if(isset($_SESSION['logged'])) 
+			{ ?>
+				<a href="index.php?page=logout"><img src="<?php echo IMG_PATH(); ?>logout.png"/>D&eacute;connecter <?php echo $_SESSION['login'] ?></a>
+		<?php } ?>
+		</header>
 		
 		<div id="main" role="main">
 		    <?php		    
@@ -106,11 +111,6 @@
 			        {	            
 				        include('include/admin/home.php');
 				    }
-				    // Logout link, for logged user
-				    if(isset($_SESSION['logged'])) 
-				    { ?>
-					    <p id="links"><a href="index.php?page=logout"><img src="<?php echo IMG_PATH(); ?>logout.png"/>D&eacute;connecter <?php echo $_SESSION['login'] ?></a></p>
-		    <?php	}
 			    }?>
 		</div>
 		
