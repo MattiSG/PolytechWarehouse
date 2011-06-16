@@ -102,19 +102,18 @@
             $totalUndelivered = $totalStudents;
             foreach($deliverygroups as $deliverygroup)
             {
-//                $totalStudents += $deliverygroup->CountStudents();
-                $totalStudents++;
+                $totalStudents += $deliverygroup->CountStudents();
                 if($deliverygroup->GetLastDelivery() == "")
                 {
-                    $totalUndelivered++;
+                    $totalUndelivered += $deliverygroup->CountStudents();
                 }
                 else if($deliverygroup->IsExtraTimeUsed())
                 {
-                    $totalLate++;
+                    $totalLate += $deliverygroup->CountStudents();
                 }
                 else
                 {
-                    $totalDelivered++;
+                    $totalDelivered += $deliverygroup->CountStudents();
                 }
             }
     ?>

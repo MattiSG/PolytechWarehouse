@@ -234,20 +234,20 @@
 	                    {
                             $class = ' class="delivered_locked_line"';
                             ?>
-	                        <tr id="<?php echo $work->GetID() . "-" . $delivery->GetID(); ?><?php echo $class; ?>">
+	                        <tr>
 	                        	<td><a href="./index.php?page=teacher_list_works&group_id=<?php echo $group->GetID(); ?>&subject_id=<?php echo $subject->GetID(); ?>">
 	                        		<?php echo $subject->GetName(); ?></a>
 	                        	</td>
 	                        	<td>
-		                            <a href="index.php?page=teacher_display_board&amp;previous=teacher_list_group_deliveries&amp;group_id=<?php echo $group->GetID(); ?>&amp;subject_id=<?php echo $subject->GetID(); ?>&amp;work_id=<?php echo $work->GetID(); ?>&amp;delivery_id=<?php echo $delivery->GetID(); ?>&amp;index=A">
+		                            <a href="index.php?page=teacher_display_board&amp;previous=teacher_list_group_deliveries&amp;group_id=<?php echo $group->GetID(); ?>&amp;subject_id=<?php echo $subject->GetID(); ?>&amp;work_id=<?php echo $work->GetID(); ?>&amp;delivery_id=<?php echo $unactive[$i]->GetID(); ?>&amp;index=A">
 		                                <img src="img/bullet_go.png"/><?php echo $work->GetName().' / '.$delivery->GetName(); ?>
 		                            </a>
 		                        </td>
 		                        <td>
 		                        <?php
 		                        	try {
-							            $deliverygroups = $delivery->GetDeliverygroups();
-							            $freeStudents = $delivery->GetFreeStudents();
+							            $deliverygroups = $unactive[$i]->GetDeliverygroups();
+							            $freeStudents = $unactive[$i]->GetFreeStudents();
 							            
 							            $totalStudents = count($freeStudents);
 							            $totalDelivered = 0;
@@ -353,7 +353,7 @@
                                 $class = ' class="extra_time_delivery_line"';
                             }
                             ?>
-	                        <tr id="<?php echo $work->GetID() . "-" . $delivery->GetID(); ?>"<?php echo $class; ?>>
+	                        <tr>
 	                        	<td><a href="./index.php?page=teacher_list_works&group_id=<?php echo $group->GetID(); ?>&subject_id=<?php echo $subject->GetID(); ?>">
 	                        		<?php echo $subject->GetName(); ?></a>
 	                        	</td>
@@ -365,8 +365,8 @@
 								<td>
 		                        <?php
 		                        	try {
-							            $deliverygroups = $delivery->GetDeliverygroups();
-							            $freeStudents = $delivery->GetFreeStudents();
+							            $deliverygroups = $active[$i]->GetDeliverygroups();
+							            $freeStudents = $active[$i]->GetFreeStudents();
 							            
 							            $totalStudents = count($freeStudents);
 							            $totalDelivered = 0;
