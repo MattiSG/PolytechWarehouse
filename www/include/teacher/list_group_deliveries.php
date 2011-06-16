@@ -145,43 +145,6 @@
 
 
 	<h2>Travaux du groupe <?php echo $groupName; ?></h2>
-	
-
-		<div class="section">
-	    <table class="summary">
-            <tr>
-                <td>Nombre de travaux actifs</td>
-                <td><?php echo count($activeSorted); ?></td>
-            </tr>
-            <tr>
-                <td>Nombre de travaux inactifs</td>
-                <td><?php echo count($unactiveSorted); ?></td>
-            </tr>
-            <tr>
-                <td>Charge de travail approximative</td>
-                <td><?php 
-                        if($level == 0)
-                        {
-                            echo "-";
-                        }
-                        else if($level == 1)
-                        {
-                            echo $level . " heure"; 
-                        }
-                        else if($level > 1)
-                        {
-                            echo $level . " heures";
-                        }
-                     ?>
-                </td>
-            </tr>
-        </table>
-	</div>
-	<?php
-	    $legend = new PWHLegend();
-	    $legend->SetType($_SESSION['type']);
-	    echo $legend->Html();
-	?>
 
 	<article>
 		<h4>Cliquez sur un jour pour ajouter un rendu :</h4>
