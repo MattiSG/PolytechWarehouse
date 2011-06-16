@@ -199,10 +199,6 @@
                 <td><?php echo count($activeSorted); ?></td>
             </tr>
             <tr>
-                <td>Nombre de travaux inactifs</td>
-                <td><?php echo count($unactiveSorted); ?></td>
-            </tr>
-            <tr>
                 <td>Charge de travail approximative</td>
                 <td><?php 
                         if($level == 0)
