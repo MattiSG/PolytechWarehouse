@@ -433,29 +433,29 @@ class Calendar extends Event_Subject {
 	public function french_month($index) {
 		switch($index % 12)
 		{
-			case 0:
-				return "Janvier";
 			case 1:
-				return "F&eacute;vrier";
+				return "Janvier";
 			case 2:
-				return "Mars";
+				return "F&eacute;vrier";
 			case 3:
-				return "Avril";
+				return "Mars";
 			case 4:
-				return "Mai";
+				return "Avril";
 			case 5:
-				return "Juin";
+				return "Mai";
 			case 6:
-				return "Juillet";
+				return "Juin";
 			case 7:
-				return "Ao&ucirc;t";
+				return "Juillet";
 			case 8:
-				return "Septembre";
+				return "Ao&ucirc;t";
 			case 9:
-				return "Octobre";
+				return "Septembre";
 			case 10:
-				return "Novembre";
+				return "Octobre";
 			case 11:
+				return "Novembre";
+			case 12:
 				return "D&eacute;cembre";
 		}
 	}
