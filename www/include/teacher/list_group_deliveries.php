@@ -191,35 +191,106 @@
 		</table>
 	</article>
 
-	<h4>Statistiques</h4>
-	<div class="section">
-	    <table class="summary">
-            <tr>
-                <td>Charge de travail approximative</td>
-                <td><?php 
-                        if($level == 0)
-                        {
-                            echo "-";
-                        }
-                        else if($level == 1)
-                        {
-                            echo $level . " heure"; 
-                        }
-                        else if($level > 1)
-                        {
-                            echo $level . " heures";
-                        }
-                     ?>
-                </td>
-            </tr>
-        </table>
-	</div>
+	<h3>La charge de travail approximative (hors TD/TP) est de 
+		<?php 
+		   if($level == 0)
+		   {
+		       echo "-";
+		   }
+		   else if($level == 1)
+		   {
+		       echo $level . " heure"; 
+		   }
+		   else if($level > 1)
+		   {
+		       echo $level . " heures";
+		   }
+		?></h3>	
+	
+	<div id="inactive">
+        <h4>Listes des rendus inactif : <?php echo count($unactiveSorted).' / '.(count($activeSorted)+count($unactiveSorted)); ?></h4>
+        <div class="section">
+            <table class="inactive_deliveries">
+	            <?php
+	            if(count($unactiveSorted) == 0)
+	            { ?>
+	                <tr><td colspan="4">Il n'y a aucun rendu inactif pour le groupe <?php echo $group->GetName(); ?></td></tr>
+	            <?php
+	            }
+	            else
+	            {
+	                $dateTranslator = new PWHDateTranslator();
+	                foreach($unactiveSorted as $unactive)
+	                {
+	                    $work = $unactive[0];
+	                    
+	                    $subject = new PWHSubject();
+	                    $subject->Read($work->GetSubjectID());
+	                    
+	                    $class = ' class="unactive_work"';
+	                    $JSID++;
+	                    $i = 1;
+	                    while($i < count($unactive))
+	                    {
+                            $class = ' class="delivered_locked_line"';
+                            ?>
+	                        <tr id="<?php echo $work->GetID() . "-" . $delivery->GetID(); ?><?php echo $class; ?>">
+	                        	<td><a href="./index.php?page=teacher_list_works&group_id=<?php echo $group->GetID(); ?>&subject_id=<?php echo $subject->GetID(); ?>">
+	                        		<?php echo $subject->GetName(); ?></a>
+	                        	</td>
+	                        	<td>
+		                            <a href="index.php?page=teacher_display_board&amp;previous=teacher_list_group_deliveries&amp;group_id=<?php echo $group->GetID(); ?>&amp;subject_id=<?php echo $subject->GetID(); ?>&amp;work_id=<?php echo $work->GetID(); ?>&amp;delivery_id=<?php echo $delivery->GetID(); ?>&amp;index=A">
+		                                <img src="img/bullet_go.png"/><?php echo $work->GetName().' / '.$delivery->GetName(); ?>
+		                            </a>
+		                        </td>
+		                        <td>
+		                        <?php
+		                        	try {
+							            $deliverygroups = $delivery->GetDeliverygroups();
+							            $freeStudents = $delivery->GetFreeStudents();
+							            
+							            $totalStudents = count($freeStudents);
+							            $totalDelivered = 0;
+							            $totalLate = 0;
+							            $totalUndelivered = $totalStudents;
+							            foreach($deliverygroups as $deliverygroup)
+							            {
+							                $totalStudents++;
+							                if($deliverygroup->GetLastDelivery() != "" && !$deliverygroup->IsExtraTimeUsed()) {
+							                    $totalDelivered++;
+							                }
+							            }
+							            
+							            echo "rendu : $totalDelivered / $totalStudents";
+									} catch(Exception $ex) {
+							            $failed = true;
+							            errorReport($ex->getMessage());
+							        }
+								?>
+		                        </td>
+		                        <td><?php echo $dateTranslator->Html($delivery->GetDeadline(), PWHDateTranslator::DATE_AND_TIME); ?></td>
+		                        <td>
+			                        <a href="downloads/index.php?type=work&amp;subject_id=<?php echo $subject->GetID(); ?>&amp;work_id=<?php echo$work->GetID(); ?>">
+			                            <img src="img/package_go.png">
+			                        </a>
+		                        </td>
+	                        </tr>     
+	                        <?php
+	                        $i++;
+	                    }
+                    }
+                }  ?>
+            </table>
+        </div>
+
+	
 	<h4>Liste des rendus actifs : <?php echo count($activeSorted).' / '.(count($activeSorted)+count($unactiveSorted)); ?></h4>
     <div class="section">
-        <table id="active" class="colored_table underlined_table">
-	        <tr>
+        <table class="active_delivery">
+	         <tr>
 		        <th>Nom</th>
 		        <th>Mati&egrave;re</th>
+				<th>Nombre de rendu</th>
 		        <th>Groupe</th>
 		        <th>Rendu</th>
 		        <th>Extra</th>
@@ -283,15 +354,39 @@
                             }
                             ?>
 	                        <tr id="<?php echo $work->GetID() . "-" . $delivery->GetID(); ?>"<?php echo $class; ?>>
-		                        <td>
+	                        	<td><a href="./index.php?page=teacher_list_works&group_id=<?php echo $group->GetID(); ?>&subject_id=<?php echo $subject->GetID(); ?>">
+	                        		<?php echo $subject->GetName(); ?></a>
+	                        	</td>
+	                        	<td>
 		                            <a href="index.php?page=teacher_display_board&amp;previous=teacher_list_group_deliveries&amp;group_id=<?php echo $group->GetID(); ?>&amp;subject_id=<?php echo $subject->GetID(); ?>&amp;work_id=<?php echo $work->GetID(); ?>&amp;delivery_id=<?php echo $active[$i]->GetID(); ?>&amp;index=A">
 		                                <img src="img/bullet_go.png"/><?php echo $work->GetName().' / '.$active[$i]->GetName(); ?>
 		                            </a>
 		                        </td>
-	                        	<td><a href="./index.php?page=teacher_list_works&group_id=<?php echo $group->GetID(); ?>&subject_id=<?php echo $subject->GetID(); ?>">
-	                        		<?php echo $subject->GetName(); ?></a>
-	                        	</td>
-
+								<td>
+		                        <?php
+		                        	try {
+							            $deliverygroups = $delivery->GetDeliverygroups();
+							            $freeStudents = $delivery->GetFreeStudents();
+							            
+							            $totalStudents = count($freeStudents);
+							            $totalDelivered = 0;
+							            $totalLate = 0;
+							            $totalUndelivered = $totalStudents;
+							            foreach($deliverygroups as $deliverygroup)
+							            {
+							                $totalStudents++;
+							                if($deliverygroup->GetLastDelivery() != "" && !$deliverygroup->IsExtraTimeUsed()) {
+							                    $totalDelivered++;
+							                }
+							            }
+							            
+							            echo "$totalDelivered / $totalStudents";
+									} catch(Exception $ex) {
+							            $failed = true;
+							            errorReport($ex->getMessage());
+							        }
+								?>
+		                        </td>
 		                        <td id="group_days_left<?php echo $id; ?>"><?php if($groupDaysLeft < 0) { echo 0; } else { echo $groupDaysLeft; } ?></td>     
 		                        <td id="delivery_days_left<?php echo $id; ?>"><?php if($deliveryDaysLeft < 0) { echo 0; } else { echo $deliveryDaysLeft; } ?></td>
 		                        <td id="extra_time_left<?php echo $id; ?>"><?php echo $extraTimeLeft; ?></td>
@@ -305,59 +400,6 @@
                 }  ?>
         </table>
     </div>
-    <div class="section">
-	    <?php echo $link; ?>
-	</div>
-	<div id="inactive">
-        <h4>Listes des rendus inactif : <?php echo count($unactiveSorted).' / '.(count($activeSorted)+count($unactiveSorted)); ?></h4>
-        <div class="section">
-            <table class="colored_table underlined_table">
-	            <tr>
-		            <th>Nom</th>
-		            <th>Mati&egrave;re</th>
-		            <th>Date de fin</th> 
-	            </tr>
-	            <?php
-	            if(count($unactiveSorted) == 0)
-	            { ?>
-	                <tr><td colspan="4">Il n'y a aucun rendu inactif pour le groupe <?php echo $group->GetName(); ?></td></tr>
-	            <?php
-	            }
-	            else
-	            {
-	                $dateTranslator = new PWHDateTranslator();
-	                foreach($unactiveSorted as $unactive)
-	                {
-	                    $work = $unactive[0];
-	                    
-	                    $subject = new PWHSubject();
-	                    $subject->Read($work->GetSubjectID());
-	                    
-	                    $class = ' class="unactive_work"';
-	                    $JSID++;
-	                    $i = 1;
-	                    while($i < count($unactive))
-	                    {
-                            $class = ' class="delivered_locked_line"';
-                            ?>
-	                        <tr id="<?php echo $work->GetID() . "-" . $delivery->GetID(); ?><?php echo $class; ?>">
-		                        <td>
-		                            <a href="index.php?page=teacher_display_board&amp;previous=teacher_list_group_deliveries&amp;group_id=<?php echo $group->GetID(); ?>&amp;subject_id=<?php echo $subject->GetID(); ?>&amp;work_id=<?php echo $work->GetID(); ?>&amp;delivery_id=<?php echo $delivery->GetID(); ?>&amp;index=A">
-		                                <img src="img/bullet_go.png"/><?php echo $work->GetName().' / '.$delivery->GetName(); ?>
-		                            </a>
-		                        </td>
-		                        <td><a href="javascript:ShowHideDeliveries('<?php echo $JSID; ?>', '<?php echo $work->GetID();?>')">
-		                        	<?php echo $subject->GetName(); ?>
-		                        </a></td>
-		                        <td><?php echo $dateTranslator->Html($delivery->GetDeadline(), PWHDateTranslator::DATE_AND_TIME); ?></td>
-	                        </tr>     
-	                        <?php
-	                        $i++;
-	                    }
-                    }
-                }  ?>
-            </table>
-        </div>
     </div>
     <?php
 	    $legend = new PWHLegend();

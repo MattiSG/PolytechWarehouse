@@ -102,7 +102,8 @@
             $totalUndelivered = $totalStudents;
             foreach($deliverygroups as $deliverygroup)
             {
-                $totalStudents += $deliverygroup->CountStudents();
+//                $totalStudents += $deliverygroup->CountStudents();
+                $totalStudents++;
                 if($deliverygroup->GetLastDelivery() == "")
                 {
                     $totalUndelivered++;
