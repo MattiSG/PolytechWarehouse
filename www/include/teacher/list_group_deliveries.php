@@ -218,16 +218,12 @@
             </tr>
         </table>
 	</div>
-	<?php
-	    $legend = new PWHLegend();
-	    $legend->SetType($_SESSION['type']);
-	    echo $legend->Html();
-	?>
 	<h4>Liste des rendus actifs</h4>
     <div class="section">
         <table id="active" class="colored_table underlined_table">
 	        <tr>
 		        <th>Nom</th>
+		        <th>Mati&egrave;re</th>
 		        <th>Groupe</th>
 		        <th>Rendu</th>
 		        <th>Extra</th>
@@ -252,12 +248,7 @@
 	                    } else if($work->IsExtraTimeUsed(date("Y-m-d H:i:s"))) {
                             $class = ' class="extra_time_line"';
                         }
-                        ?>
-                        <tr id="work_<?php echo $JSID; ?>"<?php echo $class; ?>>
-	                        <td><a href="javascript:ShowHideDeliveries('<?php echo $JSID; ?>', '<?php echo $work->GetID();?>')"><img id="img-<?php echo $work->GetID(); ?>" src="img/bullet_arrow_right.png"/><?php echo $subject->GetName().' / '.$work->GetName(); ?></a></td>
-	                        <td colspan="3"></td>
-	                    </tr>
-	                    <?php 
+
 	                    $JSID++;
 	                    $i = 1;
 	                    while($i < count($active))
@@ -298,9 +289,13 @@
 	                        <tr id="<?php echo $work->GetID() . "-" . $delivery->GetID(); ?>"<?php echo $class; ?>>
 		                        <td>
 		                            <a href="index.php?page=teacher_display_board&amp;previous=teacher_list_group_deliveries&amp;group_id=<?php echo $group->GetID(); ?>&amp;subject_id=<?php echo $subject->GetID(); ?>&amp;work_id=<?php echo $work->GetID(); ?>&amp;delivery_id=<?php echo $active[$i]->GetID(); ?>&amp;index=A">
-		                                <img src="img/bullet_go.png"/><?php echo $active[$i]->GetName(); ?>
+		                                <img src="img/bullet_go.png"/><?php echo $work->GetName().' / '.$active[$i]->GetName(); ?>
 		                            </a>
-		                        </td>	       
+		                        </td>
+	                        	<td><a href="./index.php?page=teacher_list_works&group_id=<?php echo $group->GetID(); ?>&subject_id=<?php echo $subject->GetID(); ?>">
+	                        		<?php echo $subject->GetName(); ?></a>
+	                        	</td>
+
 		                        <td id="group_days_left<?php echo $id; ?>"><?php if($groupDaysLeft < 0) { echo 0; } else { echo $groupDaysLeft; } ?></td>     
 		                        <td id="delivery_days_left<?php echo $id; ?>"><?php if($deliveryDaysLeft < 0) { echo 0; } else { echo $deliveryDaysLeft; } ?></td>
 		                        <td id="extra_time_left<?php echo $id; ?>"><?php echo $extraTimeLeft; ?></td>
@@ -323,6 +318,7 @@
             <table class="colored_table underlined_table">
 	            <tr>
 		            <th>Nom</th>
+		            <th>Mati&egrave;re</th>
 		            <th>Date de fin</th> 
 	            </tr>
 	            <?php
@@ -342,12 +338,6 @@
 	                    $subject->Read($work->GetSubjectID());
 	                    
 	                    $class = ' class="unactive_work"';
-                        ?>
-                        <tr id="work_<?php echo $JSID; ?>"<?php echo $class; ?>>
-	                        <td><a href="javascript:ShowHideDeliveries('<?php echo $JSID; ?>', '<?php echo $work->GetID();?>')"><img id="img-<?php echo $work->GetID(); ?>" src="img/bullet_arrow_right.png"/><?php echo $subject->GetName().' / '.$work->GetName(); ?></a></td>
-	                        <td colspan="3"></td>
-	                    </tr>
-	                    <?php 
 	                    $JSID++;
 	                    $i = 1;
 	                    while($i < count($unactive))
@@ -357,9 +347,12 @@
 	                        <tr id="<?php echo $work->GetID() . "-" . $delivery->GetID(); ?><?php echo $class; ?>">
 		                        <td>
 		                            <a href="index.php?page=teacher_display_board&amp;previous=teacher_list_group_deliveries&amp;group_id=<?php echo $group->GetID(); ?>&amp;subject_id=<?php echo $subject->GetID(); ?>&amp;work_id=<?php echo $work->GetID(); ?>&amp;delivery_id=<?php echo $delivery->GetID(); ?>&amp;index=A">
-		                                <img src="img/bullet_go.png"/><?php echo $delivery->GetName(); ?>
+		                                <img src="img/bullet_go.png"/><?php echo $work->GetName().' / '.$delivery->GetName(); ?>
 		                            </a>
 		                        </td>
+		                        <td><a href="javascript:ShowHideDeliveries('<?php echo $JSID; ?>', '<?php echo $work->GetID();?>')">
+		                        	<?php echo $subject->GetName(); ?>
+		                        </a></td>
 		                        <td><?php echo $dateTranslator->Html($delivery->GetDeadline(), PWHDateTranslator::DATE_AND_TIME); ?></td>
 	                        </tr>     
 	                        <?php
@@ -370,6 +363,11 @@
             </table>
         </div>
     </div>
+    <?php
+	    $legend = new PWHLegend();
+	   	$legend->SetType($_SESSION['type']);
+	    echo $legend->Html();
+	?>
     <?php } ?>
 </section>
 
@@ -548,7 +546,7 @@
     }
     
     var children = document.getElementsByTagName("tr");
-        
+    /*    
     for(var i = 0; i < children.length; i++)
     {
         if(children[i].hasAttribute("id"))
@@ -561,5 +559,6 @@
             }
         }
     }
+    */
 //]]>
 </script>

@@ -1,8 +1,9 @@
 <?php
     PWHLog::Write(PWHLog::INFO, $_SESSION['login'], "Acc&egrave;s page list_works");
     
-    previousPage('teacher_list_subjects');
+    previousPage('teacher_list_group_deliveries');
     addPreviousPageParameter('see', 'less');
+    addPreviousPageParameter('group_id', $_GET['group_id']);
     $failed = false;
     $subjectName = "???";
     
