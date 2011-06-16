@@ -120,10 +120,10 @@
                     $delivery->SetWorkID($work->GetID());
                     $delivery->AddGroups(array($group->GetID()));
                     
+                    $delivery->SetDeadline($_SESSION['year']."-".$_SESSION['month']."-".$_SESSION['day']." 23:59:00");
+                    
                     $delivery->Create(true);
                     $delivery->CreateDirectory();
-// TODO if date avaible
-//                    $delivery->SetDeadline($_POST['deadline_year'] . "-" . $_POST['deadline_month'] . "-" . $_POST['deadline_day'] . " " . $_POST['deadline_hour'] . ":" . $_POST['deadline_minute'] . ":00");
                     
                     PWHEvent::Notify(array($teacher), TEACHER_TYPE, "Vous avez &eacute;t&eacute; design&eacute; responsable du rendu " . $subject->GetName() . "-" . $work->GetName() . "-" . $delivery->GetName());
                     $work->AddDeliveries(array($delivery->GetID()));
@@ -140,7 +140,11 @@
                 unset($_SESSION['group_max']);
                 unset($_SESSION['link']);
                 unset($_SESSION['level']);
+                
                 unset($_SESSION['subject_id']);
+                unset($_SESSION['month']);
+                unset($_SESSION['year']);
+                unset($_SESSION['day']);
                 
                 PWHLog::Write(PWHLog::WARNING, $_SESSION['login'], "Cr&eacute;ation travail " . $subject->GetName() . "-" . $work->GetName());
                 redirect("index.php?page=teacher_deliveries_settings&amp;subject_id=" . $subject->GetID() . "&amp;work_id=" . $work->GetID());

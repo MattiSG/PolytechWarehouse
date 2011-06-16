@@ -5,6 +5,20 @@
     addPreviousPageParameter('group_id', $_GET['group_id']);
     $failed = false;
 
+	$month = isset($_GET['m']) ? $_GET['m'] : date('m');
+	$year  = isset($_GET['y']) ? $_GET['y'] : date('Y');
+	$day  = isset($_GET['d']) ? $_GET['d'] : date('d');
+
+	if (strlen($month) < 2)
+		$month = "0".$month;
+	if (strlen($day) < 2)
+		$day = "0".$day;
+	
+	$_SESSION['month'] = $month;
+	$_SESSION['year'] = $year;
+	$_SESSION['day'] = $day;
+
+	$subject_id = isset($_GET['subject_id']) ? $_GET['subject_id'] : 0;
 // TODO is it really useful ?    
 /*     // Clean session variables that will be used during the creation of the subject
     if(isset($_SESSION['work_name']))
@@ -80,7 +94,6 @@
             $groupMax = $_GET['group_max'];
             $link = $_GET['link'];
             $level = $_GET['level'];
-            $subject_id = $_GET['subject_id'];
         }
         else
         {
@@ -91,7 +104,6 @@
             $groupMax = "";
             $link = "";
             $level = "";
-            $subject_id = 0;
         }
         
         if(isset($_GET['action']))
@@ -135,29 +147,34 @@
         {
     ?>    
     <h4>Contraintes du travail</h4>
-    
-    <?php
-    	$promo = $group->GetPromotion();
-    ?>
-    <p>Actuellement s&eacute;l&eacute;ctionn&eacute; : <?php echo $group->GetName(); ?></p>
-    	<?php 
-    		if ($group->GetID() != $promo->GetID())
-    			echo '<p>Changer pour la promo : <a href="index.php?page=teacher_create_work_name_constraints&group_id='.$promo->GetID().'&m=6&y=2011&d=9">'.$promo->GetName().'</a></p>';
-    	?>
-    <p>Changer pour un sous groupe : 
-    	<?php
-    		
-         	foreach(PWHGroup::GetChildrenOf($promo->GetID()) as $g) {
-         		if ($group->GetID() == $g->GetID())
-	            	echo $g->GetName();
-	            else
-    				echo '<a href="index.php?page=teacher_create_work_name_constraints&group_id='.$g->GetID().'&m=6&y=2011&d=9">'.$g->GetName().'</a>';
-        	}
-        ?>
-    </p>
-    
 	<div class="section">
 		<form method="post" action="index.php?page=teacher_create_work_files&amp;group_id=<?php echo $_GET['group_id']; ?>">
+			<div class="input">
+		    	<p>La date de rendu est pr&eacute;vue le : <?php echo "$day/$month/$year"; ?></p>
+		    </div>
+		    
+		    <div class="input">
+			    <?php
+			    	$promo = $group->GetPromotion();
+			    ?>
+			    <p>Actuellement s&eacute;l&eacute;ctionn&eacute; : <?php echo $group->GetName(); ?></p>
+			    	<?php 
+			    		if ($group->GetID() != $promo->GetID())
+			    			echo '<p>Changer pour la promo : <a href="index.php?page=teacher_create_work_name_constraints&group_id='.$promo->GetID().'&subject_id='.$subject_id.'&m='.$month.'&y='.$year.'&d='.$day.'">'.$promo->GetName().'</a></p>';
+			    	?>
+			    <p>Changer pour un sous groupe : 
+			    	<?php
+			    		
+			         	foreach(PWHGroup::GetChildrenOf($promo->GetID()) as $g) {
+			         		if ($group->GetID() == $g->GetID())
+				            	echo $g->GetName();
+				            else
+			    				echo '<a href="index.php?page=teacher_create_work_name_constraints&group_id='.$g->GetID().'&subject_id='.$subject_id.'&m='.$month.'&y='.$year.'&d='.$day.'">'.$g->GetName().'</a>';
+			        	}
+			        ?>
+			    </p>
+		    </div>
+		    
 			<div class="input">
 	    		Mati&egrave;re : 
 	    		<select name="subject_id" id="subject_id">
