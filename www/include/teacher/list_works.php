@@ -120,7 +120,7 @@
     }
 ?>
 <section>
-	<h2>travaux de <?php echo $subjectName; ?></h2>
+	<h2>Tous les travaux de : <?php echo $subjectName; ?></h2>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/list_works.html', 800, 600);");
@@ -181,12 +181,12 @@
 	    </div>
 	</div>
 	<h4>Liste des travaux disponibles</h4>
+	<p>Vous pourrez configurer un travail en accédant à sa page.</p>
 	<div class="section">
         <table class="colored_table underlined_table">
             <tr>
-	            <th>Nom</th>
+	            <th>Travail</th>
 	            <th>Type</th>
-	            <th>Configurer</th>
 	            <th>T&eacute;l&eacute;charger</th>
 	            <th>Supprimer</th>
             </tr>
@@ -205,7 +205,8 @@
                     <tr<?php if(!$work->IsPublished()) { echo ' class="unpublished_line"'; } ?>>
 	                    <td>
 	                        <a href="index.php?page=teacher_list_deliveries&amp;subject_id=<?php echo $subject->GetID() ?>&amp;work_id=<?php echo $work->GetID() ?>">
-	                            <img src="<?php echo IMG_PATH() ?>bullet_go.png"/><?php echo $work->GetName() ?>
+	                            <img src="<?php echo IMG_PATH() ?>bullet_wrench.png"/><img src="<?php echo IMG_PATH() ?>bullet_go.png"/> 
+	                            <?php echo $work->GetName() ?>
 	                        </a>
 	                    </td>
 	                    <td>
@@ -219,11 +220,6 @@
 	                                echo "Normal";
 	                            }
 	                        ?>
-	                    </td>
-	                    <td>
-	                        <a href="index.php?page=teacher_work_settings&amp;subject_id=<?php echo $subject->GetID() ?>&amp;work_id=<?php echo $work->GetID() ?>">
-	                            <img src="<?php echo IMG_PATH() ?>bullet_wrench.png"/>
-	                        </a>
 	                    </td>
 	                    <td>
 	                        <a href="downloads/index.php?type=work&amp;subject_id=<?php echo $subject->GetID(); ?>&amp;work_id=<?php echo$work->GetID(); ?>">
