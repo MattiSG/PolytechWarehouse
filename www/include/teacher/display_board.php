@@ -87,7 +87,7 @@
 
 
 <section>
-	<h2>etat des rendus de <?php echo $deliveryName; ?></h2>
+	<h2>Etat des rendus de <?php echo $work->GetName()." / $deliveryName"; ?></h2>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/display_board.html', 800, 600);");
