@@ -211,6 +211,13 @@
         <h4>Listes des rendus inactif : <?php echo count($unactiveSorted).' / '.(count($activeSorted)+count($unactiveSorted)); ?></h4>
         <div class="section">
             <table class="inactive_deliveries">
+            	<tr>
+			        <th>Mati&egrave;re</th>
+			        <th>Travail</th>
+					<th>Nombre de rendu</th>
+			        <th>Deadline</th>
+			        <th>-</th>
+		        </tr>
 	            <?php
 	            if(count($unactiveSorted) == 0)
 	            { ?>
@@ -239,9 +246,9 @@
 	                        		<?php echo $subject->GetName(); ?></a>
 	                        	</td>
 	                        	<td>
-		                            <a href="index.php?page=teacher_display_board&amp;previous=teacher_list_group_deliveries&amp;group_id=<?php echo $group->GetID(); ?>&amp;subject_id=<?php echo $subject->GetID(); ?>&amp;work_id=<?php echo $work->GetID(); ?>&amp;delivery_id=<?php echo $unactive[$i]->GetID(); ?>&amp;index=A">
-		                                <img src="img/bullet_go.png"/><?php echo $work->GetName().' / '.$delivery->GetName(); ?>
-		                            </a>
+	                        	<a href="index.php?page=teacher_list_deliveries&amp;subject_id=<?php echo $subject->GetID() ?>&amp;work_id=<?php echo $work->GetID() ?>">
+	                            <?php echo $work->GetName(); ?>
+	                        </a>
 		                        </td>
 		                        <td>
 		                        <?php
@@ -261,7 +268,11 @@
 							                }
 							            }
 							            
-							            echo "rendu : $totalDelivered / $totalStudents";
+							            ?>
+							            	<a href="index.php?page=teacher_display_board&amp;previous=teacher_list_group_deliveries&amp;group_id=<?php echo $group->GetID(); ?>&amp;subject_id=<?php echo $subject->GetID(); ?>&amp;work_id=<?php echo $work->GetID(); ?>&amp;delivery_id=<?php echo $unactive[$i]->GetID(); ?>&amp;index=A">
+											<?php echo "$totalDelivered / $totalStudents"; ?>
+		                                </a>
+							            <?php
 									} catch(Exception $ex) {
 							            $failed = true;
 							            errorReport($ex->getMessage());
@@ -288,11 +299,11 @@
     <div class="section">
         <table class="active_delivery">
 	         <tr>
-		        <th>Nom</th>
 		        <th>Mati&egrave;re</th>
+		        <th>Travail</th>
 				<th>Nombre de rendu</th>
 		        <th>Groupe</th>
-		        <th>Rendu</th>
+		        <th>Deadline</th>
 		        <th>Extra</th>
 	        </tr>
 	        <?php
@@ -358,9 +369,9 @@
 	                        		<?php echo $subject->GetName(); ?></a>
 	                        	</td>
 	                        	<td>
-		                            <a href="index.php?page=teacher_display_board&amp;previous=teacher_list_group_deliveries&amp;group_id=<?php echo $group->GetID(); ?>&amp;subject_id=<?php echo $subject->GetID(); ?>&amp;work_id=<?php echo $work->GetID(); ?>&amp;delivery_id=<?php echo $active[$i]->GetID(); ?>&amp;index=A">
-		                                <img src="img/bullet_go.png"/><?php echo $work->GetName().' / '.$active[$i]->GetName(); ?>
-		                            </a>
+									<a href="index.php?page=teacher_list_deliveries&amp;subject_id=<?php echo $subject->GetID() ?>&amp;work_id=<?php echo $work->GetID() ?>">
+	                            <?php echo $work->GetName(); ?>
+	                        </a>
 		                        </td>
 								<td>
 		                        <?php
@@ -380,7 +391,11 @@
 							                }
 							            }
 							            
-							            echo "$totalDelivered / $totalStudents";
+							            ?>
+								            <a href="index.php?page=teacher_display_board&amp;previous=teacher_list_group_deliveries&amp;group_id=<?php echo $group->GetID(); ?>&amp;subject_id=<?php echo $subject->GetID(); ?>&amp;work_id=<?php echo $work->GetID(); ?>&amp;delivery_id=<?php echo $active[$i]->GetID(); ?>&amp;index=A">
+		                                <?php echo "$totalDelivered / $totalStudents"; ?>
+		                                </a>
+							            <?php
 									} catch(Exception $ex) {
 							            $failed = true;
 							            errorReport($ex->getMessage());
