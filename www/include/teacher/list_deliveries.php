@@ -82,7 +82,7 @@
     }
 ?>
 <section>
-	<h2>rendus de <?php echo $workName; ?></h2>
+	<h2>Rendus du travail : <?php echo $workName; ?></h2>
 	<?php
 	    $help = new PWHHelp();
         echo $help->Html("javascript:popup('include/teacher/help/list_deliveries.html', 800, 600);");
@@ -190,7 +190,16 @@
     <div class="section">
         <div class="list">
             <ul>
-                <li><a href="index.php?page=teacher_deliveries_settings&amp;subject_id=<?php echo $subject->GetID(); ?>&amp;work_id=<?php echo $work->GetID(); ?>"><img src="img/bullet_wrench.png"/>Configuration des dates des rendus</a></li>
+				<li>
+					<a href="index.php?page=teacher_work_settings&amp;subject_id=<?php echo $subject->GetID() ?>&amp;work_id=<?php echo $work->GetID() ?>">
+						<img src="<?php echo IMG_PATH() ?>bullet_wrench.png"/>Configuration du travail (nom, taille, ...)
+					</a>
+				</li>
+                <li>
+                	<a href="index.php?page=teacher_deliveries_settings&amp;subject_id=<?php echo $subject->GetID(); ?>&amp;work_id=<?php echo $work->GetID(); ?>">
+                		<img src="img/bullet_wrench.png"/>Configuration des dates des rendus
+                	</a>
+                </li>
             </ul>
         </div>
     </div>
@@ -229,7 +238,7 @@
 	<div class="section">   
         <table class="colored_table underlined_table">
             <tr>
-                <th>Nom</th>
+                <th>Nom des rendus</th>
 	            <th>Examiner</th>
 	            <th>Configurer</th>
                 <th>T&eacute;l&eacute;charger</th>
@@ -249,7 +258,7 @@
                     ?>
                     <tr <?php if(!$delivery->IsConfigured()) { echo 'class="unconfigured_line"'; } ?>>
                         <td>
-	                        <?php echo $delivery->GetName() ?>
+	                        <?php echo $workName; ?> / <?php echo $delivery->GetName() ?>
 	                    </td>
 	                    <td>
 	                        <a href="index.php?page=teacher_display_board&amp;previous=teacher_list_deliveries&amp;subject_id=<?php echo $_GET['subject_id']; ?>&amp;work_id=<?php echo $work->GetID(); ?>&amp;delivery_id=<?php echo $delivery->GetID(); ?>&amp;index=A">
