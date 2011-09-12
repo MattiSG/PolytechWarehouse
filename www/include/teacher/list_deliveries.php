@@ -4,6 +4,17 @@
     previousPage('teacher_list_works');
     addPreviousPageParameter('subject_id', $_GET['subject_id']);
     addPreviousPageParameter('work_id', $_GET['work_id']);
+    
+    if(isset($_GET['previous'])) {
+        previousPage($_GET['previous']);
+    }
+	
+	if(isset($_GET['group_id'])) {    
+    	addPreviousPageParameter('group_id', $_GET['group_id']);
+    	$groupid = $_GET['group_id'];
+    }
+
+    
     $failed = false;
     $workName = "???";
     
@@ -191,7 +202,7 @@
         <div class="list">
             <ul>
 				<li>
-					<a href="index.php?page=teacher_work_settings&amp;subject_id=<?php echo $subject->GetID() ?>&amp;work_id=<?php echo $work->GetID() ?>">
+					<a href="index.php?page=teacher_work_settings&amp;subject_id=<?php echo $subject->GetID() ?>&amp;work_id=<?php echo $work->GetID() ?>&previous=teacher_list_deliveries<?php echo isset($groupid)?"&group_id=$groupid":""; ?>">
 						<img src="<?php echo IMG_PATH() ?>bullet_wrench.png"/>Configuration du travail (nom, taille, ...)
 					</a>
 				</li>

@@ -2,6 +2,10 @@
     PWHLog::Write(PWHLog::INFO, $_SESSION['login'], "Acc&egrave;s page work_settings");
     
     previousPage('teacher_list_works');
+    if(isset($_GET['previous'])) {
+        previousPage($_GET['previous']);
+        addPreviousPageParameter('group_id', $_GET['group_id']);
+    }
     addPreviousPageParameter('subject_id', $_GET['subject_id']);
     addPreviousPageParameter('work_id', $_GET['work_id']);
     $failed = false;

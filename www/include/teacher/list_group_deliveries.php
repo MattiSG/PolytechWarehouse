@@ -246,7 +246,7 @@
 	                        		<?php echo $subject->GetName(); ?></a>
 	                        	</td>
 	                        	<td>
-	                        	<a href="index.php?page=teacher_list_deliveries&amp;subject_id=<?php echo $subject->GetID() ?>&amp;work_id=<?php echo $work->GetID() ?>">
+	                        	<a href="index.php?page=teacher_list_deliveries&amp;subject_id=<?php echo $subject->GetID() ?>&amp;work_id=<?php echo $work->GetID() ?>&previous=teacher_list_group_deliveries&group_id=<?php echo $group->GetID(); ?>">
 	                            <?php echo $work->GetName(); ?>
 	                        </a>
 		                        </td>
@@ -369,7 +369,7 @@
 	                        		<?php echo $subject->GetName(); ?></a>
 	                        	</td>
 	                        	<td>
-									<a href="index.php?page=teacher_list_deliveries&amp;subject_id=<?php echo $subject->GetID() ?>&amp;work_id=<?php echo $work->GetID() ?>">
+									<a href="index.php?page=teacher_list_deliveries&amp;subject_id=<?php echo $subject->GetID() ?>&amp;work_id=<?php echo $work->GetID() ?>&previous=teacher_list_group_deliveries&group_id=<?php echo $group->GetID(); ?>">
 	                            <?php echo $work->GetName(); ?>
 	                        </a>
 		                        </td>
